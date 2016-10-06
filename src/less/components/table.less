@@ -1,0 +1,127 @@
+//
+// Tables
+// --------------------------------------------------
+
+
+@table-bg: #fff;
+@thead-bg: @default-color;
+@table-cell-padding: 8px;
+@table-condensed-cell-padding: 5px;
+@table-border-color: @border-color-base;
+@table-bg-accent: @default-color;
+@table-bg-hover: @default-color;
+
+
+// Mixins
+
+.table-row-state(@state; @background) {
+    // Exact selectors below required to override `.table-striped` and prevent
+    .table tr {
+        > td.@{state},
+        > th.@{state},
+        &.@{state} > td,
+        &.@{state} > th {
+            background-color: @background;
+        }
+    }
+
+    // Hover states for `.table-hover`
+    // Note: this is not available for cells or rows within `thead` or `tfoot`.
+    .table-hover > tbody > tr {
+        > td.@{state}:hover,
+        > th.@{state}:hover,
+        &.@{state}:hover > td,
+        &:hover > .@{state},
+        &.@{state}:hover > th {
+            background-color: darken(@background, 5%);
+        }
+    }
+}
+
+
+caption {
+    padding-top: @table-cell-padding;
+    padding-bottom: @table-cell-padding;
+    text-align: left;
+}
+
+th, td {
+    text-align: left;
+}
+
+.table {
+    width: 100%;
+    max-width: 100%;
+    background-color: @table-bg;
+    > thead {
+        background-color: @thead-bg;
+    }
+    th, td {
+        padding: @table-cell-padding;
+        vertical-align: top;
+        border-top: 1px solid @table-border-color;
+    }
+    > thead > tr:first-child {
+        > th {
+            border-top: 0;
+        }
+    }
+}
+
+.table-bordered {
+    border: 1px solid @table-border-color;
+
+    th, td {
+        border: 1px solid @table-border-color;
+    }
+}
+
+.table-condensed {
+    th, td {
+        padding: @table-condensed-cell-padding;
+    }
+}
+
+.table-striped {
+    > tbody > tr:nth-of-type(even) {
+        background-color: @table-bg-accent;
+    }
+}
+
+.table-hover {
+    > tbody > tr:hover {
+        background-color: @table-bg-hover;
+    }
+}
+
+
+// Table cell sizing
+//
+// Reset default table behavior
+
+table col[class*="col-"] {
+    position: static;
+    // Prevent border hiding in Firefox and IE9-11 (see https: //github.com/twbs/bootstrap/issues/11623)
+    float: none;
+    display: table-column;
+}
+
+table {
+    td, th {
+        &[class*="col-"] {
+            position: static;
+            // Prevent border hiding in Firefox and IE9-11 (see https: //github.com/twbs/bootstrap/issues/11623)
+            float:none;
+            display: table-cell;
+        }
+    }
+}
+
+
+// Generate the contextual background
+
+.table-row-state(active; @table-bg-hover);
+.table-row-state(success; @state-success-bg);
+.table-row-state(info; @state-info-bg);
+.table-row-state(warning; @state-warning-bg);
+.table-row-state(danger; @state-danger-bg);

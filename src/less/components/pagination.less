@@ -1,0 +1,29 @@
+.pagination {
+    > div {
+        display: inline-block;
+        height: 30px;
+        padding: 5px 0;
+    }
+    span {
+        display: inline-block;
+        margin-right: 5px;
+        padding: 0 12px;
+        height: 30px;
+        line-height: 30px;
+        border: 1px solid @border-color-base;
+        background-color: #fff;
+        cursor: pointer;
+        .user-select(none);
+
+        &:hover {
+            color: @primary-color;
+            background-color: #f5f5f5;
+        }
+        &.active, &.active:hover {
+            color: #fff;
+            border-color: @primary-color;
+            background-color: @primary-color;
+            cursor: default;
+        }
+    }
+}

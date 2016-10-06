@@ -1,0 +1,164 @@
+.datepicker-wrapper {
+    display: inline-block;
+    position: relative;
+}
+.datepicker-trigger {
+    display: inline-block;
+    width: 100%;
+
+    > input {
+        width: 100%;
+        cursor: text;
+    }
+    > i {
+        position: absolute;
+        right: 8px;
+        top: 10px;
+        font-size: 16px;
+    }
+}
+.datepicker-panel {
+    position: absolute;
+    width: 272px;
+    top: 0;
+    left: -10000px;
+    border: 1px solid @border-color-base;
+    box-shadow: @box-shadow-base;
+    background-color: #fff;
+    transition: opacity 240ms, transform 240ms;
+    opacity: 0;
+    transform: scaleY(0.4);
+    transform-origin: 0% 0%;
+    z-index: 1;
+
+    &.show {
+        left: 0;
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+.datepicker-head, .datepicker-foot {
+    position: relative;
+    height: 34px;
+    line-height: 34px;
+}
+.datepicker-head {
+    text-align: center;
+
+    i {
+        position: absolute;
+        display: inline-block;
+        padding: 0 3px;
+        line-height: 34px;
+        font-size: 14px;
+        cursor: pointer;
+        color: @text-color-light;
+
+        &:hover {
+            color: @primary-color;
+        }
+    }
+}
+.datepicker-prev-year-btn {
+    left: 8px;
+}
+.datepicker-prev-month-btn {
+    left: 30px;
+}
+.datepicker-next-year-btn {
+    right: 8px;
+}
+.datepicker-next-month-btn {
+    right: 30px;
+}
+.datepicker-body {
+    height: 250px;
+    min-height: 208px;
+    border-top: 1px solid @border-color-base;
+    border-bottom: 1px solid @border-color-base;
+}
+.datepicker-table {
+    margin: 8px auto;
+    width: 96%;
+
+    th, td {
+        padding: 3px 0;
+        text-align: center;
+        font-weight: normal;
+        color: @text-color-light;
+    }
+}
+.datepicker-date {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 50%;
+
+    &:hover {
+        background-color: #ddd;
+    }
+    &.active {
+        background-color: @primary-color;
+        color: #fff;
+    }
+    &.disabled {
+        background-color: #fff;
+        color: @text-color-lighter;
+        cursor: @cursor-disabled;
+    }
+}
+.datepicker-foot {
+    padding: 0 5px;
+    text-align: center;
+
+    span {
+        cursor: pointer;
+        color: @primary-color;
+    }
+}
+.datepicker-today-btn, 
+.datepicker-clear-btn,
+.datepicker-ok-btn {
+    position: absolute;
+}
+.datepicker-today-btn {
+    left: 12px;
+}
+.datepicker-clear-btn, .datepicker-ok-btn {
+    right: 12px;
+}
+.datepicker-time-col {
+    float: left;
+    width: 90px;
+    max-height: 248px;
+    border-left: 1px solid @border-color-base;
+    overflow: hidden;
+
+    &:hover {
+        overflow-y: auto;
+    }
+    &:first-child {
+        border-left-width: 0;
+    }
+    > li {
+        box-sizing: content-box;
+        width: 100%;
+        height: 24px;
+        line-height: 24px;
+        padding-left: 30px;
+        text-align: left;
+        cursor: pointer;
+        .user-select(none);
+
+        &:hover {
+            background-color: @gray-lighter;
+        }
+        &.active {
+            background-color: @primary-color;
+            color: #fff;
+        }
+    }
+}

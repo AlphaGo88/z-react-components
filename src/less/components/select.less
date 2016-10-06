@@ -1,0 +1,109 @@
+//
+// Select
+// --------------------------------------------------
+
+.select-wrapper {
+    position: relative;
+    display: inline-block;
+    &:focus {
+        outline: 0;
+    }
+    > .caret {
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 20px;
+        cursor: pointer;
+        > b {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            margin: auto;
+            width: 0;
+            height: 0;
+            border-color: @text-color-light transparent transparent;
+            border-style: solid;
+            border-width: 6px 4px 0;
+        }
+        &.up > b {
+            border-color: transparent transparent @text-color-light;
+            border-width: 0 4px 6px;
+        }
+        &.disabled {
+            cursor: @cursor-disabled;
+        }
+        &.disabled > b {
+            border-color: @text-color-lighter transparent transparent;
+        }
+    }
+}
+
+.select-trigger {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding-right: 20px !important; // overwrite input padding
+    cursor: pointer;
+}
+
+.select-dropdown {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 100%;
+    margin: 4px 0 0;
+    max-height: 302px;
+    text-align: left;
+    background-color: #fff;
+    overflow: auto;
+    z-index: 1;
+    border: 1px solid @border-color-base;
+    box-shadow: @box-shadow-base;
+    transition: opacity 240ms, transform 240ms;
+    transform: scaleY(0.4);
+    transform-origin: 0% 0%;
+    opacity: 0;
+    &.off-screen {
+        left: -9999px;
+    }
+    &.show {
+        left: 0;
+        transform: scaleY(1);
+        opacity: 1;
+    }
+
+    > li {
+        display: block;
+        height: @input-height - 2;
+        line-height: @input-height - 2;
+        padding: 0 @input-padding-horizonal;
+        clear: both;
+        color: @text-color-light;
+        text-decoration: none;
+        white-space: nowrap;
+        cursor: pointer;
+        &:hover {
+            background-color: #eee;
+        }
+        &.selected {
+            background-color: @primary-color;
+            color: #fff;
+        }
+        &.disabled {
+            background-color: #fff;
+            color: @text-color-lighter;
+            cursor: default;
+        }
+        &.group-label {
+            background-color: #fff;
+            font-weight: bold;
+            cursor: default;
+        }
+        &.group-option {
+            padding: 0 @input-padding-horizonal + 8;
+        }
+    }
+}

@@ -1,0 +1,38 @@
+//
+// Tabs
+// --------------------------------------------------
+
+
+.tabs {
+    border-left: 1px solid @border-color-base;
+    border-bottom: 1px solid @border-color-base;
+    .clearfix();
+    > li, > a {
+        float: left;
+        margin-bottom: -1px;
+        width: 120px;
+        padding: 10px 0;
+        border: 1px solid @border-color-base;
+        border-left: 0;
+        text-align: center;
+        color: @text-color-base;
+        text-decoration: none;
+        background-color: #fff;
+        cursor: pointer;
+        &:hover {
+            color: @text-color-lighter;
+        }
+        &.active {
+            padding: 9px 0 10px 0;
+            border-top: 2px solid @primary-color;
+            border-bottom-color: #fff;
+            background-color: #fff;
+        }
+    }
+}
+
+.tab-content {
+    padding: 15px;
+    border: 1px solid @border-color-base;
+    border-top: 0;
+}

@@ -1,0 +1,178 @@
+//
+// Forms
+// --------------------------------------------------
+
+
+// Override fieldset styles in Normalize
+fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+// Override content-box in Normalize
+input[type="search"] {
+    box-sizing: border-box;
+}
+input[type="color"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="email"], input[type="month"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="time"], input[type="url"], input[type="week"], select, textarea {
+    height: @input-height;
+    padding: 0px @input-padding-horizonal;
+    font-size: @font-size-base;
+    border: 1px solid @border-color-base;
+    outline: 0;
+
+    &:focus {
+        border-color: darken(@border-color-base, 18%);
+        outline: 0;
+    }
+    &.required {
+        border-color: @color-warning;
+    }
+    &.error {
+        border-color: @color-danger;
+    }
+    &.success {
+        border-color: @color-success;
+    }
+    &.info {
+        border-color: @color-info;
+    }
+    &.warning {
+        border-color: @color-warning;
+    }
+    &:disabled {
+        color: @text-color-lighter;
+        cursor: @cursor-disabled;
+    }
+}
+select {
+    padding: 0px @input-padding-horizonal - 4;
+}
+textarea {
+    height: 92px;
+    padding: 8px @input-padding-horizonal;
+}
+// Style options in Firefox
+select > option {
+    padding: 4px @input-padding-horizonal;
+}
+// radio and checkbox
+label.radio, label.checkbox {
+    position: relative;
+    display: inline-block;
+    height: @input-height;
+    line-height: @input-height;
+    padding-left: 24px;
+    cursor: pointer;
+
+    input[type="radio"], input[type="checkbox"] {
+        display: none;
+    }
+}
+// radio
+label.radio {
+    input[type="radio"] + span {
+        &:before, &:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: (@input-height - 16) / 2;
+            width: 16px;
+            height: 16px;
+            z-index: 0;
+            transition: .28s;
+            border-radius: 50%;
+            border: 2px solid @text-color-lighter;
+        }
+    }
+    input[type="radio"]:checked + span {
+        &:before {
+            border-color: @primary-color;
+        }
+        &:after {
+            border-radius: 50%;
+            border: 2px solid @primary-color;
+            background-color: @primary-color;
+            transform: scale(.5);
+        }
+    }
+}
+// checkbox
+label.checkbox {
+    input[type="checkbox"] + span {
+        &:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: (@input-height - 16) / 2;
+            width: 16px;
+            height: 16px;
+            z-index: 0;
+            transition: .2s;
+            border-radius: 1px;
+            border: 2px solid @text-color-lighter;
+        }
+    }
+    input[type="checkbox"]:checked + span {
+        &:before {
+            left: -4px;
+            margin-top: -4px;
+            width: 10px;
+            height: 20px;
+            border-top: 2px solid transparent;
+            border-left: 2px solid transparent;
+            border-right: 2px solid @primary-color;
+            border-bottom: 2px solid @primary-color;
+            transform: rotate(40deg);
+            -webkit-backface-visibility: hidden;
+            transform-origin: 100% 100%;
+        }
+    }
+}
+.form-group {
+    padding: 0 5px;
+    margin-bottom: 10px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+    > .btn {
+        margin-right: 6px;
+    }
+    > .btn-block {
+        margin-right: 0;
+    }
+}
+.form-label, .form-control, .form-text, .form-control + label.error {
+    display: block;
+    width: 100%;
+}
+.form-label {
+    margin-bottom: 4px;
+}
+.form-text {
+    height: @input-height;
+    line-height: @input-height - 2;
+}
+.form-control {
+    > label {
+        display: inline-block;
+        margin-right: 12px;
+    }
+}
+.form-group .validation-error {
+    margin-top: 4px;
+    color: @color-danger;
+}
+// form that label and input are horizonal aligned
+.form-horizonal {
+    .form-group {
+        width: 100%;
+        .clearfix();
+    }
+    .form-label {
+        height: @input-height;
+        line-height: @input-height;
+        padding-right: 12px;
+        text-align: right;
+    }
+}

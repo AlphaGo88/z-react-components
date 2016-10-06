@@ -1,0 +1,49 @@
+//
+// Grid
+// --------------------------------------------------
+
+
+@grid-columns: 12;
+// @grid-gutter-width: 0px;
+
+
+// Common styles for all sizes of grid columns, widths 1-12
+.make-grid-columns() {
+    .col(@index) {
+        @item: ~".col-@{index}";
+        .col((@index + 1), @item);
+    }
+    .col(@index, @list) when (@index =< @grid-columns) { // general; "=<" isn't a typo
+        @item: ~".col-@{index}";
+        .col((@index + 1), ~"@{list}, @{item}");
+    }
+    .col(@index, @list) when (@index > @grid-columns) { // terminal
+        @{list} {
+            position: relative;
+            float: left;
+            // Prevent columns from collapsing when empty
+            min-height: 1px;
+            // Inner gutter via padding
+            // padding-left:  ceil((@grid-gutter-width / 2));
+            // padding-right: floor((@grid-gutter-width / 2));
+        }
+    }
+    .col(1); // kickstart it
+}
+
+// Specific width and offset of grid columns
+.loop-grid-columns(@index) when (@index =< @grid-columns) {
+    .col-@{index} {
+        width: percentage((@index / @grid-columns)) !important;
+    }
+    .col-offset-@{index} {
+        margin-left: percentage((@index / @grid-columns)) !important;
+    }
+    .loop-grid-columns(@index + 1)
+}
+
+
+.make-grid-columns();
+.loop-grid-columns(1);
+
+

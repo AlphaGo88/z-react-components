@@ -1,0 +1,128 @@
+//
+//  Global Style
+// --------------------------------------------------
+
+
+html {
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+body {
+    line-height: @line-height-base;
+    color: @text-color-base;
+    font-size: @font-size-base;
+    font-family: @font-family-base;
+}
+h6 {
+    font-size: @font-size-small;
+}
+h5 {
+    font-size: @font-size-base;
+}
+h4 {
+    font-size: @font-size-big;
+}
+h3 {
+    font-size: @font-size-bigger;
+}
+h2 {
+    font-size: @font-size-large;
+}
+h1 {
+    font-size: @font-size-larger;
+}
+ul, ol {
+    list-style: none;
+}
+
+a {
+    color: @link-color;
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+        color: @link-color-hover;
+        text-decoration: underline;
+    }
+    &:visited {
+        color: @link-color-visited;
+    }
+}
+
+
+
+//  Utility Classes
+// --------------------------------------------------
+
+.fl {
+    float: left;
+}
+.fr {
+    float: right;
+}
+.clearfix:before, .clearfix:after {
+    content: "";
+    display: table;
+}
+.clearfix:after {
+    clear: both;
+    overflow: hidden;
+}
+.center-block {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.hide {
+    display: none !important;
+}
+.circle {
+    border-radius: 50%;
+}
+
+// Text Align
+.left-align {
+    text-align: left;
+}
+.right-align {
+    text-align: right
+}
+.center, .center-align {
+    text-align: center;
+}
+
+// No Text Select
+.no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+// Text Truncate
+.truncate {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
