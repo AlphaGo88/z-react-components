@@ -1,3 +1,5 @@
+// CheckboxGroup Field
+// ---------------------------
 
 const classNames = require('classnames');
 const Formsy = require('formsy-react');
@@ -43,6 +45,7 @@ const CheckboxGroupField = React.createClass({
                             <input
                                 type="checkbox"
                                 name={name}
+                                value={item.value}
                                 onChange={this.changeValue.bind(this, item.value)}
                                 checked={this.state.value.indexOf(item.value) > -1}
                             />

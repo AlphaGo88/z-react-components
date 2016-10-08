@@ -1,4 +1,5 @@
-// 对话框组件
+// Dialog
+// ------------------------
 
 const classNames = require('classnames');
 
@@ -31,22 +32,21 @@ const Dialog = React.createClass({
         const { title, style, children, onOK, onCancel, footer } = this.props;
         const { visible } = this.state;
 
-        const layerClass = classNames('dlg-mask', { 'show': visible });
-
         return (
-            <div className={layerClass}>
-                <div className="dlg" style={style}>
-                    <a className="fa fa-close dlg-close" onClick={this.close}></a>
-                    <h3 className="dlg-title">{title}</h3>
-                    <div className="dlg-body">{children}</div>
+            <div className={classNames('modal-mask', { 'show': visible })}>
+                <div className="modal" style={style}>
+                    {title && 
+                        <h3 className="modal-title">{title}</h3>
+                    }
+                    <div className="modal-body">{children}</div>
                     {footer ? 
-                        <div className="dlg-foot">
+                        <div className="modal-foot">
                             {footer}
                         </div>
                         : 
-                        <div className="dlg-foot">
-                            <span className="btn-flat" onClick={onOK}>确认</span>
-                            <span className="btn-flat" onClick={onCancel || this.close}>取消</span>
+                        <div className="modal-foot">
+                            <span className="btn-flat btn-primary" onClick={onCancel || this.close}>取消</span>
+                            <span className="btn-flat btn-primary" onClick={onOK}>确认</span>
                         </div>
                     }
                 </div>

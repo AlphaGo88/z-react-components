@@ -1,3 +1,5 @@
+// RadioGroup Field
+// ---------------------------
 
 const classNames = require('classnames');
 const Formsy = require('formsy-react');
@@ -30,6 +32,7 @@ const RadioGroupField = React.createClass({
                             <input
                                 type="radio"
                                 name={name}
+                                value={item.value}
                                 onChange={this.changeValue.bind(this, item.value)}
                                 checked={this.state.value === item.value}
                             />

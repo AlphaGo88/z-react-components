@@ -1,3 +1,5 @@
+// Datepicker Field
+// ---------------------------
 
 const classNames = require('classnames');
 const DatePicker = require('../DatePicker');
@@ -14,11 +16,12 @@ const DateField = React.createClass({
 
     render() {
 
+        const { validationError, validationErrors, className, title, ...otherProps } = this.props;
         const errorMessage = this.getErrorMessage();
 
         return (
-            <div className={`form-group ${this.props.className}`}>
-                <label className="form-label">{this.props.title}</label> 
+            <div className={`form-group ${className}`}>
+                <label className="form-label">{title}</label> 
                 <DatePicker 
                     wrapperClassName="form-control"
                     inputClassName={
@@ -29,7 +32,7 @@ const DateField = React.createClass({
                     }
                     onChange={this.changeValue}
                     initialDate={this.getValue()}
-                    {...this.props}
+                    {...otherProps}
                 />
                 <span className="validation-error">{errorMessage}</span>
             </div>

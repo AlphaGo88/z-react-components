@@ -1,29 +1,32 @@
-// 消息组件
+// Message
+// ------------------------
 
 module.exports = {
 
     msg(content) {
 
         // create message layer if not been created.
-        let layer = document.getElementById('msg-layer');
+        let layer = document.getElementById('z-msg-layer');
 
         if (!layer) {
             layer = document.createElement('div');
-            layer.id = 'msg-layer';
+            layer.id = 'z-msg-layer';
             layer.addEventListener('transitionend', function(e) {
-                layer.removeChild(e.target);
+                layer.removeChild(e.target.parentNode);
             }, false);
             document.body.appendChild(layer);
         }
 
+        const msgWrapper = document.createElement('div');
         let msgBox = document.createElement('div');
 
-        msgBox.className = 'msg';
+        msgBox.className = 'z-msg';
         msgBox.innerHTML = content;
-        layer.appendChild(msgBox);
+        msgWrapper.appendChild(msgBox);
+        layer.appendChild(msgWrapper);
 
         setTimeout(function() {
-            msgBox.className += ' msg-exit';
+            msgBox.className += ' exit';
         }, 4000);
     }
 };

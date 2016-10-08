@@ -1,4 +1,5 @@
-// 文本输入框组件
+// Form
+// ------------------------
 
 const Formsy = require('formsy-react');
 
@@ -18,5 +19,6 @@ Form.InputField = require('./InputField');
 Form.DateField = require('./DateField');
 Form.RadioGroupField = require('./RadioGroupField');
 Form.CheckboxGroupField = require('./CheckboxGroupField');
+Form.TextAreaField = require('./TextAreaField');
 
 module.exports = Form;

@@ -1397,7 +1397,7 @@ label.checkbox input[type="checkbox"]:checked + span:before {
 .select-dropdown > li.group-option {
   padding: 0 18px;
 }
-.dlg-mask {
+.modal-mask {
   position: fixed;
   height: 100%;
   width: 100%;
@@ -1410,15 +1410,15 @@ label.checkbox input[type="checkbox"]:checked + span:before {
   z-index: 1000;
   background-color: rgba(0, 0, 0, 0.541176);
 }
-.dlg-mask.show {
+.modal-mask.show {
   left: 0;
   opacity: 1;
 }
-.dlg-mask.show > .dlg {
+.modal-mask.show > .modal {
   opacity: 1;
   transform: translateY(0px);
 }
-.dlg-mask > .dlg {
+.modal-mask > .modal {
   position: relative;
   top: 16%;
   width: 66%;
@@ -1431,40 +1431,37 @@ label.checkbox input[type="checkbox"]:checked + span:before {
   transition: opacity 400ms, transform 400ms;
   box-shadow: rgba(0, 0, 0, 0.247059) 0px 14px 45px, rgba(0, 0, 0, 0.219608) 0px 10px 18px;
 }
-.dlg-mask > .dlg > .dlg-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #666;
-  cursor: pointer;
-  text-decoration: none;
-}
-.dlg-mask > .dlg > .dlg-title {
+.modal-mask > .modal > .modal-title {
   padding: 10px 0;
   font-size: 18px;
 }
-.dlg-mask > .dlg > .dlg-body {
+.modal-mask > .modal > .modal-body {
   padding: 8px 0;
 }
-.dlg-mask > .dlg > .dlg-foot {
+.modal-mask > .modal > .modal-foot {
   padding: 10px 0;
   text-align: right;
 }
-.dlg-mask > .dlg > .dlg-foot > .btn-flat,
-.dlg-mask > .dlg > .dlg-foot > .btn-float,
-.dlg-mask > .dlg > .dlg-foot > .btn-outline {
-  margin-left: 10px;
+.modal-mask > .modal > .modal-foot > .btn-flat,
+.modal-mask > .modal > .modal-foot > .btn-float,
+.modal-mask > .modal > .modal-foot > .btn-outline {
+  margin-left: 5px;
+  font-weight: 600;
 }
-#msg-layer {
+#z-msg-layer {
   display: block;
   position: fixed;
   top: 10%;
-  right: 7%;
-  min-width: 8%;
+  left: 0;
+  width: 100%;
+  height: 0;
   text-align: center;
-  z-index: 1500;
 }
-.msg {
+#z-msg-layer > div {
+  z-index: -1;
+}
+#z-msg-layer .z-msg {
+  display: inline-block;
   width: auto;
   margin-top: 15px;
   padding: 15px 25px;
@@ -1475,13 +1472,14 @@ label.checkbox input[type="checkbox"]:checked + span:before {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   transition: opacity 400ms, transform 400ms;
   transform: translateY(0px);
-  animation: msg-enter 400ms;
+  animation: z-msg-enter 400ms;
+  z-index: 1500;
 }
-.msg.msg-exit {
+#z-msg-layer .z-msg.exit {
   opacity: 0;
   transform: translateY(-50px);
 }
-@keyframes msg-enter {
+@keyframes z-msg-enter {
   from {
     opacity: 0;
     transform: translateY(50px);
@@ -1726,7 +1724,7 @@ table th[class*="col-"] {
 .datepicker-head {
   text-align: center;
 }
-.datepicker-head i {
+.datepicker-head a {
   position: absolute;
   display: inline-block;
   padding: 0 3px;
@@ -1734,8 +1732,9 @@ table th[class*="col-"] {
   font-size: 14px;
   cursor: pointer;
   color: #666;
+  text-decoration: none;
 }
-.datepicker-head i:hover {
+.datepicker-head a:hover {
   color: #3f51b5;
 }
 .datepicker-prev-year-btn {
@@ -1788,26 +1787,6 @@ table th[class*="col-"] {
   color: #999;
   cursor: not-allowed;
 }
-.datepicker-foot {
-  padding: 0 5px;
-  text-align: center;
-}
-.datepicker-foot span {
-  cursor: pointer;
-  color: #3f51b5;
-}
-.datepicker-today-btn,
-.datepicker-clear-btn,
-.datepicker-ok-btn {
-  position: absolute;
-}
-.datepicker-today-btn {
-  left: 12px;
-}
-.datepicker-clear-btn,
-.datepicker-ok-btn {
-  right: 12px;
-}
 .datepicker-time-col {
   float: left;
   width: 90px;
@@ -1840,4 +1819,20 @@ table th[class*="col-"] {
 .datepicker-time-col > li.active {
   background-color: #3f51b5;
   color: #fff;
+}
+.datepicker-foot {
+  padding: 0 5px;
+  text-align: center;
+}
+.datepicker-foot span {
+  cursor: pointer;
+  color: #3f51b5;
+}
+.datepicker-left-btn {
+  position: absolute;
+  left: 12px;
+}
+.datepicker-right-btn {
+  position: absolute;
+  right: 12px;
 }

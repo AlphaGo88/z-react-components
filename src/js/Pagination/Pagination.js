@@ -1,4 +1,5 @@
-// 页码组件
+// Pagination
+// ------------------------
 
 const classNames = require('classnames');
 
@@ -9,13 +10,13 @@ const Pagination = React.createClass({
             recordCount: 0,             //记录总条数
             pageDisplay: 5,             //同时显示的页码数
             pageSize: 10,               //每页显示记录条数
-            initialPageNo: 1,           //初始页码
+            defaultPageNo: 1,           //初始页码
             onPageChange: () => {}
         };
     },
 
     getInitialState: function() {
-        return { pageNo: this.props.initialPageNo };
+        return { pageNo: this.props.defaultPageNo };
     },
 
     handleClick(pageNo) {

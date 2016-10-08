@@ -1,8 +1,11 @@
-require('./init');
 
 window.Z = {
+    version: '1.0.0',
+    author: 'zhao xin <83268606@qq.com>',
+
     Dialog: require('./Dialog'),
     Message: require('./Message'),
     Pagination: require('./Pagination'),
-    DatePicker: require('./DatePicker')
+    DatePicker: require('./DatePicker'),
+    Form: require('./Form')
 };

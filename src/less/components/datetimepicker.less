@@ -45,7 +45,7 @@
 .datepicker-head {
     text-align: center;
 
-    i {
+    a {
         position: absolute;
         display: inline-block;
         padding: 0 3px;
@@ -53,6 +53,7 @@
         font-size: 14px;
         cursor: pointer;
         color: @text-color-light;
+        text-decoration: none;
 
         &:hover {
             color: @primary-color;
@@ -110,26 +111,6 @@
         cursor: @cursor-disabled;
     }
 }
-.datepicker-foot {
-    padding: 0 5px;
-    text-align: center;
-
-    span {
-        cursor: pointer;
-        color: @primary-color;
-    }
-}
-.datepicker-today-btn, 
-.datepicker-clear-btn,
-.datepicker-ok-btn {
-    position: absolute;
-}
-.datepicker-today-btn {
-    left: 12px;
-}
-.datepicker-clear-btn, .datepicker-ok-btn {
-    right: 12px;
-}
 .datepicker-time-col {
     float: left;
     width: 90px;
@@ -161,4 +142,21 @@
             color: #fff;
         }
     }
+}
+.datepicker-foot {
+    padding: 0 5px;
+    text-align: center;
+
+    span {
+        cursor: pointer;
+        color: @primary-color;
+    }
+}
+.datepicker-left-btn {
+    position: absolute;
+    left: 12px;
+}
+.datepicker-right-btn {
+    position: absolute;
+    right: 12px;
 }
