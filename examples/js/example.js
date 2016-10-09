@@ -11,7 +11,7 @@ let App = React.createClass({
     },
 
     handleClick() {
-        Message.msg('This is some message.')
+        Message.msg('This is some message.', 40000)
     },
 
     showDialog() {

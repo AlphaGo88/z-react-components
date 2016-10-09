@@ -1451,7 +1451,7 @@ label.checkbox input[type="checkbox"]:checked + span:before {
 #z-msg-layer {
   display: block;
   position: fixed;
-  top: 10%;
+  top: 5%;
   left: 0;
   width: 100%;
   height: 0;

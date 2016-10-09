@@ -377,10 +377,10 @@ const DatePicker = React.createClass({
                                                 {item.value}
                                             </span>
                                         }
-                                    </td>)
-                                )}
-                            </tr>)
-                        )}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
                 {selectTime &&
@@ -394,8 +394,7 @@ const DatePicker = React.createClass({
                                 >
                                     {`${hour}时`}
                                 </li>
-                            )
-                            )}
+                            ))}
                         </ul>
                         <ul className="datepicker-time-col">
                             {minutes.map((minute, idx) => (
@@ -406,8 +405,7 @@ const DatePicker = React.createClass({
                                 >
                                     {`${minute}分`}
                                 </li>
-                            )
-                            )}
+                            ))}
                         </ul>
                         <ul className="datepicker-time-col">
                             {seconds.map((second, idx) => (
@@ -418,8 +416,7 @@ const DatePicker = React.createClass({
                                 >
                                     {`${second}秒`}
                                 </li>
-                            )
-                            )}
+                            ))}
                         </ul>
                     </div>
                 }

@@ -3,7 +3,7 @@
 
 module.exports = {
 
-    msg(content) {
+    msg(content, duration) {
 
         // create message layer if not been created.
         let layer = document.getElementById('z-msg-layer');
@@ -27,6 +27,6 @@ module.exports = {
 
         setTimeout(function() {
             msgBox.className += ' exit';
-        }, 4000);
+        }, duration || 4000);
     }
 };
