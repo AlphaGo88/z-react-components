@@ -10,7 +10,7 @@ const Dialog = React.createClass({
             isOpen: false,
             title: '',
             onOK: () => {},
-            onCancel: () => {},
+            onCancel: () => {}
         };
     },
 

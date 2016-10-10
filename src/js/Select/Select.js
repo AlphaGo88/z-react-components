@@ -7,14 +7,12 @@ const Select = React.createClass({
 
     getDefaultProps() {
         return {
-            wrapperClassName: '',
+            className: '',
             inputClassName: '',
-            multi: false,    //是否支持多选
+            style: {},
+            multi: false,       //是否支持多选
             data: [],           //选项列表
-            defaultValue: '',   //默认选中的值, 单选
-            defaultValues: [],  //默认选中的值, 多选
-            value: '',          //指定选中的值, 单选
-            values: [],         //指定选中的值, 多选
+            value: '',          //指定选中的值
             disabled: false,
             placeholder: '请选择',
             onChange: () => {}
@@ -22,86 +20,87 @@ const Select = React.createClass({
     },
 
     getInitialState() {
-        const { multi, defaultValue, defaultValues, value, values } = this.props;
-        let selectedValues = ''; 
-        let selectedValue = '';
-
-        if (multi) {
-            selectedValues = values.length ? values.slice() : defaultValues.slice();
-        } else {
-            selectedValue = value ? value : defaultValue;
-        }
-
-        return {
-            visible: false,
-            selectedValues,
-            selectedValue
-        };
+        return { isOpen: false };
     },
 
-    toggle() {
-        this.setState({ visible: !this.state.visible });
+    componentDidMount() {
+        window.addEventListener('click', this.clickAway, false);
     },
 
-    handleBlur() {
-        this.hover || this.setState({ visible: false });
+    componentWillUnmount() {
+        window.removeEventListener('click', this.clickAway, false);
     },
 
+    //点击别处隐藏选择框
+    clickAway() {
+        this.hover || this.hide();
+    },
+
+    hide() {
+       this.setState({ isOpen: false }); 
+    },
+
+    //点击input，显示或隐藏选择框
+    handleInputClick(e) {
+        this.setState({ isOpen: !this.state.isOpen });
+        e.stopPropagation();
+    },
+
+    //鼠标进入选择框
     handleMouseEnter() {
         this.hover = true;
     },
 
+    //鼠标离开选择框
     handleMouseLeave() {
         this.hover = false;
     },
 
-    //选择项
-    selectItem(item) {
+    //选择某个选项
+    selectOption(value) {
         if (this.props.multi) {
-            // this.state({
-            //     selectedValues: this.state.selectedValues.concat([item.value]) 
-            // });
+            this.props.onChange(this.props.value.concat([value]));
         } else {
-            if (!this.props.value) {
-                this.setState({
-                    selectedValue: item.value,
-                    visible: false
-                });
-            } else {
-                this.setState({
-                    visible: false
-                });
-            }
-            if (item.value !== this.state.selectedValue) {
-                this.props.onChange(item.value);
+            this.setState({
+                isOpen: false
+            });
+            if (value !== this.props.value) {
+                this.props.onChange(value);
             }
         }
     },
 
+    //反选某个选项(多选有效)
+    deSelectOption(value) {
+        let valueArr = this.props.value.slice();
+        valueArr.splice(valueArr.indexOf(value), 1);
+        this.props.onChange(valueArr);
+    },
+
     render() {
-        const { wrapperClassName, inputClassName, multi, style, disabled, data, placeholder } = this.props;
-        const { visible, selectedValues, selectedValue } = this.state;
+        const { className, inputClassName, style, placeholder, multi, disabled, data, value } = this.props;
+        const { isOpen } = this.state;
 
         //input的文本，单选显示选中项目的text，多选以逗号连接选中项目的text
         let inputText = '';
-        if (multi) {
-            const selectedItems = data.filter((item) => selectedValues.indexOf(item.value) !== -1); //选中的项目
+        if (multi && value.length > 0) {
+            const selectedItems = data.filter((item) => value.indexOf(item.value) > -1); //选中的项目
             let selectedText = []; //选中项目的文本
             selectedItems.forEach((item) => {
                 selectedText.push(item.text);
             });
             inputText = selectedText.join(',');
-        } else {
-            const selectedItem = data.filter((item) => item.value === selectedValue);
+        } else if (value.length > 0) {
+            const selectedItem = data.filter(item => item.value === value);
             if (selectedItem.length) {
                 inputText = selectedItem[0].text;
             }
         }
 
         return (
-            <div style={style} className={`select-wrapper ${wrapperClassName}`}>
+            <div style={style} className={`select-wrapper ${className}`}>
                 <span className={classNames('caret', {
-                    'up': visible
+                    'up': isOpen
                 })}>
                     <b></b>
                 </span>
@@ -112,28 +111,32 @@ const Select = React.createClass({
                     disabled={disabled}
                     placeholder={placeholder}
                     readOnly
-                    onClick={this.toggle}
-                    onBlur={this.handleBlur}
+                    onClick={this.handleInputClick}
                 />
                 <ul 
                     className={classNames('select-dropdown', {
-                        'visible': visible
+                        'show': isOpen
                     })}
                     onMouseEnter={this.handleMouseEnter}
                     onMouseLeave={this.handleMouseLeave}
                 >
-                    {data.map((item, i) => (
-                        <li 
-                            key={i}
-                            className={classNames({
-                                'disabled': item.disabled,
-                                'selected': selectedValues.indexOf(item.value) !== -1
-                            })}
-                            onClick={e => {this.selectItem(item)}}
-                        >
-                            {item.text}
-                        </li>
-                    ))}
+                    {data.map((item, i) => {
+                        const selected = multi ? (value.indexOf(item.value) > -1) : (value === item.value);
+                        return (
+                            <li 
+                                key={i}
+                                className={classNames({
+                                    'disabled': item.disabled,
+                                    'selected': selected
+                                })}
+                                onClick={e => {
+                                    (multi && selected) ? this.deSelectOption(item.value) : this.selectOption(item.value)
+                                }}
+                            >
+                                {item.text}
+                            </li>
+                        )
+                    })}
                 </ul>
             </div>
         );

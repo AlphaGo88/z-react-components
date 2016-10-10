@@ -67,7 +67,7 @@
     transform-origin: 0% 0%;
     opacity: 0;
 
-    &.visible {
+    &.show {
         left: 0;
         transform: scaleY(1);
         opacity: 1;
@@ -79,16 +79,15 @@
         line-height: @input-height - 2;
         padding: 0 @input-padding-horizonal;
         clear: both;
-        color: @text-color-light;
+        color: rgba(0, 0, 0, 0.870588);
         text-decoration: none;
         white-space: nowrap;
         cursor: pointer;
         &:hover {
-            background-color: #eee;
+            background-color: rgb(232, 232, 232);
         }
         &.selected {
-            background-color: @primary-color;
-            color: #fff;
+            color: @primary-color;
         }
         &.disabled {
             background-color: #fff;

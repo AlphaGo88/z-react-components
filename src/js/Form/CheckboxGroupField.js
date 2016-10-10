@@ -51,8 +51,7 @@ const CheckboxGroupField = React.createClass({
                             />
                             <span>{item.text}</span>
                         </label>
-                    ))
-                    }
+                    ))}
                 </div>
             </div>
         );

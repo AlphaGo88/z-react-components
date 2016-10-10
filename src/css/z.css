@@ -1361,7 +1361,7 @@ label.checkbox input[type="checkbox"]:checked + span:before {
   transform-origin: 0% 0%;
   opacity: 0;
 }
-.select-dropdown.visible {
+.select-dropdown.show {
   left: 0;
   transform: scaleY(1);
   opacity: 1;
@@ -1372,17 +1372,16 @@ label.checkbox input[type="checkbox"]:checked + span:before {
   line-height: 34px;
   padding: 0 10px;
   clear: both;
-  color: #666;
+  color: rgba(0, 0, 0, 0.870588);
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
 }
 .select-dropdown > li:hover {
-  background-color: #eee;
+  background-color: #e8e8e8;
 }
 .select-dropdown > li.selected {
-  background-color: #3f51b5;
-  color: #fff;
+  color: #3f51b5;
 }
 .select-dropdown > li.disabled {
   background-color: #fff;
@@ -1449,19 +1448,18 @@ label.checkbox input[type="checkbox"]:checked + span:before {
   font-weight: 600;
 }
 #z-msg-layer {
-  display: block;
   position: fixed;
   top: 5%;
-  left: 0;
-  width: 100%;
+  left: 50%;
+  max-width: 400px;
   height: 0;
   text-align: center;
-}
-#z-msg-layer > div {
-  z-index: -1;
+  z-index: 1500;
 }
 #z-msg-layer .z-msg {
-  display: inline-block;
+  display: block;
+  position: relative;
+  right: 50%;
   width: auto;
   margin-top: 15px;
   padding: 15px 25px;
@@ -1473,7 +1471,6 @@ label.checkbox input[type="checkbox"]:checked + span:before {
   transition: opacity 400ms, transform 400ms;
   transform: translateY(0px);
   animation: z-msg-enter 400ms;
-  z-index: 1500;
 }
 #z-msg-layer .z-msg.exit {
   opacity: 0;

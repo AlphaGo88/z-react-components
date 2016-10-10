@@ -6,20 +6,18 @@
 @msg-index: 1500;
 
 #z-msg-layer {
-    display: block;
     position: fixed;
     top: 5%;
-    left: 0;
-    width: 100%;
+    left: 50%;
+    max-width: 400px;
     height: 0;
     text-align: center;
-
-    > div {
-        z-index: -1;
-    }
+    z-index: @msg-index;
 
     .z-msg {
-        display: inline-block;
+        display: block;
+        position: relative;
+        right: 50%;
         width: auto;
         margin-top: 15px;
         padding: 15px 25px;
@@ -31,7 +29,7 @@
         transition: opacity 400ms, transform 400ms;
         transform: translateY(0px);
         animation: z-msg-enter 400ms;
-        z-index: @msg-index;
+        
         &.exit {
             opacity: 0;
             transform: translateY(-50px);

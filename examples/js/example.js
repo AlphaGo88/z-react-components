@@ -14,7 +14,8 @@ let App = React.createClass({
     getInitialState: function() {
         return { 
             dlgOpen: false,
-            emp: [{
+            emp: ['emp1','emp2'],
+            emps: [{
                 value: 'emp1',
                 text: 'Jack'
             }, {
@@ -46,20 +47,14 @@ let App = React.createClass({
         console.log(fruit)
     },
 
-    changeData() {
+    changeEmp(value) {
         this.setState({
-            emp: [{
-                value: 'emp3',
-                text: 'Jim'
-            }, {
-                value: 'emp4',
-                text: 'Michael'
-            }]
+            emp: value
         })
     },
 
     render() {
-        let { dlgOpen, emp } = this.state;
+        let { dlgOpen, emps, emp } = this.state;
 
         return (
             <div>
@@ -75,9 +70,8 @@ let App = React.createClass({
                     <DatePicker selectTime={true} />
                 </section>
                 <section>
-                    <Select data={emp} />
+                    <Select multi={true} data={emps} value={emp} onChange={this.changeEmp}/>
                     &nbsp;&nbsp;&nbsp;
-                    <span className="btn-float btn-primary" onClick={this.changeData}>改变数据</span>
                 </section>
                 <Dialog isOpen={dlgOpen} title='对话框' style={{width: 500}} onCancel={this.closeDlg}>
                     啊三季度来看房萨芬的， 啊释放了空间撒反对。阿斯蒂芬撒旦发你离开雷克萨减肥的按说反击率。
