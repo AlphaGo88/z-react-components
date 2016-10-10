@@ -7,5 +7,6 @@ window.Z = {
     Message: require('./Message'),
     Pagination: require('./Pagination'),
     DatePicker: require('./DatePicker'),
+    Select: require('./Select'),
     Form: require('./Form')
 };

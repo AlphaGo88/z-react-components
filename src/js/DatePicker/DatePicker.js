@@ -42,29 +42,27 @@ const DatePicker = React.createClass({
 
     getDefaultProps() {
         return {
-            inputClassName: '',
             wrapperClassName: '',
-            style: null,
-            name: '',
+            inputClassName: '',
             placeholder: '',
             disabled: false,
             selectTime: false,  //是否选择时间
-            value: '',  //初始值
+            defaultValue: '',  //初始值
             maxValue: '',
             minValue: '',
             onChange: () => {},
-            disableDates: () => {return false;}
+            disableDates: () => false
         };
     },
 
     getInitialState() {
-        const { value, maxValue, minValue, disableDates } = this.props;
+        const { defaultValue, maxValue, minValue, disableDates } = this.props;
         let _initialDate;   //默认选中的日期
         let set = false;    //input是否有值
         let todayDisabled = false;  //今天是否在diabled日期范围内
 
-        if (value) {
-            _initialDate = new Date(value);
+        if (defaultValue) {
+            _initialDate = new Date(defaultValue);
             set = true;
         } else {
             const today = new Date();
@@ -94,10 +92,9 @@ const DatePicker = React.createClass({
     },
 
     componentDidMount() {
-        //点击别处隐藏选择框
         window.addEventListener('click', () => {
             this.hover || this.hide();
-        }, false);
+        }, false)
     },
 
     show() {
@@ -255,12 +252,13 @@ const DatePicker = React.createClass({
         return (
             <input 
                 type="text" 
-                className={inputClassName} 
+                className={`datepicker-trigger ${inputClassName}`} 
                 style={style} 
                 value={dateStr} 
                 placeholder={placeholder} 
                 disabled={disabled}
                 readOnly
+                onFocus={this.show}
             />
         );
     },
@@ -452,7 +450,7 @@ const DatePicker = React.createClass({
     },
 
     render() {
-        const { wrapperClassName, disabled, onChange } = this.props;
+        const { wrapperClassName } = this.props;
         const { visible } = this.state;
 
         const input = this.renderInput();
@@ -462,10 +460,8 @@ const DatePicker = React.createClass({
 
         return (
             <div className={`datepicker-wrapper ${wrapperClassName}`}>
-                <div className="datepicker-trigger" onClick={() => {disabled || this.show()}}>
-                    {input}
-                    <i className="fa fa-calendar"></i>
-                </div>
+                <i className="fa fa-calendar"></i>
+                {input}
                 <div 
                     className={classNames('datepicker-panel', { 'show': visible })} 
                     onMouseEnter={this.mouseEnter} 

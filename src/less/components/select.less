@@ -52,7 +52,7 @@
 .select-dropdown {
     position: absolute;
     width: 100%;
-    left: 0;
+    left: -10000px;
     top: 100%;
     margin: 4px 0 0;
     max-height: 302px;
@@ -66,10 +66,8 @@
     transform: scaleY(0.4);
     transform-origin: 0% 0%;
     opacity: 0;
-    &.off-screen {
-        left: -9999px;
-    }
-    &.show {
+
+    &.visible {
         left: 0;
         transform: scaleY(1);
         opacity: 1;

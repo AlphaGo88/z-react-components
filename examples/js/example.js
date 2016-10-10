@@ -1,31 +1,65 @@
 
-require('../../src/js/z.js')
-const {Pagination, Message, Dialog, DatePicker} = Z;
+require('../../src/js/z.js');
+
+const {
+    Pagination, 
+    Message, 
+    Dialog, 
+    DatePicker,
+    Select
+} = Z;
 
 let App = React.createClass({
 
     getInitialState: function() {
-        return {
-            dlgVisible: false 
+        return { 
+            dlgOpen: false,
+            emp: [{
+                value: 'emp1',
+                text: 'Jack'
+            }, {
+                value: 'emp2',
+                text: 'Steve'
+            }, {
+                value: 'emp3',
+                text: 'Jim'
+            }, {
+                value: 'emp4',
+                text: 'Michael'
+            }]
         };
     },
 
     handleClick() {
-        Message.msg('This is some message.', 40000)
+        Message.msg('This is some message.', 4000)
     },
 
     showDialog() {
-        this.setState({
-            dlgVisible: true
-        });
+        this.setState({ dlgOpen: true });
+    },
+
+    closeDlg() {
+        this.setState({ dlgOpen: false });
     },
 
     setFruit(fruit) {
         console.log(fruit)
     },
 
+    changeData() {
+        this.setState({
+            emp: [{
+                value: 'emp3',
+                text: 'Jim'
+            }, {
+                value: 'emp4',
+                text: 'Michael'
+            }]
+        })
+    },
+
     render() {
-        let {dlgVisible} = this.state;
+        let { dlgOpen, emp } = this.state;
 
         return (
             <div>
@@ -40,7 +74,12 @@ let App = React.createClass({
                 <section>
                     <DatePicker selectTime={true} />
                 </section>
-                <Dialog visible={dlgVisible} title='对话框' style={{width: 500}}>
+                <section>
+                    <Select data={emp} />
+                    &nbsp;&nbsp;&nbsp;
+                    <span className="btn-float btn-primary" onClick={this.changeData}>改变数据</span>
+                </section>
+                <Dialog isOpen={dlgOpen} title='对话框' style={{width: 500}} onCancel={this.closeDlg}>
                     啊三季度来看房萨芬的， 啊释放了空间撒反对。阿斯蒂芬撒旦发你离开雷克萨减肥的按说反击率。
                 </Dialog>
             </div>

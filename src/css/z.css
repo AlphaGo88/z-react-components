@@ -1013,6 +1013,9 @@ button[disabled].btn-float,
   border: 1px solid #ccc;
   border-top: 0;
 }
+input {
+  background-color: transparent;
+}
 fieldset {
   margin: 0;
   padding: 0;
@@ -1343,7 +1346,7 @@ label.checkbox input[type="checkbox"]:checked + span:before {
 .select-dropdown {
   position: absolute;
   width: 100%;
-  left: 0;
+  left: -10000px;
   top: 100%;
   margin: 4px 0 0;
   max-height: 302px;
@@ -1358,10 +1361,7 @@ label.checkbox input[type="checkbox"]:checked + span:before {
   transform-origin: 0% 0%;
   opacity: 0;
 }
-.select-dropdown.off-screen {
-  left: -9999px;
-}
-.select-dropdown.show {
+.select-dropdown.visible {
   left: 0;
   transform: scaleY(1);
   opacity: 1;
@@ -1682,19 +1682,17 @@ table th[class*="col-"] {
   display: inline-block;
   position: relative;
 }
-.datepicker-trigger {
-  display: inline-block;
-  width: 100%;
-}
-.datepicker-trigger > input {
-  width: 100%;
-  cursor: text;
-}
-.datepicker-trigger > i {
+.datepicker-wrapper > i {
   position: absolute;
   right: 8px;
   top: 10px;
   font-size: 16px;
+}
+.datepicker-trigger {
+  display: block;
+  position: relative;
+  width: 100%;
+  cursor: text;
 }
 .datepicker-panel {
   position: absolute;

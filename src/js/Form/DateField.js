@@ -31,7 +31,7 @@ const DateField = React.createClass({
                         })
                     }
                     onChange={this.changeValue}
-                    initialDate={this.getValue()}
+                    defaultValue={this.getValue()}
                     {...otherProps}
                 />
                 <span className="validation-error">{errorMessage}</span>

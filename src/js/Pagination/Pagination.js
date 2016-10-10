@@ -10,30 +10,18 @@ const Pagination = React.createClass({
             recordCount: 0,             //记录总条数
             pageDisplay: 5,             //同时显示的页码数
             pageSize: 10,               //每页显示记录条数
-            defaultPageNo: 1,           //初始页码
-            onPageChange: () => {}
+            current: 1,                 //初始页码
+            onChange: () => {}
         };
     },
 
-    getInitialState: function() {
-        return { pageNo: this.props.defaultPageNo };
-    },
-
-    handleClick(pageNo) {
-        if (pageNo !== this.state.pageNo) {
-            this.setState({ pageNo });
-            this.props.onPageChange(pageNo);
-        }
-    },
-
     render() {
-        const { recordCount, pageDisplay, pageSize } = this.props;
+        const { recordCount, pageDisplay, pageSize, current, onChange } = this.props;
 
         if (recordCount === 0) return null;
 
-        const activeNo = this.state.pageNo;
         const pageCount = Math.ceil(recordCount / pageSize); //总共的页数
-        const leftNo = Math.ceil(activeNo / pageDisplay) * pageDisplay - pageDisplay + 1; //最左边的页码
+        const leftNo = Math.ceil(current / pageDisplay) * pageDisplay - pageDisplay + 1; //最左边的页码
         const rightNo = Math.min(leftNo + pageDisplay - 1, pageCount); //最右边的页码
         
         let pageNos = [];
@@ -45,26 +33,26 @@ const Pagination = React.createClass({
 
         return (
             <div className="pagination">
-                {activeNo === 1 ||
+                {current === 1 ||
                     <div>
-                        <span onClick={e => {this.handleClick(1)}}>首页</span>
-                        <span onClick={e => {this.handleClick(activeNo - 1)}}>上一页</span>
+                        <span onClick={e => onChange(1)}>首页</span>
+                        <span onClick={e => onChange(current - 1)}>上一页</span>
                     </div>
                 }
                 {pageNos.map(pageNo => (
                         <span 
                             key={pageNo} 
-                            className={classNames({'active': pageNo === activeNo})} 
-                            onClick={e => {this.handleClick(pageNo)}}
+                            className={classNames({'active': pageNo === current})} 
+                            onClick={e => onChange(pageNo)}
                         >
                             {pageNo}
                         </span>
                     )
                 )}
-                {activeNo === pageCount ||
+                {current === pageCount ||
                     <div>
-                        <span onClick={e => {this.handleClick(activeNo + 1)}}>下一页</span>
-                        <span onClick={e => {this.handleClick(pageCount)}}>尾页</span>
+                        <span onClick={e => onChange(current + 1)}>下一页</span>
+                        <span onClick={e => onChange(pageCount)}>尾页</span>
                     </div>
                 }
             </div>
