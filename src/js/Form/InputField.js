@@ -27,7 +27,15 @@ const InputField = React.createClass({
 
         // An error message is returned ONLY if the component is invalid
         // or the server has returned an error message
-        const { validationError, validationErrors, type, title, name, className, ...otherProps } = this.props;
+        const { 
+            validationError, 
+            validationErrors, 
+            type, 
+            title, 
+            name, 
+            className,
+            ...otherProps 
+        } = this.props;
         const errorMessage = this.getErrorMessage();
 
         return (

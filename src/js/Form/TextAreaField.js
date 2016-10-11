@@ -8,13 +8,24 @@ const TextAreaField = React.createClass({
 
     mixins: [Formsy.Mixin],
 
+    componentDidMount() {
+        this.setValue(this.props.defaultValue || '');
+    },
+
     changeValue(event) {
-        this.setValue(event.currentTarget['innerText']);
+        this.setValue(event.target.innerText);
     },
 
     render() {
 
-        const { validationError, validationErrors, type, title, name, className, ...otherProps } = this.props;
+        const { 
+            validationError, 
+            validationErrors, 
+            title, 
+            name, 
+            className, 
+            ...otherProps 
+        } = this.props;
         const errorMessage = this.getErrorMessage();
 
         return (

@@ -60,7 +60,6 @@ const DatePicker = React.createClass({
         const { defaultValue, value, maxValue, minValue, disableDates } = this.props;
         let _initialDate;   //初始默认选中的日期
         let curDate = '';   //初始值，如果没有指定初始值则为''
-        let todayDisabled = false;  //今天是否在diabled日期范围内
 
         //判断今天是否在disabled日期范围内
         //如果今天大于最大日期，默认选中最大日期
@@ -68,22 +67,19 @@ const DatePicker = React.createClass({
         //否则默认选中今天
         const today = new Date();
         if (maxValue && today.valueOf() > new Date(maxValue).valueOf()) {
-            todayDisabled = true;
             _initialDate = new Date(maxValue);
         } else if (minValue && today.valueOf() < new Date(minValue).valueOf()) {
-            todayDisabled = true;
             _initialDate = new Date(minValue);
         } else {
             _initialDate = today;
         }
 
         //指定或默认日期
-        if (value || defaultValue) {
-            if (value) {
-                _initialDate = new Date(value);
-            } else {
-                _initialDate = new Date(defaultValue);
-            }
+        if (value) {
+            _initialDate = new Date(value);
+            curDate = _initialDate;
+        } else if (defaultValue) {
+            _initialDate = new Date(defaultValue);
             curDate = _initialDate;
         }
 
@@ -93,7 +89,6 @@ const DatePicker = React.createClass({
         return {
             isOpen: false,
             view: 'date',   //当前视图，日期选择('date')或时间选择('time')
-            todayDisabled,
             curDate,
             ...dateProps
         };
@@ -160,11 +155,17 @@ const DatePicker = React.createClass({
     },
 
     prevYear() {
-        this.setState({ year: this.state.year - 1 });
+        this.setState({ 
+            year: this.state.year - 1,
+            date: 0
+        });
     },
 
     nextYear() {
-        this.setState({ year: this.state.year + 1 });
+        this.setState({ 
+            year: this.state.year + 1,
+            date: 0
+        });
     },
 
     prevMonth() {
@@ -173,11 +174,13 @@ const DatePicker = React.createClass({
         if (curMonth === 0) {
             this.setState({
                 year: this.state.year - 1,
-                month: 11
-            })
+                month: 11,
+                date: 0
+            });
         } else {
             this.setState({
-                month: curMonth - 1
+                month: curMonth - 1,
+                date: 0
             });
         }
     },
@@ -188,11 +191,13 @@ const DatePicker = React.createClass({
         if (curMonth === 11) {
             this.setState({
                 year: curYear + 1,
-                month: 0
+                month: 0,
+                date: 0
             });
         } else {
             this.setState({
-                month: curMonth + 1
+                month: curMonth + 1,
+                date: 0
             });
         }
     },
@@ -300,8 +305,7 @@ const DatePicker = React.createClass({
     },
 
     renderPanelHead() {
-        const { year, month, date, hours, minutes, seconds } = this.props.value ? 
-            getDateProps(new Date(this.props.value)) : this.state;
+        const { year, month, date, hours, minutes, seconds } = this.state;
         let dateStr = '';
         if (this.state.view === 'time') {
             dateStr = getDateTimeStr(year, month, date, hours, minutes, seconds);
@@ -465,21 +469,19 @@ const DatePicker = React.createClass({
 
         return (
             <div className="datepicker-foot">
-                <div className={classNames({'hide': view === 'time'})}>
-                    <span className="datepicker-left-btn" onClick={this.clear}>清空</span>
-                    {selectTime &&
-                        <span onClick={this.selectTime}>选择时间</span>
-                    }
-                    {todayDisabled ||
-                        <span className="datepicker-right-btn" onClick={this.setToday}>
-                            {selectTime ? '现在' : '今天'}
-                        </span>
-                    }
-                </div>
-                {selectTime &&
-                    <div className={classNames({'hide': view === 'date'})}>
-                        <span onClick={this.selectDate}>选择日期</span>
+                {selectTime ?
+                    <div>
+                        <span className="datepicker-left-btn" onClick={this.hideAndRestore}>取消</span>
+                        {view === 'time' ?
+                            <span onClick={this.selectDate}>选择日期</span>
+                            :
+                            <span onClick={this.selectTime}>选择时间</span>
+                        }
                         <span className="datepicker-right-btn" onClick={this.ok}>确认</span>
+                    </div>
+                    :
+                    <div>
+                        <span className="datepicker-left-btn" onClick={this.hideAndRestore}>取消</span>
                     </div>
                 }
             </div>

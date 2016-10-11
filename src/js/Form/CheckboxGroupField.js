@@ -13,7 +13,7 @@ const CheckboxGroupField = React.createClass({
     },
 
     componentDidMount() {
-        const value = this.props.value || [];
+        const value = this.props.defaultValue || [];
         this.setValue(value);
         this.setState({ value });
     },

@@ -8,7 +8,7 @@ const RadioGroupField = React.createClass({
     mixins: [Formsy.Mixin],
 
     componentDidMount() {
-        const value = this.props.value || '';
+        const value = this.props.defaultValue || '';
         this.setValue(value);
         this.setState({ value });
     },
@@ -35,6 +35,7 @@ const RadioGroupField = React.createClass({
                                 value={item.value}
                                 onChange={this.changeValue.bind(this, item.value)}
                                 checked={this.state.value === item.value}
+                                disabled={item.disabled}
                             />
                             <span>{item.text}</span>
                         </label>

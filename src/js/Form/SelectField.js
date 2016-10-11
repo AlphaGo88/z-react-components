@@ -10,7 +10,7 @@ const SelectField = React.createClass({
     mixins: [Formsy.Mixin],
 
     componentDidMount() {
-        const value = this.props.value || '';
+        const value = this.props.defaultValue || '';
         this.setValue(value);
     },
 
@@ -24,11 +24,8 @@ const SelectField = React.createClass({
             validationError, 
             validationErrors, 
             className, 
-            inputClassName,
             title, 
             name, 
-            value, 
-            onChange,
             ...otherProps 
         } = this.props;
         const errorMessage = this.getErrorMessage();

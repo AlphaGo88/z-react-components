@@ -48,10 +48,10 @@ const MyAppForm = React.createClass({
         return (
           <Form style={{width: 600}} onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
             <Input className="col-6" name="name" title="name" defaultValue="sdf"/>
-            <DateField className="col-6" name="birth" title="birth" selectTime={true} value="2015-06-03"/>
-            <Select className="col-6" name="sport" data={countries} />
+            <DateField className="col-6" name="birth" title="birth" selectTime={false} defaultValue="2015-06-03"/>
+            <Select className="col-6" name="sport" data={countries} required/>
             <Select className="col-6" name="sport1" data={countries} />
-            <RadioGroup className="col-6" name="country" items={countries} value="usa" required/>
+            <RadioGroup className="col-6" name="country" items={countries} defaultValue="usa" required/>
             <CheckboxGroup className="col-6" name="fruit" items={fruits} required/>
             <div className="form-group col-12">
                 <button className="btn-float btn-primary" disabled={!this.state.canSubmit}>Submit</button>
