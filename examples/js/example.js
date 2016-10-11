@@ -67,7 +67,7 @@ let App = React.createClass({
                     <Pagination recordCount={100} />
                 </section>
                 <section>
-                    <DatePicker selectTime={true} />
+                    <DatePicker selectTime={true} value="2016-09-09"/>
                 </section>
                 <section>
                     <Select multi={true} data={emps} value={emp} onChange={this.changeEmp}/>

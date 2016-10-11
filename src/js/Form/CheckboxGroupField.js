@@ -5,6 +5,7 @@ const classNames = require('classnames');
 const Formsy = require('formsy-react');
 
 const CheckboxGroupField = React.createClass({
+
     mixins: [Formsy.Mixin],
 
     getInitialState() {

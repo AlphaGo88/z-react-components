@@ -21,12 +21,10 @@ const TextAreaField = React.createClass({
             <div className={`form-group ${className}`}>
                 <label className="form-label" htmlFor={name}>{title}</label> 
                 <textarea 
-                    className={
-                        classNames('form-control', {
-                            'required': this.showRequired(),
-                            'error': this.showError()
-                        })
-                    }
+                    className={classNames('form-control', {
+                        'required': this.showRequired(),
+                        'error': this.showError()
+                    })}
                     name={name}
                     onChange={this.changeValue}
                     value={this.getValue()}

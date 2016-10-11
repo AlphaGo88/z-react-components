@@ -8,7 +8,7 @@ const RadioGroupField = React.createClass({
     mixins: [Formsy.Mixin],
 
     componentDidMount() {
-        const value = this.props.value;
+        const value = this.props.value || '';
         this.setValue(value);
         this.setState({ value });
     },

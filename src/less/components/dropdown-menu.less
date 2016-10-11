@@ -1,0 +1,32 @@
+//
+// Dropdown Menu
+// --------------------------------------------------
+
+
+.dropdown-menu {
+    min-width: 150px;
+
+    // Links within the dropdown menu
+    > li > a, > li > span {
+        display: block;
+        padding: 8px 20px;
+        clear: both;
+        color: @text-color-light;
+        text-decoration: none;
+        white-space: nowrap;
+        cursor: pointer;
+        &:hover {
+            background-color: #eee;
+        }
+    }
+    > li.disabled > a, > li.disabled > span {
+        color: @text-color-lighter;
+        background-color: #fff;
+        cursor: @cursor-disabled;
+    }
+    .divider {
+        height: 0px;
+        overflow: hidden;
+        border-bottom: 1px solid @border-color-light;
+    }
+}

@@ -16,6 +16,7 @@ let Form = React.createClass({
 });
 
 Form.InputField = require('./InputField');
+Form.SelectField = require('./SelectField');
 Form.DateField = require('./DateField');
 Form.RadioGroupField = require('./RadioGroupField');
 Form.CheckboxGroupField = require('./CheckboxGroupField');

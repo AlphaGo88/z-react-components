@@ -1,13 +1,12 @@
-// Datepicker Field
+// Select Field
 // ---------------------------
 
 const classNames = require('classnames');
-const DatePicker = require('../DatePicker');
+const Select = require('../Select');
 const Formsy = require('formsy-react');
 
-const DateField = React.createClass({
+const SelectField = React.createClass({
 
-    // Add the Formsy Mixin
     mixins: [Formsy.Mixin],
 
     componentDidMount() {
@@ -15,8 +14,8 @@ const DateField = React.createClass({
         this.setValue(value);
     },
 
-    changeValue(dateStr, dateObj) {
-        this.setValue(dateStr);
+    changeValue(value) {
+        this.setValue(value);
     },
 
     render() {
@@ -37,7 +36,7 @@ const DateField = React.createClass({
         return (
             <div className={`form-group ${className}`}>
                 <label className="form-label">{title}</label> 
-                <DatePicker 
+                <Select 
                     className="form-control"
                     inputClassName={classNames({
                         'required': this.showRequired(),
@@ -47,10 +46,10 @@ const DateField = React.createClass({
                     value={this.getValue()}
                     {...otherProps}
                 />
-                <span className="validation-error">{errorMessage}</span>
+                <span className='validation-error'>{errorMessage}</span>
             </div>
         );
     }
 });
 
-module.exports = DateField;
+module.exports = SelectField;

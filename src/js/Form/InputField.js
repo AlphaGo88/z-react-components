@@ -34,12 +34,10 @@ const InputField = React.createClass({
             <div className={`form-group ${className}`}>
                 <label className="form-label" htmlFor={name}>{title}</label> 
                 <input 
-                    className={
-                        classNames('form-control', {
-                            'required': this.showRequired(),
-                            'error': this.showError()
-                        })
-                    }
+                    className={classNames('form-control', {
+                        'required': this.showRequired(),
+                        'error': this.showError()
+                    })}
                     type={type || 'text'}
                     name={name}
                     onChange={this.changeValue}
