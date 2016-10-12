@@ -48,7 +48,9 @@ const MyAppForm = React.createClass({
         return (
           <Form style={{width: 400}} onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
             <Input className="col-6" name="name" title="name" defaultValue="sdf"/>
-            <DateField className="col-6" name="birth" title="birth" selectTime={true} defaultValue="2015-06-03"/>
+            <DateField className="col-6" name="birth" title="birth" selectTime={true} defaultValue="2015-06-03"
+                disableDates={(date) => date.getDay() === 5}
+            />
             <Select className="col-6" name="sport" data={countries} required/>
             <Select className="col-6" name="sport1" data={countries} />
             <RadioGroup className="col-6" name="country" items={countries} defaultValue="usa" required/>

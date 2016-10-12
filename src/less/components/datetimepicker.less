@@ -1,7 +1,3 @@
-.datepicker-wrapper {
-    &:extend(.dropdown-wrapper);
-}
-
 .datepicker-trigger {
     display: block;
     position: relative;
@@ -17,14 +13,7 @@
 }
 
 .datepicker-panel {
-    &:extend(.dropdown);
     width: 272px;
-
-    &.offscreen {
-        left: -10000px;
-        opacity: 0;
-        transform: scaleY(0.4);
-    }
 }
 
 .datepicker-head,
@@ -49,6 +38,10 @@
 
         &:hover {
             color: #000;
+        }
+        &.disabled {
+            color: @text-color-lighter;
+            cursor: @cursor-disabled;
         }
     }
 

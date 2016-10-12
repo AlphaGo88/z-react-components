@@ -1537,18 +1537,16 @@ table th[class*="col-"] {
   background-color: #3f51b5;
   cursor: default;
 }
-.dropdown-wrapper,
-.datepicker-wrapper {
+.dropdown-wrapper {
   position: relative;
   display: inline-block;
 }
-.dropdown,
-.datepicker-panel {
+.dropdown {
   position: absolute;
+  width: 100%;
   top: 100%;
   left: 0;
   margin: 4px 0 0;
-  width: 100%;
   overflow: auto;
   background-color: #fff;
   border: 1px solid #ccc;
@@ -1563,6 +1561,9 @@ table th[class*="col-"] {
   left: -10000px;
   opacity: 0;
   transform: scaleY(0.4);
+}
+.dropdown:focus {
+  outline: none;
 }
 .dropdown-menu {
   min-width: 150px;
@@ -1679,11 +1680,6 @@ table th[class*="col-"] {
 .datepicker-panel {
   width: 272px;
 }
-.datepicker-panel.offscreen {
-  left: -10000px;
-  opacity: 0;
-  transform: scaleY(0.4);
-}
 .datepicker-head,
 .datepicker-foot {
   position: relative;
@@ -1705,6 +1701,10 @@ table th[class*="col-"] {
 }
 .datepicker-head a:hover {
   color: #000;
+}
+.datepicker-head a.disabled {
+  color: #999;
+  cursor: not-allowed;
 }
 .datepicker-prev-year-btn {
   left: 10px;

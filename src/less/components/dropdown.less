@@ -11,10 +11,10 @@
 
 .dropdown {
     position: absolute;
+    width: 100%;
     top: 100%;
     left: 0;
     margin: 4px 0 0;
-    width: 100%;
     overflow: auto;
     background-color: #fff;
     border: 1px solid @border-color-base;
@@ -30,5 +30,7 @@
         opacity: 0;
         transform: scaleY(0.4);
     }
-
+    &:focus {
+        outline: none;
+    }
 }
