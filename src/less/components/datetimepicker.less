@@ -48,15 +48,14 @@
         text-decoration: none;
 
         &:hover {
-            color: @primary-color;
+            color: #000;
         }
-
     }
 
 }
 
 .datepicker-prev-year-btn {
-    left: 8px;
+    left: 10px;
 }
 
 .datepicker-prev-month-btn {
@@ -64,7 +63,7 @@
 }
 
 .datepicker-next-year-btn {
-    right: 8px;
+    right: 10px;
 }
 
 .datepicker-next-month-btn {
@@ -72,31 +71,34 @@
 }
 
 .datepicker-body {
-    height: 250px;
-    min-height: 208px;
+    height: 204px;
     border-top: 1px solid @border-color-base;
     border-bottom: 1px solid @border-color-base;
 }
 
 .datepicker-table {
-    margin: 8px auto;
+    margin: 5px auto;
     width: 96%;
 
     th,
     td {
-        padding: 3px 0;
+        padding: 1px 0;
         text-align: center;
         font-weight: normal;
         color: @text-color-light;
+    }
+
+    th {
+        height: 28px;
     }
 
 }
 
 .datepicker-date {
     display: inline-block;
-    width: 28px;
-    height: 28px;
-    line-height: 28px;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
     text-align: center;
     cursor: pointer;
     border-radius: 50%;
@@ -121,7 +123,7 @@
 .datepicker-time-col {
     float: left;
     width: 90px;
-    max-height: 248px;
+    max-height: 202px;
     border-left: 1px solid @border-color-base;
     overflow: hidden;
 
@@ -169,10 +171,10 @@
 
 .datepicker-left-btn {
     position: absolute;
-    left: 12px;
+    left: 15px;
 }
 
 .datepicker-right-btn {
     position: absolute;
-    right: 12px;
+    right: 14px;
 }

@@ -262,17 +262,37 @@ const DatePicker = React.createClass({
 
     //确认选择，当selectTime == true时有效
     ok() {
-        const { year, month, date, hours, minutes, seconds } = this.state;
-        const dateStr = getDateTimeStr(year, month, date, hours, minutes, seconds);
-        const dateObj = new Date(year, month, date, hours, minutes, seconds);
+        //如果选择了日期，更新
+        //如果没选择日期，相当于点击取消
+        if (this.state.date) {
+            const { year, month, date, hours, minutes, seconds } = this.state;
+            const dateStr = getDateTimeStr(year, month, date, hours, minutes, seconds);
+            const dateObj = new Date(year, month, date, hours, minutes, seconds);
+            this.setState({
+                view: 'date',
+                curDate: dateObj,
+                isOpen: false
+            });
+            this.props.onChange(dateStr, dateObj);
+        } else {
+            this.hideAndRestore();
+        }
+    },
 
-        this.setState({
-            view: 'date',
-            curDate: dateObj,
-            isOpen: false
-        });
+    handleKeyDown(event) {
+        switch (event.which) {
+            case 27:
+                // ESC
+                this.hideAndRestore();
+                break;
 
-        this.props.onChange(dateStr, dateObj);
+            case 13:
+                // Enter
+                this.ok();
+                break;
+
+            default:
+        }
     },
 
     renderInput() {
@@ -300,6 +320,7 @@ const DatePicker = React.createClass({
                 readOnly
                 onClick={this.handleInputClick}
                 onBlur={this.clickAway}
+                onKeyDown={this.handleKeyDown}
             />
         );
     },
@@ -332,11 +353,11 @@ const DatePicker = React.createClass({
 
     renderPanelBody() {
         const { selectTime, maxValue, minValue, disableDates, value} = this.props;
-        const { year, month, date } = this.state;
+        const { view, year, month, date } = this.state;
 
         /* 生成日期 Start */
         const howManyDates = getMonthDays(year, month);     //本月有多少天
-        const offset = new Date(year, month, 1).getDay();   //本月第一天是星期几
+        const offset = new Date(year, month, 1).getDay() || 7;   //本月第一天是星期几
         const _maxValue = maxValue ? new Date(maxValue).valueOf() : 0;
         const _minValue = minValue ? new Date(minValue).valueOf() : 0;
 
@@ -344,7 +365,7 @@ const DatePicker = React.createClass({
         let curDateValue, disabled = false;
 
         //第一行本月1号之前的空日期
-        for (i = 0; i < offset; i++) {
+        for (i = 1; i < offset; i++) {
             dates.push({ value: 0 });
         }
 
@@ -386,16 +407,16 @@ const DatePicker = React.createClass({
 
         return (
             <div className="datepicker-body">
-                <table className={classNames('datepicker-table', {'hide': this.state.view === 'time'})}>
+                <table className={classNames('datepicker-table', {'hide': view === 'time'})}>
                     <thead>
                         <tr>
-                            <th>日</th>
                             <th>一</th>
                             <th>二</th>
                             <th>三</th>
                             <th>四</th>
                             <th>五</th>
                             <th>六</th>
+                            <th>日</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -422,8 +443,11 @@ const DatePicker = React.createClass({
                         ))}
                     </tbody>
                 </table>
+                <div className={classNames('datepicker-yearSelect', {'hide': view === 'year'})}>
+                    
+                </div>
                 {selectTime &&
-                    <div className={classNames('clearfix', {'hide': this.state.view === 'date'})}>
+                    <div className={classNames('clearfix', {'hide': view === 'date'})}>
                         <ul className="datepicker-time-col">
                             {hours.map((hour, idx) => (
                                 <li 
@@ -471,7 +495,7 @@ const DatePicker = React.createClass({
             <div className="datepicker-foot">
                 {selectTime ?
                     <div>
-                        <span className="datepicker-left-btn" onClick={this.hideAndRestore}>取消</span>
+                        <span className="datepicker-left-btn" onClick={this.clear}>清空</span>
                         {view === 'time' ?
                             <span onClick={this.selectDate}>选择日期</span>
                             :
@@ -481,7 +505,7 @@ const DatePicker = React.createClass({
                     </div>
                     :
                     <div>
-                        <span className="datepicker-left-btn" onClick={this.hideAndRestore}>取消</span>
+                        <span className="datepicker-left-btn" onClick={this.clear}>清空</span>
                     </div>
                 }
             </div>
@@ -508,6 +532,7 @@ const DatePicker = React.createClass({
                     })} 
                     onMouseEnter={this.handleMouseEnter} 
                     onMouseLeave={this.handleMouseLeave}
+                    onKeyDown={this.handleKeyDown}
                 >
                     {panelHead}
                     {panelBody}

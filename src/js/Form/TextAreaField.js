@@ -24,15 +24,23 @@ const TextAreaField = React.createClass({
             title, 
             name, 
             className, 
+            labelClassName, 
+            controlClassName,
             ...otherProps 
         } = this.props;
         const errorMessage = this.getErrorMessage();
 
         return (
             <div className={`form-group ${className}`}>
-                <label className="form-label" htmlFor={name}>{title}</label> 
+                <label 
+                    className={`form-label ${labelClassName}`} 
+                    htmlFor={name}
+                >
+                    {title}
+                </label> 
                 <textarea 
-                    className={classNames('form-control', {
+                    className={classNames({
+                        [`form-control ${controlClassName}`]: true,
                         'required': this.showRequired(),
                         'error': this.showError()
                     })}
@@ -41,7 +49,9 @@ const TextAreaField = React.createClass({
                     value={this.getValue()}
                     {...otherProps}
                 />
-                <span className='validation-error'>{errorMessage}</span>
+                <span className='validation-error'>
+                    {errorMessage}
+                </span>
             </div>
         );
     }

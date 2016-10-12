@@ -33,14 +33,22 @@ const CheckboxGroupField = React.createClass({
     },
 
     render() {
-        const { name, title, items } = this.props;
+        const { 
+            name, 
+            title, 
+            items, 
+            labelClassName, 
+            controlClassName 
+        } = this.props;
 
         return (
             <div className={`form-group ${this.props.className}`}>
                 {title && 
-                    <label className="form-label">{title}</label>
+                    <label className={`form-label ${labelClassName}`}>
+                        {title}
+                    </label>
                 }
-                <div className="form-control">
+                <div className={`form-control ${controlClassName}`}>
                     {items.map((item, i) => (
                         <label key={i} className="checkbox">
                             <input

@@ -27,15 +27,19 @@ const DateField = React.createClass({
             className, 
             title, 
             name, 
+            labelClassName, 
+            controlClassName,
             ...otherProps 
         } = this.props;
         const errorMessage = this.getErrorMessage();
 
         return (
             <div className={`form-group ${className}`}>
-                <label className="form-label">{title}</label> 
+                <label className={`form-label ${labelClassName}`}>
+                    {title}
+                </label> 
                 <DatePicker 
-                    className="form-control"
+                    className={`form-control ${controlClassName}`}
                     inputClassName={classNames({
                         'required': this.showRequired(),
                         'error': this.showError()
@@ -44,7 +48,9 @@ const DateField = React.createClass({
                     value={this.getValue()}
                     {...otherProps}
                 />
-                <span className="validation-error">{errorMessage}</span>
+                <span className="validation-error">
+                    {errorMessage}
+                </span>
             </div>
         );
     }

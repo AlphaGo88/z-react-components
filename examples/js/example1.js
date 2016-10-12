@@ -46,9 +46,9 @@ const MyAppForm = React.createClass({
     render() {
         const { countries, fruits } = this.props;
         return (
-          <Form style={{width: 600}} onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
+          <Form style={{width: 400}} onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
             <Input className="col-6" name="name" title="name" defaultValue="sdf"/>
-            <DateField className="col-6" name="birth" title="birth" selectTime={false} defaultValue="2015-06-03"/>
+            <DateField className="col-6" name="birth" title="birth" selectTime={true} defaultValue="2015-06-03"/>
             <Select className="col-6" name="sport" data={countries} required/>
             <Select className="col-6" name="sport1" data={countries} />
             <RadioGroup className="col-6" name="country" items={countries} defaultValue="usa" required/>

@@ -23,18 +23,22 @@ const SelectField = React.createClass({
         const { 
             validationError, 
             validationErrors, 
-            className, 
             title, 
             name, 
+            className, 
+            labelClassName, 
+            controlClassName,
             ...otherProps 
         } = this.props;
         const errorMessage = this.getErrorMessage();
 
         return (
             <div className={`form-group ${className}`}>
-                <label className="form-label">{title}</label> 
+                <label className={`form-label ${labelClassName}`}>
+                    {title}
+                </label> 
                 <Select 
-                    className="form-control"
+                    className={`form-control ${controlClassName}`}
                     inputClassName={classNames({
                         'required': this.showRequired(),
                         'error': this.showError()
@@ -43,7 +47,9 @@ const SelectField = React.createClass({
                     value={this.getValue()}
                     {...otherProps}
                 />
-                <span className='validation-error'>{errorMessage}</span>
+                <span className='validation-error'>
+                    {errorMessage}
+                </span>
             </div>
         );
     }

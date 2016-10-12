@@ -78,15 +78,23 @@ const Select = React.createClass({
 
         //input的文本，单选显示选中项目的text，多选以逗号连接选中项目的text
         let inputText = '';
+
         if (multi && value.length > 0) {
-            const selectedItems = data.filter((item) => value.indexOf(item.value) > -1); //选中的项目
-            let selectedText = []; //选中项目的文本
+            //选中的项目
+            const selectedItems = data.filter((item) => 
+                value.indexOf(item.value) > -1
+            );
+            //选中项目的文本
+            let selectedText = []; 
+
             selectedItems.forEach((item) => {
                 selectedText.push(item.text);
             });
             inputText = selectedText.join(',');
+
         } else if (value.length > 0) {
             const selectedItem = data.filter(item => item.value === value);
+            
             if (selectedItem.length) {
                 inputText = selectedItem[0].text;
             }
