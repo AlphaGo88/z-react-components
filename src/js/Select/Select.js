@@ -1,21 +1,70 @@
 // Select
 // ------------------------
 
+const React = require('react');
 const classNames = require('classnames');
+const ClickAwayListener = require('../internal/ClickAwayListener');
 
 const Select = React.createClass({
 
+    propTypes: {
+        /**
+         * The css class name of the root element.
+         */
+        className: React.PropTypes.string,
+
+        /**
+         * The css class name of the input element.
+         */
+        inputClassName: React.PropTypes.string,
+
+        /**
+         * Overwrite the inline styles of the root element.
+         */
+        style: React.PropTypes.object,
+
+        /**
+         * Whether multi-selection is enabled.
+         */
+        multi: React.PropTypes.bool,
+
+        /**
+         * The placeholder of the input element.
+         */
+        placeholder: React.PropTypes.string,
+
+        /**
+         * Whether the component is disabled.
+         */
+        disabled: React.PropTypes.bool,
+
+        /**
+         * The selected Value.
+         * Pass a string when `multi` is `false`.
+         * Pass an array when `multi` is `true`.
+         */
+        value: React.PropTypes.any,
+
+        /**
+         * Fires when the selected value change.
+         * @param {string} `value`
+         */
+        onChange: React.PropTypes.func,
+
+        /**
+         * The dropdown's z-index.
+         */
+        zIndex: React.PropTypes.number
+    },
+
     getDefaultProps() {
         return {
-            className: '',
-            inputClassName: '',
-            style: {},
-            multi: false,       //是否支持多选
-            data: [],           //选项列表
-            value: '',          //指定选中的值
+            multi: false,
+            data: [],
+            value: '',
             disabled: false,
             placeholder: '请选择',
-            onChange: () => {}
+            onChange() {}
         };
     },
 
@@ -23,35 +72,14 @@ const Select = React.createClass({
         return { isOpen: false };
     },
 
-    componentDidMount() {
-        window.addEventListener('click', this.clickAway, false);
+    handleClickAway() {
+        this.state.isOpen && this.setState({ isOpen: false });
     },
 
-    componentWillUnmount() {
-        window.removeEventListener('click', this.clickAway, false);
-    },
-
-    clickAway() {
-        !this.hover && this.state.isOpen && this.setState({ isOpen: false });
-    },
-
-    //点击input，显示或隐藏选择框
     handleInputClick(event) {
         this.setState({ isOpen: !this.state.isOpen });
-        event.stopPropagation();
     },
 
-    //鼠标进入选择框
-    handleMouseEnter() {
-        this.hover = true;
-    },
-
-    //鼠标离开选择框
-    handleMouseLeave() {
-        this.hover = false;
-    },
-
-    //选择某个选项
     selectOption(value) {
         if (this.props.multi) {
             this.props.onChange(this.props.value.concat([value]));
@@ -65,7 +93,6 @@ const Select = React.createClass({
         }
     },
 
-    //反选某个选项(多选有效)
     deSelectOption(value) {
         let valueArr = this.props.value.slice();
         valueArr.splice(valueArr.indexOf(value), 1);
@@ -73,7 +100,17 @@ const Select = React.createClass({
     },
 
     render() {
-        const { className, inputClassName, style, placeholder, multi, disabled, data, value } = this.props;
+        const { 
+            className, 
+            inputClassName, 
+            style, 
+            placeholder, 
+            multi, 
+            disabled, 
+            data, 
+            value,
+            children 
+        } = this.props;
         const { isOpen } = this.state;
 
         //input的文本，单选显示选中项目的text，多选以逗号连接选中项目的text
@@ -101,49 +138,50 @@ const Select = React.createClass({
         }
 
         return (
-            <div style={style} className={`dropdown-wrapper ${className}`}>
-                <span className={classNames('select-caret', { 'up': isOpen })}>
-                    <b></b>
-                </span>
-                <input 
-                    type="text" 
-                    className={`select-trigger ${inputClassName}`}
-                    value={inputText}
-                    disabled={disabled}
-                    placeholder={placeholder}
-                    readOnly
-                    onClick={this.handleInputClick}
-                    onBlur={this.clickAway}
-                />
-                <div className={classNames({ 
-                    'dropdown': true,
-                    'offscreen': !isOpen
-                })}>
-                    <ul 
-                        className="select-options"
-                        onMouseEnter={this.handleMouseEnter}
-                        onMouseLeave={this.handleMouseLeave}
-                    >
-                        {data.map((item, i) => {
-                            const selected = multi ? (value.indexOf(item.value) > -1) : (value === item.value);
-                            return (
-                                <li 
-                                    key={i}
-                                    className={classNames({
-                                        'disabled': item.disabled,
-                                        'selected': selected
-                                    })}
-                                    onClick={e => {
-                                        (multi && selected) ? this.deSelectOption(item.value) : this.selectOption(item.value)
-                                    }}
-                                >
-                                    {item.text}
-                                </li>
-                            )
+            <ClickAwayListener onClickAway={this.handleClickAway}>
+                <div 
+                    style={style} 
+                    className={classNames('dropdown-wrapper', {
+                        [`${className}`]: className
+                    })}
+                >
+                    <span className={classNames('select-caret', { 'up': isOpen })}>
+                        <b></b>
+                    </span>
+                    <input 
+                        type="text" 
+                        className={classNames('select-trigger', {
+                            [`${inputClassName}`]: inputClassName
                         })}
-                    </ul>
+                        value={inputText}
+                        disabled={disabled}
+                        placeholder={placeholder}
+                        onClick={this.handleInputClick}
+                    />
+                    <div className={classNames('dropdown', { 'offscreen': !isOpen })}>
+                        <ul className="select-options">
+                            {data.map((item, i) => {
+                                const selected = multi ? (value.indexOf(item.value) > -1) : (value === item.value);
+                                return (
+                                    <li 
+                                        key={i}
+                                        className={classNames('select-option', {
+                                            'disabled': item.disabled,
+                                            'selected': selected
+                                        })}
+                                        onClick={e => {
+                                            if (item.disabled) return;
+                                            (multi && selected) ? this.deSelectOption(item.value) : this.selectOption(item.value)
+                                        }}
+                                    >
+                                        {item.text}
+                                    </li>
+                                )
+                            })}
+                        </ul>
+                    </div>
                 </div>
-            </div>
+            </ClickAwayListener>
         );
     }
 });

@@ -1,6 +1,7 @@
 // Form
 // ------------------------
 
+const React = require('react');
 const Formsy = require('formsy-react');
 
 let Form = React.createClass({

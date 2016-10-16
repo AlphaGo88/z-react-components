@@ -1,3 +1,6 @@
+
+const React = require('react');
+const ReactDOM = require('react-dom');
 const Dialog = require('./Dialog');
 
 module.exports = React.createClass({

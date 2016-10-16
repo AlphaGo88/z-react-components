@@ -1,8 +1,10 @@
 // RadioGroup Field
 // ---------------------------
 
+const React = require('react');
 const classNames = require('classnames');
 const Formsy = require('formsy-react');
+const RadioGroup = require('../RadioGroup');
 
 const RadioGroupField = React.createClass({
     mixins: [Formsy.Mixin],
@@ -23,33 +25,38 @@ const RadioGroupField = React.createClass({
             name, 
             title, 
             items, 
+            className,
             labelClassName, 
             controlClassName 
         } = this.props;
 
         return (
-            <div className={`form-group ${this.props.className}`}>
+            <div className={classNames(
+                'form-group', {
+                    [`${className}`]: className
+                }
+            )}>
                 {title && 
-                    <label className={`form-label ${labelClassName}`}>
+                    <label 
+                        className={classNames(
+                            'form-label', {
+                                [`${labelClassName}`]: labelClassName
+                            }
+                        )}
+                    >
                         {title}
                     </label>
                 }
-                <div className={`form-control ${controlClassName}`}>
-                    {items.map((item, i) => (
-                        <label key={i} className="radio">
-                            <input
-                                type="radio"
-                                name={name}
-                                value={item.value}
-                                onChange={this.changeValue.bind(this, item.value)}
-                                checked={this.state.value === item.value}
-                                disabled={item.disabled}
-                            />
-                            <span>{item.text}</span>
-                        </label>
-                    ))
-                }
-                </div>
+                <RadioGroup
+                    className={classNames(
+                        'form-control', {
+                            [`${controlClassName}`]: controlClassName
+                        }
+                    )}
+                    items={items}
+                    value={this.state.value}
+                    onChange={this.changeValue}
+                />
             </div>
         );
     }

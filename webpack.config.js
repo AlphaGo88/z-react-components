@@ -2,14 +2,17 @@ var webpack = require('webpack');
 
 module.exports = {
     entry: {
-        example: './examples/js/example',
-        example1: './examples/js/example1',
-        vendor: ['classnames', 'formsy-react']
+        z: './src/js/z'
     },
     output: {
-        path: './examples/dist',
-        filename: '[name].js'
+        path: './examples',
+        filename: 'z.js',
+        library: 'Z'
     },
+    externals: [{
+        'react': 'var React', 
+        'react-dom': 'var ReactDOM'
+    }],
     module: {
         loaders: [{
             test: /\.css$/,
@@ -26,12 +29,16 @@ module.exports = {
             }
         }]
     },
-    resolve: {
-    },
+    resolve: {},
     plugins: [
-        new webpack.optimize.CommonsChunkPlugin({
-            names: ['common', 'vendor'],
-            minChunks: 2
-        }),
+        // new webpack.optimize.CommonsChunkPlugin({
+        //     names: ['common', 'vendor'],
+        //     minChunks: 2
+        // }),
+        // new webpack.DefinePlugin({
+        //     'process.env': {
+        //         NODE_ENV: JSON.stringify("production")
+        //     }
+        // })
     ]
 };

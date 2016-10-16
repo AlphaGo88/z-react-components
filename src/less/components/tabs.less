@@ -7,7 +7,8 @@
     border-left: 1px solid @border-color-base;
     border-bottom: 1px solid @border-color-base;
     .clearfix();
-    > li, > a {
+
+    > .tab {
         float: left;
         margin-bottom: -1px;
         width: 120px;
@@ -19,9 +20,11 @@
         text-decoration: none;
         background-color: #fff;
         cursor: pointer;
+
         &:hover {
             color: @text-color-lighter;
         }
+        
         &.active {
             padding: 9px 0 10px 0;
             border-top: 2px solid @primary-color;

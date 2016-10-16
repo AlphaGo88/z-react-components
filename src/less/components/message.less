@@ -29,10 +29,35 @@
         transition: opacity 400ms, transform 400ms;
         transform: translateY(0px);
         animation: z-msg-enter 400ms;
-        
+
         &.exit {
             opacity: 0;
             transform: translateY(-50px);
+        }
+
+        .icon-success,
+        .icon-info,
+        .icon-warning,
+        .icon-error {
+            margin-right: 5px;
+            font-size: 20px;
+            vertical-align: top;
+        }
+
+        .icon-success {
+            color: @color-success;
+        }
+
+        .icon-info {
+            color: @color-info;
+        }
+
+        .icon-warning {
+            color: @color-warning;
+        }
+
+        .icon-error {
+            color: @color-danger;
         }
     }
 }

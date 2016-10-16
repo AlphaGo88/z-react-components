@@ -1,6 +1,7 @@
 // Input Field
 // ---------------------------
 
+const React = require('react');
 const classNames = require('classnames');
 const Formsy = require('formsy-react');
 
@@ -33,6 +34,7 @@ const InputField = React.createClass({
             type, 
             title, 
             name, 
+            validations,
             className,
             labelClassName, 
             controlClassName,
@@ -41,16 +43,25 @@ const InputField = React.createClass({
         const errorMessage = this.getErrorMessage();
 
         return (
-            <div className={`form-group ${className}`}>
+            <div className={classNames(
+                'form-group', {
+                    [`${className}`]: className
+                }
+            )}>
                 <label 
-                    className={`form-label ${labelClassName}`} 
+                    className={classNames(
+                        'form-label', {
+                            [`${labelClassName}`]: labelClassName
+                        }
+                    )} 
                     htmlFor={name}
                 >
                     {title}
                 </label> 
                 <input 
                     className={classNames({
-                        [`form-control ${controlClassName}`]: true,
+                        'form-control': true,
+                        [`${controlClassName}`]: controlClassName,
                         'required': this.showRequired(),
                         'error': this.showError()
                     })}

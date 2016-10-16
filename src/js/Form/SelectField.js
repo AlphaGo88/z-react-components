@@ -1,6 +1,7 @@
 // Select Field
 // ---------------------------
 
+const React = require('react');
 const classNames = require('classnames');
 const Select = require('../Select');
 const Formsy = require('formsy-react');
@@ -21,8 +22,6 @@ const SelectField = React.createClass({
     render() {
 
         const { 
-            validationError, 
-            validationErrors, 
             title, 
             name, 
             className, 
@@ -33,12 +32,26 @@ const SelectField = React.createClass({
         const errorMessage = this.getErrorMessage();
 
         return (
-            <div className={`form-group ${className}`}>
-                <label className={`form-label ${labelClassName}`}>
+            <div className={classNames(
+                'form-group', {
+                    [`${className}`]: className
+                }
+            )}>
+                <label 
+                    className={classNames(
+                        'form-label', {
+                            [`${labelClassName}`]: labelClassName
+                        }
+                    )}
+                >
                     {title}
-                </label> 
+                </label>
                 <Select 
-                    className={`form-control ${controlClassName}`}
+                    className={classNames(
+                        'form-control', {
+                            [`${controlClassName}`]: controlClassName
+                        }
+                    )}
                     inputClassName={classNames({
                         'required': this.showRequired(),
                         'error': this.showError()

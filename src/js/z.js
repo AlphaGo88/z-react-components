@@ -1,5 +1,5 @@
 
-window.Z = {
+module.exports = {
     version: '1.0.0',
     author: 'zhao xin <83268606@qq.com>',
 
@@ -8,5 +8,7 @@ window.Z = {
     Pagination: require('./Pagination'),
     DatePicker: require('./DatePicker'),
     Select: require('./Select'),
+    RadioGroup: require('./RadioGroup'),
+    CheckboxGroup: require('./CheckboxGroup'),
     Form: require('./Form')
 };

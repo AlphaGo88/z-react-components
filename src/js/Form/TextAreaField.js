@@ -1,6 +1,7 @@
 // TextArea Field
 // ---------------------------
 
+const React = require('react');
 const classNames = require('classnames');
 const Formsy = require('formsy-react');
 
@@ -13,7 +14,7 @@ const TextAreaField = React.createClass({
     },
 
     changeValue(event) {
-        this.setValue(event.target.innerText);
+        this.setValue(event.target.value);
     },
 
     render() {
@@ -31,22 +32,29 @@ const TextAreaField = React.createClass({
         const errorMessage = this.getErrorMessage();
 
         return (
-            <div className={`form-group ${className}`}>
+            <div className={classNames(
+                'form-group', {
+                    [`${className}`]: className
+                }
+            )}>
                 <label 
-                    className={`form-label ${labelClassName}`} 
-                    htmlFor={name}
+                    className={classNames(
+                        'form-label', {
+                            [`${labelClassName}`]: labelClassName
+                        }
+                    )}
                 >
                     {title}
                 </label> 
                 <textarea 
                     className={classNames({
-                        [`form-control ${controlClassName}`]: true,
+                        'form-control': true,
+                        [`${controlClassName}`]: controlClassName,
                         'required': this.showRequired(),
                         'error': this.showError()
                     })}
                     name={name}
                     onChange={this.changeValue}
-                    value={this.getValue()}
                     {...otherProps}
                 />
                 <span className='validation-error'>

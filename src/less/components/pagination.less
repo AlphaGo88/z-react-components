@@ -1,10 +1,6 @@
 .pagination {
-    > div {
-        display: inline-block;
-        height: 30px;
-        padding: 5px 0;
-    }
-    span {
+    
+    > .page {
         display: inline-block;
         margin-right: 5px;
         padding: 0 12px;
@@ -19,7 +15,8 @@
             color: @primary-color;
             background-color: #f5f5f5;
         }
-        &.active, &.active:hover {
+
+        &.active {
             color: #fff;
             border-color: @primary-color;
             background-color: @primary-color;

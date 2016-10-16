@@ -1,25 +1,27 @@
 // DatePicker
 // ------------------------
 
+const React = require('react');
 const classNames = require('classnames');
+const ClickAwayListener = require('../internal/ClickAwayListener');
 
 //判断是否为闰年
-function isLeapYear(year) {
+const isLeapYear = (year) => {
     return (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
 }
 
 //获取某一年某一月份的天数
-function getMonthDays(year, month) {
+const getMonthDays = (year, month) => {
     return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month] || (isLeapYear(year) ? 29 : 28);
 }
 
-function getDateStr (year, month, date) {
+const getDateStr = (year, month, date) => {
     const monthStr = month > 8 ? month + 1 : '0' + (month + 1);
     const dateStr = date > 9 ? date : '0' + date;
     return `${year}-${monthStr}-${dateStr}`;
 }
 
-function getDateTimeStr (year, month, date, hours, minutes, seconds) {
+const getDateTimeStr = (year, month, date, hours, minutes, seconds) => {
     const hoursStr = hours > 9 ? hours : '0' + hours;
     const minutesStr = minutes > 9 ? minutes : '0' + minutes;
     const secondsStr = seconds > 9 ? seconds : '0' + seconds;
@@ -27,7 +29,7 @@ function getDateTimeStr (year, month, date, hours, minutes, seconds) {
     return `${dateStr} ${hoursStr}:${minutesStr}:${secondsStr}`;
 }
 
-function getDateProps(date) {
+const getDateProps = (date) => {
     return {
         year: date.getFullYear(),
         month: date.getMonth(),
@@ -40,20 +42,86 @@ function getDateProps(date) {
 
 const DatePicker = React.createClass({
 
+    propTypes: {
+        /**
+         * The class name of the root element.
+         */
+        className: React.PropTypes.string,
+
+        /**
+         * The inline styles of the root element.
+         */
+        style: React.PropTypes.object,
+
+        /**
+         * The class name of the input element.
+         */
+        inputClassName: React.PropTypes.string,
+
+        /**
+         * The placeholder of the input element.
+         */
+        placeholder: React.PropTypes.string,
+
+        /**
+         * Whether the component is disabled.
+         */
+        disabled: React.PropTypes.bool,
+
+        /**
+         * Whether time selection is enabled.
+         */
+        selectTime: React.PropTypes.bool,
+
+        /**
+         * Default value of the component.
+         * 
+         * The `defaultValue` must be:
+         * 1. a valid date string, e.g. `2016-06-06`.
+         * 2. a valid date value, e.g. 1476325700327.
+         * 3. a date object.
+         * So are `value`, `maxValue` and `minValue`.
+         */
+        defaultValue: React.PropTypes.any,
+
+        /**
+         * The value of the component, meaning the component is controlled.
+         * Will override `defaultValue`.
+         */
+        value: React.PropTypes.any,
+
+        /**
+         * Maximum date value.
+         */
+        maxValue: React.PropTypes.any,
+
+        /**
+         * Minimum date value.
+         */
+        minValue: React.PropTypes.any,
+
+        /**
+         * Disable dates that satisfy the test function.
+         * @param {date} date
+         * @return {bool}
+         */
+        disableDates: React.PropTypes.func,
+
+        /**
+         * Fires when the component's value changes.
+         * @param {string} dateStr
+         * @param {date} dateObj
+         */
+        onChange: React.PropTypes.func,
+    },
+
     getDefaultProps() {
         return {
-            className: '',
-            inputClassName: '',
-            placeholder: '',
             disabled: false,
-            selectTime: false,  //是否选择时间
-            defaultValue: '',  //初始值
-            value: '',         //指定值，将变成受限组件，并覆盖defaultValue
-            maxValue: '',
-            minValue: '',
-            onChange: () => {},
+            selectTime: false,
+            onChange() {},
             disableDates: () => false
-        };
+        }
     },
 
     getInitialState() {
@@ -96,17 +164,9 @@ const DatePicker = React.createClass({
         };
     },
 
-    componentDidMount() {
-        window.addEventListener('click', this.clickAway, false);
-    },
-
-    componentWillUnmount() {
-        window.removeEventListener('click', this.clickAway, false);
-    },
-
     //如果点击到别处关闭并还原日期
-    clickAway() {
-        !this.hover && this.state.isOpen && this.hideAndRestore();
+    handleClickAway() {
+        this.state.isOpen && this.hideAndRestore();
     },
 
     //点击别处或取消，不保存，还原原来的日期
@@ -124,23 +184,12 @@ const DatePicker = React.createClass({
     },
 
     //点击input，显示或隐藏选择框
-    handleInputClick(event) {
+    handleInputClick() {
         if (this.state.isOpen) {
             this.hideAndRestore();
         } else {
             this.setState({ isOpen: true });
         }
-        event.stopPropagation();
-    },
-
-    //鼠标进入日期选择框
-    handleMouseEnter() {
-        this.hover = true;
-    },
-
-    //鼠标离开日期选择框
-    handleMouseLeave() {
-        this.hover = false;
     },
 
     //切换到选择时间（支持选择时间时有效）
@@ -325,22 +374,22 @@ const DatePicker = React.createClass({
 
             case 37:
                 // Left Arrow
-                this.state.view === 'date' && this.toDate(-1);
+                this.state.view === 'date' && this.pressKeyToDate(-1);
                 break;
 
             case 38:
                 // Up Arrow
-                this.state.view === 'date' && this.toDate(-7);
+                this.state.view === 'date' && this.pressKeyToDate(-7);
                 break;
 
             case 39:
                 // Right Arrow
-                this.state.view === 'date' && this.toDate(1);
+                this.state.view === 'date' && this.pressKeyToDate(1);
                 break;
 
             case 40:
                 // Down Arrow
-                this.state.view === 'date' && this.toDate(7);
+                this.state.view === 'date' && this.pressKeyToDate(7);
                 break;
 
             default:
@@ -348,7 +397,9 @@ const DatePicker = React.createClass({
     },
 
     //按方向键，选择日期
-    toDate(offset) {
+    pressKeyToDate(offset) {
+        if (offset > 31 || offset < -31) return;
+
         const { year, month, date } = this.state;
         const dateObj = new Date(new Date(year, month, date).valueOf() + offset * 24 * 3600000);
         const newYear = dateObj.getFullYear();
@@ -356,7 +407,7 @@ const DatePicker = React.createClass({
         const newDate = dateObj.getDate();
 
         if (this.isDateDisabled(newYear, newMonth, newDate)) {
-            this.toDate(offset > 0 ? offset + 1 : offset - 1);
+            this.pressKeyToDate(offset > 0 ? offset + 1 : offset - 1);
         } else {
             this.setState({
                 year: newYear,
@@ -383,13 +434,16 @@ const DatePicker = React.createClass({
         return (
             <input 
                 type="text" 
-                className={`datepicker-trigger ${inputClassName}`}  
+                className={classNames(
+                    'datepicker-trigger', {
+                        [`${inputClassName}`]: inputClassName
+                    }
+                )}  
                 value={dateStr} 
                 placeholder={placeholder} 
                 disabled={disabled}
                 readOnly
                 onClick={this.handleInputClick}
-                onBlur={this.clickAway}
                 onKeyDown={this.handleKeyDown}
             />
         );
@@ -606,7 +660,7 @@ const DatePicker = React.createClass({
     },
 
     render() {
-        const { className } = this.props;
+        const { className, style } = this.props;
         const { isOpen } = this.state;
 
         const input = this.renderInput();
@@ -615,25 +669,30 @@ const DatePicker = React.createClass({
         const panelFoot = this.renderPanelFoot();
 
         return (
-            <div className={`dropdown-wrapper ${className}`}>
-                <i className="fa fa-calendar datepicker-icon"></i>
-                {input}
+            <ClickAwayListener onClickAway={this.handleClickAway}>
                 <div 
-                    className={classNames(
-                        'dropdown', 
-                        'datepicker-panel',
-                        {'offscreen': !isOpen }
-                    )}
-                    tabIndex="0"
-                    onMouseEnter={this.handleMouseEnter} 
-                    onMouseLeave={this.handleMouseLeave}
-                    onKeyDown={this.handleKeyDown}
+                    className={classNames('dropdown-wrapper', {
+                        [`${className}`]: className
+                    })}
+                    style={style}
                 >
-                    {panelHead}
-                    {panelBody}
-                    {panelFoot}
+                    <i className="fa fa-calendar datepicker-icon"></i>
+                    {input}
+                    <div 
+                        className={classNames(
+                            'dropdown', 
+                            'datepicker-panel',
+                            {'offscreen': !isOpen }
+                        )}
+                        tabIndex="0"
+                        onKeyDown={this.handleKeyDown}
+                    >
+                        {panelHead}
+                        {panelBody}
+                        {panelFoot}
+                    </div>
                 </div>
-            </div>
+            </ClickAwayListener>
         );
     }
 });

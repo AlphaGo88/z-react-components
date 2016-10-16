@@ -16,7 +16,8 @@
 }
 
 .button-text-color(@color) {
-    &, &:hover {
+    &, 
+    &:hover {
         color: @color;
     }
 }
@@ -25,12 +26,15 @@
     background-color: @background;
     border-color: @border-color;
     color: @text-color;
+
     > .badge {
         background-color: @text-color;
         color: @background;
     }
 
-    &:focus, &:hover, &:active {
+    &:focus, 
+    &:hover, 
+    &:active {
         background-color: lighten(@background, 8%);
         border-color: lighten(@border-color, 8%);
         color: @text-color;
@@ -41,14 +45,20 @@
     background-color: #fff;
     border-color: @color;
     color: @color;
+
     > .badge {
         background-color: @color;
         color: #fff;
     }
-    &:focus, &:hover, &:active, &.active {
+
+    &:focus, 
+    &:hover, 
+    &:active, 
+    &.active {
         background-color: @color;
         border-color: @color;
         color: #fff;
+
         > .badge {
             background-color: #fff;
             color: @color;
@@ -70,17 +80,19 @@
     letter-spacing: .5px;
     transition-duration: .3s;
     .user-select(none);
-    &, &:focus, &:hover, &:active {
+
+    &, 
+    &:focus, 
+    &:hover, 
+    &:active {
         outline: 0;
         text-decoration: none;
     }
 
     // icon
-    > i.right, > .badge.right {
-        margin-left: 6px;
-    }
-    > i.left, > .badge.left {
-        margin-right: 6px;
+    > i, 
+    > .badge {
+        margin: 0 6px;
     }
 
     // badge
@@ -101,6 +113,7 @@
 
 .btn-flat {
     background-color: transparent;
+
     &:focus, &:hover, &:active {
         border-color: @button-flat-hover-bg;
         background-color: @button-flat-hover-bg;
@@ -111,7 +124,10 @@
     background-color: transparent;
     border-color: #fff;
     color: #fff;
-    &:focus, &:hover, &:active {
+
+    &:focus, 
+    &:hover, 
+    &:active {
         background-color: #fff;
         border-color: #fff;
         color: @text-color-base;
@@ -121,9 +137,11 @@
 .btn-small {
     .button-size(28px; 18px; @font-size-small);
 }
+
 .btn-large {
     .button-size(44px; 26px; @font-size-base);
 }
+
 .btn-larger {
     .button-size(52px; 30px; @font-size-big);
 }
@@ -132,7 +150,10 @@
     background-color: @default-color;
     border-color: @border-color-base;
     color: @text-color-base;
-    &:focus, &:hover, &:active {
+
+    &:focus, 
+    &:hover, 
+    &:active {
         background-color: lighten(@default-color, 4%);
     }
 }
@@ -140,15 +161,19 @@
 .btn-float.btn-primary {
     .button-color(@primary-color; @primary-color; #fff);
 }
+
 .btn-float.btn-success {
     .button-color(@color-success; @color-success; #fff);
 }
+
 .btn-float.btn-info {
     .button-color(@color-info; @color-info; #fff);
 }
+
 .btn-float.btn-warning {
     .button-color(@color-warning; @color-warning; #fff);
 }
+
 .btn-float.btn-danger {
     .button-color(@color-danger; @color-danger; #fff);
 }
@@ -156,18 +181,23 @@
 .btn-flat.btn-default {
     .button-text-color(@text-color-base);
 }
+
 .btn-flat.btn-primary {
     .button-text-color(@primary-color);
 }
+
 .btn-flat.btn-success {
     .button-text-color(@color-success);
 }
+
 .btn-flat.btn-info {
     .button-text-color(@color-info);
 }
+
 .btn-flat.btn-warning {
     .button-text-color(@color-warning);
 }
+
 .btn-flat.btn-danger {
     .button-text-color(@color-danger);
 }
@@ -175,15 +205,19 @@
 .btn-outline.btn-primary {
     .button-outline(@primary-color);
 }
+
 .btn-outline.btn-success {
     .button-outline(@color-success);
 }
+
 .btn-outline.btn-info {
     .button-outline(@color-info);
 }
+
 .btn-outline.btn-warning {
     .button-outline(@color-warning);
 }
+
 .btn-outline.btn-danger {
     .button-outline(@color-danger);
 }
@@ -194,11 +228,13 @@ button[disabled],
     cursor: @cursor-disabled !important;
     color: @text-color-lighter !important;
 }
+
 button[disabled].btn-float,
 .btn-float.btn-disabled {
     background-color: @default-color !important;
     border-color: @border-color-base !important;
 }
+
 .btn-outline.btn-disabled {
     border-color: @border-color-base !important;
 }
