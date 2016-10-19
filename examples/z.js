@@ -1914,16 +1914,7 @@ var Z =
 	var React = __webpack_require__(2);
 	var Formsy = __webpack_require__(21);
 
-	var Form = React.createClass({
-	    displayName: 'Form',
-	    render: function render() {
-	        return React.createElement(
-	            Formsy.Form,
-	            this.props,
-	            this.props.children
-	        );
-	    }
-	});
+	var Form = Formsy.Form;
 
 	Form.InputField = __webpack_require__(28);
 	Form.SelectField = __webpack_require__(29);
@@ -2908,12 +2899,13 @@ var Z =
 	        var type = _props.type;
 	        var title = _props.title;
 	        var name = _props.name;
+	        var defaultValue = _props.defaultValue;
 	        var validations = _props.validations;
 	        var className = _props.className;
 	        var labelClassName = _props.labelClassName;
 	        var controlClassName = _props.controlClassName;
 
-	        var otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'type', 'title', 'name', 'validations', 'className', 'labelClassName', 'controlClassName']);
+	        var otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'type', 'title', 'name', 'defaultValue', 'validations', 'className', 'labelClassName', 'controlClassName']);
 
 	        var errorMessage = this.getErrorMessage();
 
@@ -2934,6 +2926,7 @@ var Z =
 	                }, _defineProperty(_classNames3, '' + controlClassName, controlClassName), _defineProperty(_classNames3, 'required', this.showRequired()), _defineProperty(_classNames3, 'error', this.showError()), _classNames3)),
 	                type: type || 'text',
 	                name: name,
+	                value: this.getValue(),
 	                onChange: this.changeValue
 	            }, otherProps)),
 	            React.createElement(
@@ -2974,8 +2967,7 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentDidMount: function componentDidMount() {
-	        var value = this.props.defaultValue || '';
-	        this.setValue(value);
+	        this.setValue(this.props.defaultValue || '');
 	    },
 	    changeValue: function changeValue(value) {
 	        this.setValue(value);
@@ -3050,8 +3042,7 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentDidMount: function componentDidMount() {
-	        var value = this.props.defaultValue || '';
-	        this.setValue(value);
+	        this.setValue(this.props.defaultValue || '');
 	    },
 	    changeValue: function changeValue(dateStr, dateObj) {
 	        this.setValue(dateStr);
@@ -3118,13 +3109,10 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentDidMount: function componentDidMount() {
-	        var value = this.props.defaultValue || '';
-	        this.setValue(value);
-	        this.setState({ value: value });
+	        this.setValue(this.props.defaultValue || '');
 	    },
 	    changeValue: function changeValue(value) {
 	        this.setValue(value);
-	        this.setState({ value: value });
 	    },
 	    render: function render() {
 	        var _props = this.props;
@@ -3149,7 +3137,7 @@ var Z =
 	            React.createElement(RadioGroup, {
 	                className: classNames('form-control', _defineProperty({}, '' + controlClassName, controlClassName)),
 	                items: items,
-	                value: this.state.value,
+	                value: this.getValue(),
 	                onChange: this.changeValue
 	            })
 	        );
@@ -3180,17 +3168,11 @@ var Z =
 
 	    mixins: [Formsy.Mixin],
 
-	    getInitialState: function getInitialState() {
-	        return { value: [] };
-	    },
 	    componentDidMount: function componentDidMount() {
-	        var value = this.props.defaultValue || [];
-	        this.setValue(value);
-	        this.setState({ value: value });
+	        this.setValue(this.props.defaultValue || []);
 	    },
 	    changeValue: function changeValue(value) {
 	        this.setValue(value);
-	        this.setState({ value: value });
 	    },
 	    render: function render() {
 	        var _props = this.props;
@@ -3215,7 +3197,7 @@ var Z =
 	            React.createElement(CheckboxGroup, {
 	                className: classNames('checkbox-group form-control', _defineProperty({}, '' + controlClassName, controlClassName)),
 	                items: items,
-	                value: this.state.value,
+	                value: this.getValue(),
 	                onChange: this.changeValue
 	            })
 	        );
@@ -3263,11 +3245,12 @@ var Z =
 	        var validationErrors = _props.validationErrors;
 	        var title = _props.title;
 	        var name = _props.name;
+	        var defaultValue = _props.defaultValue;
 	        var className = _props.className;
 	        var labelClassName = _props.labelClassName;
 	        var controlClassName = _props.controlClassName;
 
-	        var otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'title', 'name', 'className', 'labelClassName', 'controlClassName']);
+	        var otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'title', 'name', 'defaultValue', 'className', 'labelClassName', 'controlClassName']);
 
 	        var errorMessage = this.getErrorMessage();
 
@@ -3286,6 +3269,7 @@ var Z =
 	                    'form-control': true
 	                }, _defineProperty(_classNames3, '' + controlClassName, controlClassName), _defineProperty(_classNames3, 'required', this.showRequired()), _defineProperty(_classNames3, 'error', this.showError()), _classNames3)),
 	                name: name,
+	                value: this.getValue(),
 	                onChange: this.changeValue
 	            }, otherProps)),
 	            React.createElement(

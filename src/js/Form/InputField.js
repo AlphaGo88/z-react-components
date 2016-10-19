@@ -33,7 +33,8 @@ const InputField = React.createClass({
             validationErrors, 
             type, 
             title, 
-            name, 
+            name,
+            defaultValue, 
             validations,
             className,
             labelClassName, 
@@ -67,6 +68,7 @@ const InputField = React.createClass({
                     })}
                     type={type || 'text'}
                     name={name}
+                    value={this.getValue()}
                     onChange={this.changeValue}
                     {...otherProps}
                 />

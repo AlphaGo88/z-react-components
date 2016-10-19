@@ -10,19 +10,12 @@ const CheckboxGroupField = React.createClass({
 
     mixins: [Formsy.Mixin],
 
-    getInitialState() {
-        return { value: [] };
-    },
-
     componentDidMount() {
-        const value = this.props.defaultValue || [];
-        this.setValue(value);
-        this.setState({ value });
+        this.setValue(this.props.defaultValue || []);
     },
 
     changeValue(value) {
         this.setValue(value);
-        this.setState({ value });
     },
 
     render() {
@@ -59,7 +52,7 @@ const CheckboxGroupField = React.createClass({
                         }
                     )}
                     items={items}
-                    value={this.state.value}
+                    value={this.getValue()}
                     onChange={this.changeValue}
                 />
             </div>

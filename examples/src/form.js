@@ -28,6 +28,7 @@ const MyAppForm = React.createClass({
     },
     getInitialState() {
       return {
+        a: '123',
         canSubmit: false
       }
     },
@@ -44,11 +45,16 @@ const MyAppForm = React.createClass({
     submit(model) {
       console.log(model)
     },
+    changeValue() {
+        this.setState({
+            a: 'dsfsdfsdf'
+        })
+    },
     render() {
         const { countries, fruits } = this.props;
         return (
           <Form style={{width: 400}} onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
-            <Input className="col-6" name="name" title="name" defaultValue="sdf"/>
+            <Input className="col-6" name="name" title="name" defaultValue={this.state.a}/>
             <Date className="col-6" name="birth" title="birth" selectTime={true} defaultValue="2015-06-03"
                 disableDates={(date) => date.getDay() === 5}
             />
@@ -59,6 +65,7 @@ const MyAppForm = React.createClass({
             <TextArea className="col-6" name="ta" defaultValue="sdf"/>
             <div className="form-group col-12">
                 <button className="btn-float btn-primary" disabled={!this.state.canSubmit}>Submit</button>
+                <span className="btn-float btn-default" onClick={this.changeValue}>ChangeValue</span>
             </div>
           </Form>
         );

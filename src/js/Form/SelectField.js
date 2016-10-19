@@ -11,8 +11,7 @@ const SelectField = React.createClass({
     mixins: [Formsy.Mixin],
 
     componentDidMount() {
-        const value = this.props.defaultValue || '';
-        this.setValue(value);
+        this.setValue(this.props.defaultValue || '');
     },
 
     changeValue(value) {

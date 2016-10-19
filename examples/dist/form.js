@@ -78,6 +78,7 @@
 	    },
 	    getInitialState: function getInitialState() {
 	        return {
+	            a: '123',
 	            canSubmit: false
 	        };
 	    },
@@ -94,6 +95,11 @@
 	    submit: function submit(model) {
 	        console.log(model);
 	    },
+	    changeValue: function changeValue() {
+	        this.setState({
+	            a: 'dsfsdfsdf'
+	        });
+	    },
 	    render: function render() {
 	        var _props = this.props;
 	        var countries = _props.countries;
@@ -102,7 +108,7 @@
 	        return React.createElement(
 	            Form,
 	            { style: { width: 400 }, onValidSubmit: this.submit, onValid: this.enableButton, onInvalid: this.disableButton },
-	            React.createElement(Input, { className: 'col-6', name: 'name', title: 'name', defaultValue: 'sdf' }),
+	            React.createElement(Input, { className: 'col-6', name: 'name', title: 'name', defaultValue: this.state.a }),
 	            React.createElement(Date, { className: 'col-6', name: 'birth', title: 'birth', selectTime: true, defaultValue: '2015-06-03',
 	                disableDates: function disableDates(date) {
 	                    return date.getDay() === 5;
@@ -120,6 +126,11 @@
 	                    'button',
 	                    { className: 'btn-float btn-primary', disabled: !this.state.canSubmit },
 	                    'Submit'
+	                ),
+	                React.createElement(
+	                    'span',
+	                    { className: 'btn-float btn-default', onClick: this.changeValue },
+	                    'ChangeValue'
 	                )
 	            )
 	        );
