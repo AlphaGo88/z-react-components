@@ -45,7 +45,6 @@ const Select = React.createClass({
 
         /**
          * The selected values(`multi` == true).
-         * 
          */
         values: React.PropTypes.array,
 

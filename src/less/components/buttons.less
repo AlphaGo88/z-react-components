@@ -15,14 +15,14 @@
     font-size: @font-size;
 }
 
-.button-text-color(@color) {
+.button-flat(@color) {
     &, 
     &:hover {
         color: @color;
     }
 }
 
-.button-color(@background; @border-color; @text-color) {
+.button-float(@background; @border-color; @text-color) {
     background-color: @background;
     border-color: @border-color;
     color: @text-color;
@@ -114,7 +114,9 @@
 .btn-flat {
     background-color: transparent;
 
-    &:focus, &:hover, &:active {
+    &:focus, 
+    &:hover, 
+    &:active {
         border-color: @button-flat-hover-bg;
         background-color: @button-flat-hover-bg;
     }
@@ -159,47 +161,47 @@
 }
 
 .btn-float.btn-primary {
-    .button-color(@primary-color; @primary-color; #fff);
+    .button-float(@primary-color; @primary-color; #fff);
 }
 
 .btn-float.btn-success {
-    .button-color(@color-success; @color-success; #fff);
+    .button-float(@color-success; @color-success; #fff);
 }
 
 .btn-float.btn-info {
-    .button-color(@color-info; @color-info; #fff);
+    .button-float(@color-info; @color-info; #fff);
 }
 
 .btn-float.btn-warning {
-    .button-color(@color-warning; @color-warning; #fff);
+    .button-float(@color-warning; @color-warning; #fff);
 }
 
 .btn-float.btn-danger {
-    .button-color(@color-danger; @color-danger; #fff);
+    .button-float(@color-danger; @color-danger; #fff);
 }
 
 .btn-flat.btn-default {
-    .button-text-color(@text-color-base);
+    .button-flat(@text-color-base);
 }
 
 .btn-flat.btn-primary {
-    .button-text-color(@primary-color);
+    .button-flat(@primary-color);
 }
 
 .btn-flat.btn-success {
-    .button-text-color(@color-success);
+    .button-flat(@color-success);
 }
 
 .btn-flat.btn-info {
-    .button-text-color(@color-info);
+    .button-flat(@color-info);
 }
 
 .btn-flat.btn-warning {
-    .button-text-color(@color-warning);
+    .button-flat(@color-warning);
 }
 
 .btn-flat.btn-danger {
-    .button-text-color(@color-danger);
+    .button-flat(@color-danger);
 }
 
 .btn-outline.btn-primary {
@@ -235,6 +237,12 @@ button[disabled].btn-float,
     border-color: @border-color-base !important;
 }
 
+button[disabled].btn-flat:hover,
+.btn-flat.btn-disabled:hover {
+    background-color: transparent;
+}
+
+button[disabled].btn-outline,
 .btn-outline.btn-disabled {
     border-color: @border-color-base !important;
 }
