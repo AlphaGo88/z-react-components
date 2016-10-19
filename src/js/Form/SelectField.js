@@ -11,7 +11,13 @@ const SelectField = React.createClass({
     mixins: [Formsy.Mixin],
 
     componentDidMount() {
-        this.setValue(this.props.defaultValue || '');
+        const { multi, defaultValue } = this.props;
+
+        if (multi) {
+            this.setValue(defaultValue || []);
+        } else {
+            this.setValue(defaultValue || '');
+        }
     },
 
     changeValue(value) {
@@ -26,9 +32,13 @@ const SelectField = React.createClass({
             className, 
             labelClassName, 
             controlClassName,
+            multi,
             ...otherProps 
         } = this.props;
         const errorMessage = this.getErrorMessage();
+
+        const value = multi ? '' : this.getValue();
+        const values = multi ? this.getValue() : [];
 
         return (
             <div className={classNames(
@@ -55,8 +65,10 @@ const SelectField = React.createClass({
                         'required': this.showRequired(),
                         'error': this.showError()
                     })}
+                    multi={multi}
                     onChange={this.changeValue}
-                    value={this.getValue()}
+                    value={value}
+                    values={values}
                     {...otherProps}
                 />
                 <span className='validation-error'>

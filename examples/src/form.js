@@ -58,7 +58,7 @@ const MyAppForm = React.createClass({
             <Date className="col-6" name="birth" title="birth" selectTime={true} defaultValue="2015-06-03"
                 disableDates={(date) => date.getDay() === 5}
             />
-            <Select className="col-6" name="select1" data={countries} title="aabv" />
+            <Select className="col-6" name="select1" data={countries} title="aabv" multi={true}/>
             <Input className="col-6" name="input_iosdjf" title="iosdjf" validations="isUrl" validationError="请输入合法的URL"/>
             <RadioGroup className="col-6" name="radio" items={countries} defaultValue="usa" required/>
             <CheckboxGroup className="col-6" name="checkbox" items={fruits} required/>

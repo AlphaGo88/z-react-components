@@ -62,7 +62,7 @@ let App = React.createClass({
                     <Select 
                         multi={true} 
                         data={emps} 
-                        value={emp} 
+                        values={emp} 
                         onChange={this.changeEmp}
                     />
                 </section>

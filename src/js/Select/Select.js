@@ -39,11 +39,15 @@ const Select = React.createClass({
         disabled: React.PropTypes.bool,
 
         /**
-         * The selected Value.
-         * Pass a string when `multi` is `false`.
-         * Pass an array when `multi` is `true`.
+         * The selected value(`multi` == false).
          */
-        value: React.PropTypes.any,
+        value: React.PropTypes.string,
+
+        /**
+         * The selected values(`multi` == true).
+         * 
+         */
+        values: React.PropTypes.array,
 
         /**
          * Fires when the selected value change.
@@ -62,6 +66,7 @@ const Select = React.createClass({
             multi: false,
             data: [],
             value: '',
+            values: [],
             disabled: false,
             placeholder: '请选择',
             onChange() {}
@@ -82,7 +87,7 @@ const Select = React.createClass({
 
     selectOption(value) {
         if (this.props.multi) {
-            this.props.onChange(this.props.value.concat([value]));
+            this.props.onChange(this.props.values.concat([value]));
         } else {
             this.setState({
                 isOpen: false
@@ -94,7 +99,7 @@ const Select = React.createClass({
     },
 
     deSelectOption(value) {
-        let valueArr = this.props.value.slice();
+        let valueArr = this.props.values.slice();
         valueArr.splice(valueArr.indexOf(value), 1);
         this.props.onChange(valueArr);
     },
@@ -109,6 +114,7 @@ const Select = React.createClass({
             disabled, 
             data, 
             value,
+            values,
             children 
         } = this.props;
         const { isOpen } = this.state;
@@ -116,10 +122,10 @@ const Select = React.createClass({
         //input的文本，单选显示选中项目的text，多选以逗号连接选中项目的text
         let inputText = '';
 
-        if (multi && value.length > 0) {
+        if (multi && values.length > 0) {
             //选中的项目
             const selectedItems = data.filter((item) => 
-                value.indexOf(item.value) > -1
+                values.indexOf(item.value) > -1
             );
             //选中项目的文本
             let selectedText = []; 
@@ -161,7 +167,7 @@ const Select = React.createClass({
                     <div className={classNames('dropdown', { 'offscreen': !isOpen })}>
                         <ul className="select-options">
                             {data.map((item, i) => {
-                                const selected = multi ? (value.indexOf(item.value) > -1) : (value === item.value);
+                                const selected = multi ? (values.indexOf(item.value) > -1) : (value === item.value);
                                 return (
                                     <li 
                                         key={i}

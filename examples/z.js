@@ -1453,11 +1453,15 @@ var Z =
 	        disabled: React.PropTypes.bool,
 
 	        /**
-	         * The selected Value.
-	         * Pass a string when `multi` is `false`.
-	         * Pass an array when `multi` is `true`.
+	         * The selected value(`multi` == false).
 	         */
-	        value: React.PropTypes.any,
+	        value: React.PropTypes.string,
+
+	        /**
+	         * The selected values(`multi` == true).
+	         * 
+	         */
+	        values: React.PropTypes.array,
 
 	        /**
 	         * Fires when the selected value change.
@@ -1476,6 +1480,7 @@ var Z =
 	            multi: false,
 	            data: [],
 	            value: '',
+	            values: [],
 	            disabled: false,
 	            placeholder: '请选择',
 	            onChange: function onChange() {}
@@ -1492,7 +1497,7 @@ var Z =
 	    },
 	    selectOption: function selectOption(value) {
 	        if (this.props.multi) {
-	            this.props.onChange(this.props.value.concat([value]));
+	            this.props.onChange(this.props.values.concat([value]));
 	        } else {
 	            this.setState({
 	                isOpen: false
@@ -1503,7 +1508,7 @@ var Z =
 	        }
 	    },
 	    deSelectOption: function deSelectOption(value) {
-	        var valueArr = this.props.value.slice();
+	        var valueArr = this.props.values.slice();
 	        valueArr.splice(valueArr.indexOf(value), 1);
 	        this.props.onChange(valueArr);
 	    },
@@ -1519,6 +1524,7 @@ var Z =
 	        var disabled = _props.disabled;
 	        var data = _props.data;
 	        var value = _props.value;
+	        var values = _props.values;
 	        var children = _props.children;
 	        var isOpen = this.state.isOpen;
 
@@ -1526,11 +1532,11 @@ var Z =
 
 	        var inputText = '';
 
-	        if (multi && value.length > 0) {
+	        if (multi && values.length > 0) {
 	            (function () {
 	                //选中的项目
 	                var selectedItems = data.filter(function (item) {
-	                    return value.indexOf(item.value) > -1;
+	                    return values.indexOf(item.value) > -1;
 	                });
 	                //选中项目的文本
 	                var selectedText = [];
@@ -1579,7 +1585,7 @@ var Z =
 	                        'ul',
 	                        { className: 'select-options' },
 	                        data.map(function (item, i) {
-	                            var selected = multi ? value.indexOf(item.value) > -1 : value === item.value;
+	                            var selected = multi ? values.indexOf(item.value) > -1 : value === item.value;
 	                            return React.createElement(
 	                                'li',
 	                                {
@@ -2967,22 +2973,35 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentDidMount: function componentDidMount() {
-	        this.setValue(this.props.defaultValue || '');
+	        var _props = this.props;
+	        var multi = _props.multi;
+	        var defaultValue = _props.defaultValue;
+
+
+	        if (multi) {
+	            this.setValue(defaultValue || []);
+	        } else {
+	            this.setValue(defaultValue || '');
+	        }
 	    },
 	    changeValue: function changeValue(value) {
 	        this.setValue(value);
 	    },
 	    render: function render() {
-	        var _props = this.props;
-	        var title = _props.title;
-	        var name = _props.name;
-	        var className = _props.className;
-	        var labelClassName = _props.labelClassName;
-	        var controlClassName = _props.controlClassName;
+	        var _props2 = this.props;
+	        var title = _props2.title;
+	        var name = _props2.name;
+	        var className = _props2.className;
+	        var labelClassName = _props2.labelClassName;
+	        var controlClassName = _props2.controlClassName;
+	        var multi = _props2.multi;
 
-	        var otherProps = _objectWithoutProperties(_props, ['title', 'name', 'className', 'labelClassName', 'controlClassName']);
+	        var otherProps = _objectWithoutProperties(_props2, ['title', 'name', 'className', 'labelClassName', 'controlClassName', 'multi']);
 
 	        var errorMessage = this.getErrorMessage();
+
+	        var value = multi ? '' : this.getValue();
+	        var values = multi ? this.getValue() : [];
 
 	        return React.createElement(
 	            'div',
@@ -3000,8 +3019,10 @@ var Z =
 	                    'required': this.showRequired(),
 	                    'error': this.showError()
 	                }),
+	                multi: multi,
 	                onChange: this.changeValue,
-	                value: this.getValue()
+	                value: value,
+	                values: values
 	            }, otherProps)),
 	            React.createElement(
 	                'span',

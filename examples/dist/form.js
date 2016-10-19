@@ -114,7 +114,7 @@
 	                    return date.getDay() === 5;
 	                }
 	            }),
-	            React.createElement(Select, { className: 'col-6', name: 'select1', data: countries, title: 'aabv' }),
+	            React.createElement(Select, { className: 'col-6', name: 'select1', data: countries, title: 'aabv', multi: true }),
 	            React.createElement(Input, { className: 'col-6', name: 'input_iosdjf', title: 'iosdjf', validations: 'isUrl', validationError: '\u8BF7\u8F93\u5165\u5408\u6CD5\u7684URL' }),
 	            React.createElement(RadioGroup, { className: 'col-6', name: 'radio', items: countries, defaultValue: 'usa', required: true }),
 	            React.createElement(CheckboxGroup, { className: 'col-6', name: 'checkbox', items: fruits, required: true }),
