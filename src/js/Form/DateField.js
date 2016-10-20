@@ -17,6 +17,7 @@ const DateField = React.createClass({
 
     changeValue(dateStr, dateObj) {
         this.setValue(dateStr);
+        this.props.onChange && this.props.onChange(dateStr, dateObj);
     },
 
     render() {
@@ -27,6 +28,7 @@ const DateField = React.createClass({
             name, 
             labelClassName, 
             controlClassName,
+            onChange,
             ...otherProps 
         } = this.props;
         const errorMessage = this.getErrorMessage();

@@ -47,14 +47,14 @@
 	'use strict';
 
 	var _Z = Z;
-	var Form = _Z.Form;
+	var Formsy = _Z.Formsy;
 
-	var Input = Form.InputField;
-	var Select = Form.SelectField;
-	var RadioGroup = Form.RadioGroupField;
-	var CheckboxGroup = Form.CheckboxGroupField;
-	var Date = Form.DateField;
-	var TextArea = Form.TextAreaField;
+	var Input = Formsy.InputField;
+	var Select = Formsy.SelectField;
+	var RadioGroup = Formsy.RadioGroupField;
+	var CheckboxGroup = Formsy.CheckboxGroupField;
+	var Date = Formsy.DateField;
+	var TextArea = Formsy.TextAreaField;
 
 	var MyAppForm = React.createClass({
 	    displayName: 'MyAppForm',
@@ -67,6 +67,22 @@
 	                value: 'china',
 	                text: '中国'
 	            }],
+	            cities: {
+	                china: [{
+	                    value: 'bj',
+	                    text: '北京'
+	                }, {
+	                    value: 'sh',
+	                    text: '上海'
+	                }],
+	                usa: [{
+	                    value: 'dc',
+	                    text: '华盛顿'
+	                }, {
+	                    value: 'ny',
+	                    text: '纽约'
+	                }]
+	            },
 	            fruits: [{
 	                value: 'apple',
 	                text: 'apple'
@@ -78,7 +94,7 @@
 	    },
 	    getInitialState: function getInitialState() {
 	        return {
-	            a: '123',
+	            country: 'china',
 	            canSubmit: false
 	        };
 	    },
@@ -95,30 +111,31 @@
 	    submit: function submit(model) {
 	        console.log(model);
 	    },
-	    changeValue: function changeValue() {
+	    countryChange: function countryChange(value) {
 	        this.setState({
-	            a: 'dsfsdfsdf'
+	            country: value
 	        });
 	    },
 	    render: function render() {
 	        var _props = this.props;
 	        var countries = _props.countries;
+	        var cities = _props.cities;
 	        var fruits = _props.fruits;
+	        var country = this.state.country;
 
 	        return React.createElement(
-	            Form,
+	            Formsy.Form,
 	            { style: { width: 400 }, onValidSubmit: this.submit, onValid: this.enableButton, onInvalid: this.disableButton },
-	            React.createElement(Input, { className: 'col-6', name: 'name', title: 'name', defaultValue: this.state.a }),
-	            React.createElement(Date, { className: 'col-6', name: 'birth', title: 'birth', selectTime: true, defaultValue: '2015-06-03',
-	                disableDates: function disableDates(date) {
+	            React.createElement(Input, { className: 'col-6', name: 'name', title: 'name' }),
+	            React.createElement(Date, { className: 'col-6', name: 'birth', title: 'birth', selectTime: true, disableDates: function disableDates(date) {
 	                    return date.getDay() === 5;
 	                }
 	            }),
-	            React.createElement(Select, { className: 'col-6', name: 'select1', data: countries, title: 'aabv', multi: true }),
-	            React.createElement(Input, { className: 'col-6', name: 'input_iosdjf', title: 'iosdjf', validations: 'isUrl', validationError: '\u8BF7\u8F93\u5165\u5408\u6CD5\u7684URL' }),
-	            React.createElement(RadioGroup, { className: 'col-6', name: 'radio', items: countries, defaultValue: 'usa', required: true }),
+	            React.createElement(Select, { className: 'col-6', name: 'select1', data: countries, title: 'country', onChange: this.countryChange }),
+	            React.createElement(Select, { className: 'col-6', name: 'select2', data: cities[country], title: 'city' }),
+	            React.createElement(RadioGroup, { className: 'col-6', name: 'radio', items: countries, required: true }),
 	            React.createElement(CheckboxGroup, { className: 'col-6', name: 'checkbox', items: fruits, required: true }),
-	            React.createElement(TextArea, { className: 'col-6', name: 'ta', defaultValue: 'sdf' }),
+	            React.createElement(TextArea, { className: 'col-6', name: 'ta' }),
 	            React.createElement(
 	                'div',
 	                { className: 'form-group col-12' },
@@ -126,11 +143,6 @@
 	                    'button',
 	                    { className: 'btn-float btn-primary', disabled: !this.state.canSubmit },
 	                    'Submit'
-	                ),
-	                React.createElement(
-	                    'span',
-	                    { className: 'btn-float btn-default', onClick: this.changeValue },
-	                    'ChangeValue'
 	                )
 	            )
 	        );

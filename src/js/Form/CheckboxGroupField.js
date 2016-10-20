@@ -16,6 +16,7 @@ const CheckboxGroupField = React.createClass({
 
     changeValue(value) {
         this.setValue(value);
+        this.props.onChange && this.props.onChange(value);
     },
 
     render() {
@@ -25,7 +26,7 @@ const CheckboxGroupField = React.createClass({
             items, 
             className,
             labelClassName, 
-            controlClassName 
+            controlClassName
         } = this.props;
 
         return (

@@ -15,6 +15,7 @@ const RadioGroupField = React.createClass({
 
     changeValue(value) {
         this.setValue(value);
+        this.props.onChange && this.props.onChange(value);
     },
 
     render() {

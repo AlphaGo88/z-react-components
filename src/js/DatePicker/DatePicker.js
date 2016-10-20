@@ -207,10 +207,20 @@ const DatePicker = React.createClass({
     //否则不选中任何日(date = 0)
     inCurrentYearAndMonth(year, month) {
         const { curDate } = this.state;
+        const initialDate = this.initialSelectedDate;
 
-        if (curDate.getFullYear() === year && curDate.getMonth() === month) {
-            return curDate.getDate();
+        if (curDate) {
+            if (curDate.getFullYear() === year &&
+                curDate.getMonth() === month) {
+                return curDate.getDate();
+            }
+        } else {
+            if (initialDate.getFullYear() === year &&
+                initialDate.getMonth() === month) {
+                return initialDate.getDate();
+            }
         }
+
         return 0;
     },
 

@@ -22,6 +22,7 @@ const SelectField = React.createClass({
 
     changeValue(value) {
         this.setValue(value);
+        this.props.onChange && this.props.onChange(value);
     },
 
     render() {
@@ -33,6 +34,7 @@ const SelectField = React.createClass({
             labelClassName, 
             controlClassName,
             multi,
+            onChange,
             ...otherProps 
         } = this.props;
         const errorMessage = this.getErrorMessage();
