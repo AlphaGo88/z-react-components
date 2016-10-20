@@ -957,6 +957,11 @@ button[disabled].btn-float,
   background-color: #f5f5f5 !important;
   border-color: #ccc !important;
 }
+button[disabled].btn-flat:hover,
+.btn-flat.btn-disabled:hover {
+  background-color: transparent;
+}
+button[disabled].btn-outline,
 .btn-outline.btn-disabled {
   border-color: #ccc !important;
 }
@@ -998,7 +1003,6 @@ button[disabled].btn-float,
   background-color: #fff;
 }
 .tab-content {
-  padding: 15px;
   border: 1px solid #ccc;
   border-top: 0;
 }
@@ -1252,6 +1256,10 @@ label.checkbox input[type="checkbox"]:checked + span:before {
 .form-group > .btn-outline {
   margin-right: 6px;
 }
+.form-group .validation-error {
+  margin-top: 4px;
+  color: #d9534f;
+}
 .form-label,
 .form-control,
 .form-text {
@@ -1264,10 +1272,6 @@ label.checkbox input[type="checkbox"]:checked + span:before {
 .form-text {
   height: 36px;
   line-height: 34px;
-}
-.form-group .validation-error {
-  margin-top: 4px;
-  color: #d9534f;
 }
 .form-horizonal .form-group {
   width: 100%;
@@ -1785,7 +1789,7 @@ table th[class*="col-"] {
   user-select: none;
 }
 .datepicker-time-col > li:hover {
-  background-color: #eeeeee;
+  background-color: #e8e8e8;
 }
 .datepicker-time-col > li.active {
   background-color: #2599f2;

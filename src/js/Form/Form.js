@@ -1,16 +1,13 @@
 // Form
 // ------------------------
 
-const React = require('react');
-const Formsy = require('formsy-react');
+let Formsy = require('formsy-react');
 
-let Form = Formsy.Form;
+Formsy.InputField = require('./InputField');
+Formsy.SelectField = require('./SelectField');
+Formsy.DateField = require('./DateField');
+Formsy.RadioGroupField = require('./RadioGroupField');
+Formsy.CheckboxGroupField = require('./CheckboxGroupField');
+Formsy.TextAreaField = require('./TextAreaField');
 
-Form.InputField = require('./InputField');
-Form.SelectField = require('./SelectField');
-Form.DateField = require('./DateField');
-Form.RadioGroupField = require('./RadioGroupField');
-Form.CheckboxGroupField = require('./CheckboxGroupField');
-Form.TextAreaField = require('./TextAreaField');
-
-module.exports = Form;
+module.exports = Formsy;

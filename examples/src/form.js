@@ -1,11 +1,11 @@
 
-const { Form } = Z;
-const Input = Form.InputField;
-const Select = Form.SelectField;
-const RadioGroup = Form.RadioGroupField;
-const CheckboxGroup = Form.CheckboxGroupField;
-const Date = Form.DateField;
-const TextArea = Form.TextAreaField;
+const { Formsy } = Z;
+const Input = Formsy.InputField;
+const Select = Formsy.SelectField;
+const RadioGroup = Formsy.RadioGroupField;
+const CheckboxGroup = Formsy.CheckboxGroupField;
+const Date = Formsy.DateField;
+const TextArea = Formsy.TextAreaField;
 
 const MyAppForm = React.createClass({
     getDefaultProps() {
@@ -53,7 +53,7 @@ const MyAppForm = React.createClass({
     render() {
         const { countries, fruits } = this.props;
         return (
-          <Form style={{width: 400}} onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
+          <Formsy.Form style={{width: 400}} onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
             <Input className="col-6" name="name" title="name" defaultValue={this.state.a}/>
             <Date className="col-6" name="birth" title="birth" selectTime={true} defaultValue="2015-06-03"
                 disableDates={(date) => date.getDay() === 5}
@@ -67,7 +67,7 @@ const MyAppForm = React.createClass({
                 <button className="btn-float btn-primary" disabled={!this.state.canSubmit}>Submit</button>
                 <span className="btn-float btn-default" onClick={this.changeValue}>ChangeValue</span>
             </div>
-          </Form>
+          </Formsy.Form>
         );
     }
 });

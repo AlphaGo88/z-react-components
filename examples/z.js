@@ -58,7 +58,7 @@ var Z =
 	    Select: __webpack_require__(13),
 	    RadioGroup: __webpack_require__(15),
 	    CheckboxGroup: __webpack_require__(17),
-	    Form: __webpack_require__(19)
+	    Formsy: __webpack_require__(19)
 	};
 
 /***/ },
@@ -1459,7 +1459,6 @@ var Z =
 
 	        /**
 	         * The selected values(`multi` == true).
-	         * 
 	         */
 	        values: React.PropTypes.array,
 
@@ -1917,19 +1916,16 @@ var Z =
 	// Form
 	// ------------------------
 
-	var React = __webpack_require__(2);
 	var Formsy = __webpack_require__(21);
 
-	var Form = Formsy.Form;
+	Formsy.InputField = __webpack_require__(28);
+	Formsy.SelectField = __webpack_require__(29);
+	Formsy.DateField = __webpack_require__(30);
+	Formsy.RadioGroupField = __webpack_require__(31);
+	Formsy.CheckboxGroupField = __webpack_require__(32);
+	Formsy.TextAreaField = __webpack_require__(33);
 
-	Form.InputField = __webpack_require__(28);
-	Form.SelectField = __webpack_require__(29);
-	Form.DateField = __webpack_require__(30);
-	Form.RadioGroupField = __webpack_require__(31);
-	Form.CheckboxGroupField = __webpack_require__(32);
-	Form.TextAreaField = __webpack_require__(33);
-
-	module.exports = Form;
+	module.exports = Formsy;
 
 /***/ },
 /* 21 */

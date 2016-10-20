@@ -150,7 +150,7 @@
 
 .btn-float.btn-default {
     background-color: @default-color;
-    border-color: @border-color-base;
+    border-color: #ccc;
     color: @text-color-base;
 
     &:focus, 
@@ -234,17 +234,18 @@ button[disabled],
 button[disabled].btn-float,
 .btn-float.btn-disabled {
     background-color: @default-color !important;
-    border-color: @border-color-base !important;
+    border-color: #ccc !important;
 }
 
 button[disabled].btn-flat:hover,
 .btn-flat.btn-disabled:hover {
     background-color: transparent;
+    border-color: transparent !important;
 }
 
 button[disabled].btn-outline,
 .btn-outline.btn-disabled {
-    border-color: @border-color-base !important;
+    border-color: #ccc !important;
 }
 
 // block button
