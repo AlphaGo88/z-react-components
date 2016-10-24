@@ -14,14 +14,19 @@ const Select = React.createClass({
         className: React.PropTypes.string,
 
         /**
-         * The css class name of the input element.
+         * The css class name of the dropdown element.
          */
-        inputClassName: React.PropTypes.string,
+        dropdownClassName: React.PropTypes.string,
 
         /**
          * Overwrite the inline styles of the root element.
          */
         style: React.PropTypes.object,
+
+        /**
+         * Overwrite the inline styles of the dropdown element.
+         */
+        dropdownStyle: React.PropTypes.object,
 
         /**
          * Whether multi-selection is enabled.
@@ -39,33 +44,28 @@ const Select = React.createClass({
         disabled: React.PropTypes.bool,
 
         /**
-         * The selected value(`multi` == false).
+         * The selected value.
+         * When `multi` is true, it's an array of selected values.
          */
-        value: React.PropTypes.string,
-
-        /**
-         * The selected values(`multi` == true).
-         */
-        values: React.PropTypes.array,
+        value: React.PropTypes.oneOfType([
+            React.PropTypes.string,
+            React.PropTypes.number,
+            React.PropTypes.array
+        ]),
 
         /**
          * Fires when the selected value change.
          * @param {string} `value`
          */
-        onChange: React.PropTypes.func,
-
-        /**
-         * The dropdown's z-index.
-         */
-        zIndex: React.PropTypes.number
+        onChange: React.PropTypes.func
     },
 
     getDefaultProps() {
         return {
+            className: '',
+            dropdownClassName: '',
             multi: false,
-            data: [],
-            value: '',
-            values: [],
+            options: [],
             disabled: false,
             placeholder: '请选择',
             onChange() {}
@@ -80,93 +80,137 @@ const Select = React.createClass({
         this.state.isOpen && this.setState({ isOpen: false });
     },
 
-    handleInputClick(event) {
-        this.setState({ isOpen: !this.state.isOpen });
+    handleTriggerClick(event) {
+        if (!this.props.disabled) this.setState({ isOpen: !this.state.isOpen });
     },
 
-    selectOption(value) {
+    selectOption(optionValue) {
         if (this.props.multi) {
-            this.props.onChange(this.props.values.concat([value]));
+            this.props.onChange(this._value.concat([optionValue]));
         } else {
             this.setState({
                 isOpen: false
             });
-            if (value !== this.props.value) {
-                this.props.onChange(value);
+            if (optionValue !== this._value) {
+                this.props.onChange(optionValue);
             }
         }
     },
 
-    deSelectOption(value) {
-        let valueArr = this.props.values.slice();
-        valueArr.splice(valueArr.indexOf(value), 1);
-        this.props.onChange(valueArr);
+    deSelectOption(optionValue) {
+        let value = this._value.slice();
+        value.splice(value.indexOf(optionValue), 1);
+        this.props.onChange(value);
     },
 
     render() {
         const { 
             className, 
             inputClassName, 
+            dropdownClassName,
             style, 
+            inputStyle,
+            dropdownStyle,
             placeholder, 
             multi, 
             disabled, 
-            data, 
+            options, 
             value,
-            values,
             children 
         } = this.props;
         const { isOpen } = this.state;
 
-        //input的文本，单选显示选中项目的text，多选以逗号连接选中项目的text
-        let inputText = '';
+        let displayText = '';
+        let selectedItems = [];
 
-        if (multi && values.length > 0) {
-            //选中的项目
-            const selectedItems = data.filter((item) => 
-                values.indexOf(item.value) > -1
-            );
-            //选中项目的文本
-            let selectedText = []; 
+        if (multi) {
+            // get selected items when `multi` is true
+            if (value && value.length > 0) {
+                this._value = value;
+                
+                selectedItems = options.filter(item => 
+                    this._value.indexOf(item.value) > -1
+                );
 
-            selectedItems.forEach((item) => {
-                selectedText.push(item.text);
-            });
-            inputText = selectedText.join(',');
-
-        } else if (value.length > 0) {
-            const selectedItem = data.filter(item => item.value === value);
-            
-            if (selectedItem.length) {
-                inputText = selectedItem[0].text;
+                if (!selectedItems.length) {
+                    console.warn('The `value` prop of `Select` does not match any of its options.');
+                }
+            } else {
+                this._value = [];
+            }
+        } else {
+            // when `multi` is false
+            if (value || value === 0) {
+                this._value = value;
+                selectedItems = options.filter(item => 
+                    item.value === this._value
+                );
+                
+                if (selectedItems.length) {
+                    displayText = selectedItems[0].text;
+                } else {
+                    console.warn('The `value` prop of `Select` does not match any of its options.');
+                }
+            } else {
+                this._value = '';
             }
         }
 
         return (
             <ClickAwayListener onClickAway={this.handleClickAway}>
                 <div 
-                    style={style} 
-                    className={classNames('dropdown-wrapper', {
-                        [`${className}`]: className
+                    className={classNames({
+                        'select-wrapper-single': !multi,
+                        'select-wrapper-multi': multi,
+                        [`dropdown-wrapper ${className}`]: true,
+                        'focus': isOpen
                     })}
+                    style={style} 
                 >
-                    <span className={classNames('select-caret', { 'up': isOpen })}>
-                        <b></b>
-                    </span>
-                    <input 
-                        type="text" 
-                        className={classNames('select-trigger', {
-                            [`${inputClassName}`]: inputClassName
+                    <div 
+                        className="select-trigger"
+                        onClick={this.handleTriggerClick}
+                    >
+                        {multi ?
+                            (selectedItems.length ?
+                                <ul>
+                                    {selectedItems.map((item, i) => (
+                                        <li
+                                            key={i}
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                this.deSelectOption(item.value);
+                                            }}
+                                        >
+                                            {item.text}
+                                            <i className="fa fa-close"/>
+                                        </li>
+                                    ))}
+                                </ul>
+                                :
+                                <span className="placeholder">{placeholder}</span>
+                            )
+                            :
+                            (displayText ||
+                                <span className="placeholder">{placeholder}</span>
+                            )
+                        }
+                        {multi ||
+                            <span className={classNames('select-caret', {'up': isOpen})}>
+                                <b></b>
+                            </span>
+                        }
+                    </div>
+                    <div 
+                        className={classNames({
+                            [`dropdown ${dropdownClassName}`]: true, 
+                            'offscreen': !isOpen 
                         })}
-                        value={inputText}
-                        disabled={disabled}
-                        placeholder={placeholder}
-                        onClick={this.handleInputClick}
-                    />
-                    <div className={classNames('dropdown', { 'offscreen': !isOpen })}>
+                        style={dropdownStyle}
+                    >
                         <ul className="select-options">
-                            {data.map((item, i) => {
-                                const selected = multi ? (values.indexOf(item.value) > -1) : (value === item.value);
+                            {options.map((item, i) => {
+                                const selected = multi ? (this._value.indexOf(item.value) > -1) : (this._value === item.value);
                                 return (
                                     <li 
                                         key={i}

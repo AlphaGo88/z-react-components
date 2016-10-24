@@ -115,6 +115,7 @@
 	        this.setState({
 	            country: value
 	        });
+	        this.refs.citySelect.setValue('');
 	    },
 	    render: function render() {
 	        var _props = this.props;
@@ -131,8 +132,8 @@
 	                    return date.getDay() === 5;
 	                }
 	            }),
-	            React.createElement(Select, { className: 'col-6', name: 'select1', data: countries, title: 'country', onChange: this.countryChange }),
-	            React.createElement(Select, { className: 'col-6', name: 'select2', data: cities[country], title: 'city' }),
+	            React.createElement(Select, { className: 'col-6', name: 'select1', options: countries, title: 'country', onChange: this.countryChange }),
+	            React.createElement(Select, { ref: 'citySelect', className: 'col-6', name: 'select2', options: cities[country], title: 'city' }),
 	            React.createElement(RadioGroup, { className: 'col-6', name: 'radio', items: countries, required: true }),
 	            React.createElement(CheckboxGroup, { className: 'col-6', name: 'checkbox', items: fruits, required: true }),
 	            React.createElement(TextArea, { className: 'col-6', name: 'ta' }),

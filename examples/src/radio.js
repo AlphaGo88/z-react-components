@@ -59,10 +59,10 @@ let App = React.createClass({
                     <CheckboxGroup value={hobby} items={hobbies} onChange={this.handleHobbyChange}/>
                 </section>
                 <section>
-                    <RadioGroup align="y" value={emp} items={emps}/>
+                    <RadioGroup align="y" value={emp} items={emps} onChange={this.handleEmpChange}/>
                 </section>
                 <section>
-                    <CheckboxGroup align="y" value={hobby} items={hobbies}/>
+                    <CheckboxGroup align="y" value={hobby} items={hobbies} onChange={this.handleHobbyChange}/>
                 </section>
             </div>
         )

@@ -35,6 +35,11 @@ const CheckboxGroup = React.createClass({
         align: React.PropTypes.string,
 
         /**
+         * Whether the component is disabled.
+         */
+        disabled: React.PropTypes.bool,
+
+        /**
          * The items of the `CheckboxGroup`, 
          * each with a `value` prop and a `text` prop.
          */
@@ -54,6 +59,8 @@ const CheckboxGroup = React.createClass({
 
     getDefaultProps() {
         return {
+            className: '',
+            itemClassName: '',
             align: 'x',
             items: [],
             value: [],
@@ -88,27 +95,27 @@ const CheckboxGroup = React.createClass({
         return (
             <ul 
                 style={style}
-                className={classNames(
-                    'checkbox-group', {
-                        [`${className}`]: className,
-                        'horizonal': align === 'x'
-                    }
-                )}
+                className={classNames({
+                    [`checkbox-group ${className}`]: true,
+                    'horizonal': align === 'x'
+                })}
             >
                 {items.map((item, i) => (
                     <li 
                         key={i}
                         style={itemStyle}
-                        className={classNames({
-                            [`${itemClassName}`]: itemClassName
-                        })}
+                        className={`${itemClassName}`}
                     >
-                        <label key={i} className="checkbox">
+                        <label 
+                            key={i} 
+                            className={classNames('checkbox', {
+                                'disabled': item.disabled || this.props.disabled
+                            })}
+                        >
                             <input
                                 type="checkbox"
-                                name={name}
+                                disabled={item.disabled || this.props.disabled}
                                 value={item.value}
-                                disabled={item.disabled}
                                 checked={value.indexOf(item.value) > -1}
                                 onChange={(e) => this.handleChange(e, item.value)}
                             />

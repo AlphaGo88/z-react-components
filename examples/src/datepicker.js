@@ -36,6 +36,18 @@ let App = React.createClass({
                         selectTime={true}
                     />
                 </section>
+                <section>
+                    <DatePicker 
+                        disabled
+                    />
+                </section>
+                <section>
+                    <DatePicker 
+                        disableDate={date => {
+                            return data.getDay() === 4
+                        }}
+                    />
+                </section>
             </div>
         )
     }

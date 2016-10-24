@@ -46,6 +46,7 @@ const Pagination = React.createClass({
 
     getDefaultProps() {
         return {
+            className: '',
             recordCount: 0,
             pageDisplay: 5,
             pageSize: 10,
@@ -79,16 +80,15 @@ const Pagination = React.createClass({
         }
 
         return (
-            <div 
-                style={style} 
-                className={classNames('pagination', {
-                    [`${className}`]: className
-                })}
-            >
+            <div style={style} className={`pagination ${className}`}>
                 {current === 1 ||
                     [
-                        <span key={0} className="page" onClick={e => onChange(1)}>首页</span>,
-                        <span key={1} className="page" onClick={e => onChange(current - 1)}>上一页</span>
+                        <span key={0} className="page" onClick={e => onChange(1)}>
+                            首页
+                        </span>,
+                        <span key={1} className="page" onClick={e => onChange(current - 1)}>
+                            上一页
+                        </span>
                     ]
                 }
                 {pageNos.map(pageNo => (
@@ -104,8 +104,12 @@ const Pagination = React.createClass({
                 ))}
                 {current === pageCount ||
                     [
-                        <span key={0} className="page" onClick={e => onChange(current + 1)}>下一页</span>,
-                        <span key={1} className="page" onClick={e => onChange(pageCount)}>尾页</span>
+                        <span key={0} className="page" onClick={e => onChange(current + 1)}>
+                            下一页
+                        </span>,
+                        <span key={1} className="page" onClick={e => onChange(pageCount)}>
+                            尾页
+                        </span>
                     ]
                 }
             </div>

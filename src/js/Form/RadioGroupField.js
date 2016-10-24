@@ -20,12 +20,14 @@ const RadioGroupField = React.createClass({
 
     render() {
         const { 
-            name, 
+            validationError, 
+            validationErrors, 
+            validations,
             title, 
-            items, 
             className,
             labelClassName, 
-            controlClassName 
+            controlClassName,
+            ...otherProps
         } = this.props;
 
         return (
@@ -46,12 +48,12 @@ const RadioGroupField = React.createClass({
                     </label>
                 }
                 <RadioGroup
+                    {...otherProps}
                     className={classNames(
                         'form-control', {
                             [`${controlClassName}`]: controlClassName
                         }
                     )}
-                    items={items}
                     value={this.getValue()}
                     onChange={this.changeValue}
                 />

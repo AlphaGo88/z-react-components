@@ -10,31 +10,37 @@
 
     > .tab {
         float: left;
+        position: relative;
         margin-bottom: -1px;
         width: 120px;
         padding: 10px 0;
         border: 1px solid @border-color-base;
         border-left: 0;
         text-align: center;
-        color: @text-color-base;
+        color: @text-color-light;
         text-decoration: none;
         background-color: #fff;
         cursor: pointer;
 
         &:hover {
-            color: @text-color-lighter;
+            color: @text-color-base;
         }
         
         &.active {
             padding: 9px 0 10px 0;
+            color: @text-color-base;
             border-top: 2px solid @primary-color;
             border-bottom-color: #fff;
-            background-color: #fff;
         }
     }
 }
 
 .tab-content {
+    display: none;
     border: 1px solid @border-color-base;
     border-top: 0;
+
+    &.active {
+        display: block;
+    }
 }

@@ -49,14 +49,29 @@ const DatePicker = React.createClass({
         className: React.PropTypes.string,
 
         /**
+         * The class name of the input element.
+         */
+        inputClassName: React.PropTypes.string,
+
+        /**
+         * The css class name of the dropdown element.
+         */
+        dropdownClassName: React.PropTypes.string,
+
+        /**
          * The inline styles of the root element.
          */
         style: React.PropTypes.object,
 
         /**
-         * The class name of the input element.
+         * The inline styles of the input element.
          */
-        inputClassName: React.PropTypes.string,
+        inputStyle: React.PropTypes.object,
+
+        /**
+         * Overwrite the inline styles of the dropdown element.
+         */
+        dropdownStyle: React.PropTypes.object,
 
         /**
          * The placeholder of the input element.
@@ -117,6 +132,8 @@ const DatePicker = React.createClass({
 
     getDefaultProps() {
         return {
+            className: '',
+            inputClassName: '',
             disabled: false,
             selectTime: false,
             onChange() {},
@@ -126,7 +143,8 @@ const DatePicker = React.createClass({
 
     getInitialState() {
         const { defaultValue, value, maxValue, minValue, disableDates } = this.props;
-        let selectedDate;   //初始默认选中的日期
+        const today = new Date(); 
+        let selectedDate = today;   //初始默认选中的日期
         let curDate = '';   //当前日期值(与input的值同步)，如果没有指定值或默认值则为''
 
         if (value) { 
@@ -143,13 +161,10 @@ const DatePicker = React.createClass({
             //如果今天大于最大日期，默认选中最大日期
             //如果今天小于最小日期，默认选中最小日期
             //否则默认选中今天
-            const today = new Date();
             if (maxValue && today.valueOf() > new Date(maxValue).valueOf()) {
                 selectedDate = new Date(maxValue);
             } else if (minValue && today.valueOf() < new Date(minValue).valueOf()) {
                 selectedDate = new Date(minValue);
-            } else {
-                selectedDate = today;
             }
         }
 
@@ -428,7 +443,7 @@ const DatePicker = React.createClass({
     },
 
     renderInput() {
-        const { selectTime, style, inputClassName, placeholder, disabled, value } = this.props;
+        const { inputClassName, inputStyle, placeholder, selectTime, disabled, value } = this.props;
         const { curDate } = this.state;
         let dateStr = '';   //input显示的日期
 
@@ -444,11 +459,8 @@ const DatePicker = React.createClass({
         return (
             <input 
                 type="text" 
-                className={classNames(
-                    'datepicker-trigger', {
-                        [`${inputClassName}`]: inputClassName
-                    }
-                )}  
+                className={`datepicker-trigger ${inputClassName}`}
+                style={inputStyle}
                 value={dateStr} 
                 placeholder={placeholder} 
                 disabled={disabled}
@@ -670,7 +682,7 @@ const DatePicker = React.createClass({
     },
 
     render() {
-        const { className, style } = this.props;
+        const { className, dropdownClassName, style, dropdownStyle } = this.props;
         const { isOpen } = this.state;
 
         const input = this.renderInput();
@@ -681,19 +693,18 @@ const DatePicker = React.createClass({
         return (
             <ClickAwayListener onClickAway={this.handleClickAway}>
                 <div 
-                    className={classNames('dropdown-wrapper', {
-                        [`${className}`]: className
-                    })}
+                    className={`dropdown-wrapper ${className}`}
                     style={style}
                 >
                     <i className="fa fa-calendar datepicker-icon"></i>
                     {input}
                     <div 
                         className={classNames(
-                            'dropdown', 
+                            [`dropdown ${dropdownClassName}`]: true, 
                             'datepicker-panel',
                             {'offscreen': !isOpen }
                         )}
+                        style={dropdownStyle}
                         tabIndex="0"
                         onKeyDown={this.handleKeyDown}
                     >

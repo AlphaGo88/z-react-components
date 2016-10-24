@@ -2,11 +2,60 @@
 // Select
 // --------------------------------------------------
 
-.select-trigger {
+.select-wrapper-single,
+.select-wrapper-multi {
     position: relative;
-    display: block;
+    width: 200px;
+    min-height: @input-height;
+    border: 1px solid @border-color-base;
+
+    &.focus {
+        border-color: darken(@border-color-base, 18%);
+    }
+}
+
+.select-wrapper-single {
+    line-height: @input-height - 2;
+
+    > .select-trigger {
+        padding: 0 20px 0 @input-padding-horizonal;
+    }
+}
+
+.select-wrapper-multi .placeholder {
+    display: inline-block;
+    height: @input-height - 2;
+    line-height: @input-height - 2;
+}
+
+.select-trigger {
     width: 100%;
-    padding-right: 20px !important;
+    min-height: @input-height - 2;
+    padding: 0 4px 0 8px;
+
+    > .placeholder {
+        color: @text-color-lighter;
+    }
+
+    > ul {
+        padding-bottom: 4px;
+
+        > li {
+            display: inline-block;
+            line-height: 24px;
+            margin: 4px 4px 0 0;
+            padding: 0px 4px;
+            border: 1px solid @border-color-base;
+            border-radius: 2px;
+            background-color: #eee;
+            cursor: pointer;
+
+            > i {
+                margin-left: 4px;
+                color: #757575;
+            }
+        }
+    }
 }
 
 .select-caret {

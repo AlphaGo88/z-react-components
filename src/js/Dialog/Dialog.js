@@ -8,6 +8,11 @@ const Dialog = React.createClass({
 
     propTypes: {
         /**
+         * The css class name of the dialog element.
+         */
+        className: React.PropTypes.string,
+
+        /**
          * The inline styles of the dialog element.
          */
         style: React.PropTypes.object,
@@ -46,6 +51,7 @@ const Dialog = React.createClass({
 
     getDefaultProps() {
         return {
+            className: '',
             isOpen: false,
             onOK() {},
             onCancel() {}
@@ -53,11 +59,11 @@ const Dialog = React.createClass({
     },
 
     render() {
-        const { isOpen, style, title, children, actions, onOK, onCancel } = this.props;
+        const { className, style, title, children, actions, isOpen, onOK, onCancel } = this.props;
 
         return (
             <div className={classNames('modal-mask', { 'show': isOpen })}>
-                <div className="modal" style={style}>
+                <div className={`modal ${className}`} style={style}>
                     {title && 
                         <h3 className="modal-title">{title}</h3>
                     }

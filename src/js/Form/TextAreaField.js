@@ -22,9 +22,9 @@ const TextAreaField = React.createClass({
         const { 
             validationError, 
             validationErrors, 
+            validations,
             title, 
             name, 
-            defaultValue,
             className, 
             labelClassName, 
             controlClassName,
@@ -48,6 +48,7 @@ const TextAreaField = React.createClass({
                     {title}
                 </label> 
                 <textarea 
+                    {...otherProps}
                     className={classNames({
                         'form-control': true,
                         [`${controlClassName}`]: controlClassName,
@@ -57,7 +58,6 @@ const TextAreaField = React.createClass({
                     name={name}
                     value={this.getValue()}
                     onChange={this.changeValue}
-                    {...otherProps}
                 />
                 <span className='validation-error'>
                     {errorMessage}

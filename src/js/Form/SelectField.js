@@ -28,19 +28,24 @@ const SelectField = React.createClass({
     render() {
 
         const { 
+            validationError, 
+            validationErrors, 
+            validations,
             title, 
-            name, 
             className, 
             labelClassName, 
             controlClassName,
             multi,
-            onChange,
             ...otherProps 
         } = this.props;
         const errorMessage = this.getErrorMessage();
 
-        const value = multi ? '' : this.getValue();
-        const values = multi ? this.getValue() : [];
+        let _value;
+        if (multi) {
+            _value = this.getValue() || [];
+        } else {
+            _value = this.getValue() || '';
+        }
 
         return (
             <div className={classNames(
@@ -58,20 +63,17 @@ const SelectField = React.createClass({
                     {title}
                 </label>
                 <Select 
+                    {...otherProps}
                     className={classNames(
                         'form-control', {
-                            [`${controlClassName}`]: controlClassName
+                            [`${controlClassName}`]: controlClassName,
+                            'required': this.showRequired(),
+                            'error': this.showError()
                         }
                     )}
-                    inputClassName={classNames({
-                        'required': this.showRequired(),
-                        'error': this.showError()
-                    })}
                     multi={multi}
+                    value={_value}
                     onChange={this.changeValue}
-                    value={value}
-                    values={values}
-                    {...otherProps}
                 />
                 <span className='validation-error'>
                     {errorMessage}

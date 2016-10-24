@@ -65,7 +65,7 @@ textarea {
         border-color: @color-warning;
     }
 
-    &:disabled {
+    &[disabled] {
         color: @text-color-lighter;
         cursor: @cursor-disabled;
     }
@@ -101,6 +101,11 @@ label.checkbox {
     padding-left: 24px;
     cursor: pointer;
 
+    &.disabled {
+        cursor: @cursor-disabled;
+        color: @text-color-lighter;
+    }
+
     input[type="radio"],
     input[type="checkbox"] {
         display: none;
@@ -109,7 +114,7 @@ label.checkbox {
 
 // radio
 label.radio {
-    input[type="radio"] + span {
+    > input[type="radio"] + span {
         &:before,
         &:after {
             content: '';
@@ -125,7 +130,7 @@ label.radio {
         }
     }
 
-    input[type="radio"]:checked + span {
+    > input[type="radio"]:checked + span {
         &:before {
             border-color: @primary-color;
         }
@@ -141,7 +146,7 @@ label.radio {
 
 // checkbox
 label.checkbox {
-    input[type="checkbox"] + span {
+    > input[type="checkbox"] + span {
         &:before {
             content: '';
             position: absolute;
@@ -156,7 +161,7 @@ label.checkbox {
         }
     }
 
-    input[type="checkbox"]:checked + span {
+    > input[type="checkbox"]:checked + span {
         &:before {
             left: -4px;
             margin-top: -4px;
@@ -206,13 +211,13 @@ label.checkbox {
 
 .form-text {
     height: @input-height;
-    line-height: @input-height - 2;
+    line-height: @input-height;
+    padding-left: @input-padding-horizonal;
 }
 
-// form that label and input are horizonal aligned
+// forms whose labels and inputs are horizonal aligned
 .form-horizonal {
     .form-group {
-        width: 100%;
         .clearfix();
     }
 

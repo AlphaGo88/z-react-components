@@ -31,11 +31,10 @@ const InputField = React.createClass({
         const { 
             validationError, 
             validationErrors, 
+            validations,
             type, 
             title, 
             name,
-            defaultValue, 
-            validations,
             className,
             labelClassName, 
             controlClassName,
@@ -60,6 +59,7 @@ const InputField = React.createClass({
                     {title}
                 </label> 
                 <input 
+                    {...otherProps}
                     className={classNames({
                         'form-control': true,
                         [`${controlClassName}`]: controlClassName,
@@ -70,7 +70,6 @@ const InputField = React.createClass({
                     name={name}
                     value={this.getValue()}
                     onChange={this.changeValue}
-                    {...otherProps}
                 />
                 <span className='validation-error'>
                     {errorMessage}

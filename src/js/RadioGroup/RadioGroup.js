@@ -35,6 +35,11 @@ const RadioGroup = React.createClass({
         align: React.PropTypes.string,
 
         /**
+         * Whether the component is disabled.
+         */
+        disabled: React.PropTypes.bool,
+
+        /**
          * The items of the `RadioGroup`, 
          * each with a `value` prop and a `text` prop.
          */
@@ -54,6 +59,8 @@ const RadioGroup = React.createClass({
 
     getDefaultProps() {
         return {
+            className: '',
+            itemClassName: '',
             align: 'x',
             items: [],
             value: '',
@@ -81,27 +88,27 @@ const RadioGroup = React.createClass({
         return (
             <ul 
                 style={style}
-                className={classNames(
-                    'radio-group', {
-                        [`${className}`]: className,
-                        'horizonal': align === 'x'
-                    }
-                )}
+                className={classNames({
+                    [`radio-group ${className}`]: true,
+                    'horizonal': align === 'x'
+                })}
             >
                 {items.map((item, i) => (
                     <li 
                         key={i}
                         style={itemStyle}
-                        className={classNames({
-                            [`${itemClassName}`]: itemClassName
-                        })}
+                        className={`${itemClassName}`}
                     >
-                        <label key={i} className="radio">
+                        <label 
+                            key={i} 
+                            className={classNames('radio', {
+                                'disabled': item.disabled || this.props.disabled
+                            })}
+                        >
                             <input
                                 type="radio"
-                                name={name}
                                 value={item.value}
-                                disabled={item.disabled}
+                                disabled={item.disabled || this.props.disabled}
                                 checked={value === item.value}
                                 onChange={(e) => this.handleChange(e, item.value)}
                             />

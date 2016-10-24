@@ -10,5 +10,6 @@ module.exports = {
     Select: require('./Select'),
     RadioGroup: require('./RadioGroup'),
     CheckboxGroup: require('./CheckboxGroup'),
+    Tabs: require('./Tabs'),
     Formsy: require('./Form')
 };

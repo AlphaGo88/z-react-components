@@ -21,12 +21,14 @@ const CheckboxGroupField = React.createClass({
 
     render() {
         const { 
-            name, 
+            validationError, 
+            validationErrors, 
+            validations,
             title, 
-            items, 
             className,
             labelClassName, 
-            controlClassName
+            controlClassName,
+            ...otherProps
         } = this.props;
 
         return (
@@ -47,12 +49,12 @@ const CheckboxGroupField = React.createClass({
                     </label>
                 }
                 <CheckboxGroup
+                    {...otherProps}
                     className={classNames(
-                        'checkbox-group form-control', {
+                        'form-control', {
                             [`${controlClassName}`]: controlClassName
                         }
                     )}
-                    items={items}
                     value={this.getValue()}
                     onChange={this.changeValue}
                 />

@@ -47,67 +47,45 @@
 	"use strict";
 
 	var _Z = Z;
-	var DatePicker = _Z.DatePicker;
+	var Tabs = _Z.Tabs;
 
 
 	var App = React.createClass({
 	    displayName: "App",
-
-
 	    getInitialState: function getInitialState() {
 	        return {
-	            date: ''
+	            activeTab: 0
 	        };
 	    },
-
-	    handleChange: function handleChange(dateStr, dateObj) {
-	        this.setState({
-	            date: dateStr
-	        });
+	    handleTabChange: function handleTabChange(tabIndex) {
+	        this.setState({ activeTab: tabIndex });
 	    },
 	    render: function render() {
 
 	        return React.createElement(
-	            "div",
+	            "section",
 	            null,
 	            React.createElement(
-	                "section",
-	                null,
-	                React.createElement(DatePicker, { value: this.state.date, onChange: this.handleChange }),
-	                "\xA0\xA0\xA0",
-	                React.createElement("input", { value: this.state.date })
-	            ),
-	            React.createElement(
-	                "section",
-	                null,
-	                React.createElement(DatePicker, {
-	                    defaultValue: "2014-08-05",
-	                    maxValue: "2016-09-20",
-	                    minValue: "2010-03-14"
-	                })
-	            ),
-	            React.createElement(
-	                "section",
-	                null,
-	                React.createElement(DatePicker, {
-	                    selectTime: true
-	                })
-	            ),
-	            React.createElement(
-	                "section",
-	                null,
-	                React.createElement(DatePicker, {
-	                    disabled: true
-	                })
-	            ),
-	            React.createElement(
-	                "section",
-	                null,
-	                React.createElement(DatePicker, {
-	                    disableDate: function disableDate(date) {
-	                        return data.getDay() === 4;
-	                    }
-	                })
+	                Tabs,
+	                {
+	                    activeIndex: this.state.activeTab,
+	                    onChange: this.handleTabChange
+	                },
+	                React.createElement(
+	                    Tabs.Tab,
+	                    { label: "tab1" },
+	                    "jdsifojflsmfd"
+	                ),
+	                React.createElement(
+	                    Tabs.Tab,
+	                    { label: "tab2" },
+	                    "\u4F60\u597D\u820D\u5F97\u79BB\u5F00\u623F\u95F4"
+	                ),
+	                React.createElement(
+	                    Tabs.Tab,
+	                    { label: "tab3" },
+	                    "\u5973\u90CE\u7684\u5B50\u5973\u963F\u4F5Bi\u8FDD\u6CD5jo\u989D\u5916i\u4ED8\u91D1\u989D\u6211if"
+	                )
 	            )
 	        );
 	    }

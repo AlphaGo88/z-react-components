@@ -121,12 +121,12 @@
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(RadioGroup, { align: 'y', value: emp, items: emps })
+	                React.createElement(RadioGroup, { align: 'y', value: emp, items: emps, onChange: this.handleEmpChange })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(CheckboxGroup, { align: 'y', value: hobby, items: hobbies })
+	                React.createElement(CheckboxGroup, { align: 'y', value: hobby, items: hobbies, onChange: this.handleHobbyChange })
 	            )
 	        );
 	    }

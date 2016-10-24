@@ -56,6 +56,17 @@
 
 	    getInitialState: function getInitialState() {
 	        return {
+	            fruit: '',
+	            fruits: [{
+	                value: 1,
+	                text: 'apple'
+	            }, {
+	                value: 2,
+	                text: 'orange'
+	            }, {
+	                value: 3,
+	                text: 'banana'
+	            }],
 	            emp: [],
 	            emps: [{
 	                value: '1',
@@ -103,10 +114,17 @@
 	            emp: value
 	        });
 	    },
+	    changeFruit: function changeFruit(value) {
+	        this.setState({
+	            fruit: value
+	        });
+	    },
 	    render: function render() {
 	        var _state = this.state;
 	        var emps = _state.emps;
 	        var emp = _state.emp;
+	        var fruits = _state.fruits;
+	        var fruit = _state.fruit;
 
 
 	        return React.createElement(
@@ -117,9 +135,26 @@
 	                null,
 	                React.createElement(Select, {
 	                    multi: true,
-	                    data: emps,
-	                    values: emp,
+	                    options: emps,
+	                    value: emp,
 	                    onChange: this.changeEmp
+	                })
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(Select, {
+	                    options: fruits,
+	                    value: fruit,
+	                    onChange: this.changeFruit
+	                })
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(Select, {
+	                    options: fruits,
+	                    disabled: true
 	                })
 	            )
 	        );

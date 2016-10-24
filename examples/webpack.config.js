@@ -8,6 +8,7 @@ module.exports = {
         page: './src/page',
         radio: './src/radio',
         select: './src/select',
+        tabs: './src/tabs',
     },
     output: {
         path: './dist',

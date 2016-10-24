@@ -64,7 +64,8 @@ const MyAppForm = React.createClass({
     countryChange(value) {
         this.setState({
             country: value
-        })
+        });
+        this.refs.citySelect.setValue('');
     },
     render() {
         const { countries, cities, fruits } = this.props;
@@ -74,8 +75,8 @@ const MyAppForm = React.createClass({
             <Input className="col-6" name="name" title="name" />
             <Date className="col-6" name="birth" title="birth" selectTime={true} disableDates={(date) => date.getDay() === 5}
             />
-            <Select className="col-6" name="select1" data={countries} title="country" onChange={this.countryChange}/>
-            <Select className="col-6" name="select2" data={cities[country]} title="city"/>
+            <Select className="col-6" name="select1" options={countries} title="country" onChange={this.countryChange}/>
+            <Select ref="citySelect" className="col-6" name="select2" options={cities[country]} title="city"/>
             <RadioGroup className="col-6" name="radio" items={countries} required/>
             <CheckboxGroup className="col-6" name="checkbox" items={fruits} required/>
             <TextArea className="col-6" name="ta"/>

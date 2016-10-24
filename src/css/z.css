@@ -970,8 +970,8 @@ button[disabled].btn-outline,
   display: block;
 }
 .tabs {
-  border-left: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
+  border-left: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
 }
 .tabs:before,
 .tabs:after {
@@ -986,7 +986,7 @@ button[disabled].btn-outline,
   margin-bottom: -1px;
   width: 120px;
   padding: 10px 0;
-  border: 1px solid #aaa;
+  border: 1px solid #ccc;
   border-left: 0;
   text-align: center;
   color: #333;
@@ -1004,8 +1004,12 @@ button[disabled].btn-outline,
   background-color: #fff;
 }
 .tab-content {
-  border: 1px solid #aaa;
+  display: none;
+  border: 1px solid #ccc;
   border-top: 0;
+}
+.tab-content.active {
+  display: block;
 }
 input {
   background-color: transparent;
@@ -1037,7 +1041,7 @@ textarea {
   height: 36px;
   padding: 0px 10px;
   font-size: 14px;
-  border: 1px solid #aaa;
+  border: 1px solid #ccc;
   outline: 0;
 }
 input[type="color"]:focus,
@@ -1056,7 +1060,7 @@ input[type="url"]:focus,
 input[type="week"]:focus,
 select:focus,
 textarea:focus {
-  border-color: #7c7c7c;
+  border-color: #9e9e9e;
   outline: 0;
 }
 input[type="color"].required,
@@ -1149,22 +1153,22 @@ select.warning,
 textarea.warning {
   border-color: #f0ad4e;
 }
-input[type="color"]:disabled,
-input[type="date"]:disabled,
-input[type="datetime"]:disabled,
-input[type="datetime-local"]:disabled,
-input[type="email"]:disabled,
-input[type="month"]:disabled,
-input[type="number"]:disabled,
-input[type="password"]:disabled,
-input[type="search"]:disabled,
-input[type="tel"]:disabled,
-input[type="text"]:disabled,
-input[type="time"]:disabled,
-input[type="url"]:disabled,
-input[type="week"]:disabled,
-select:disabled,
-textarea:disabled {
+input[type="color"][disabled],
+input[type="date"][disabled],
+input[type="datetime"][disabled],
+input[type="datetime-local"][disabled],
+input[type="email"][disabled],
+input[type="month"][disabled],
+input[type="number"][disabled],
+input[type="password"][disabled],
+input[type="search"][disabled],
+input[type="tel"][disabled],
+input[type="text"][disabled],
+input[type="time"][disabled],
+input[type="url"][disabled],
+input[type="week"][disabled],
+select[disabled],
+textarea[disabled] {
   color: #999;
   cursor: not-allowed;
 }
@@ -1192,14 +1196,19 @@ label.checkbox {
   padding-left: 24px;
   cursor: pointer;
 }
+label.radio.disabled,
+label.checkbox.disabled {
+  cursor: not-allowed;
+  color: #999;
+}
 label.radio input[type="radio"],
 label.checkbox input[type="radio"],
 label.radio input[type="checkbox"],
 label.checkbox input[type="checkbox"] {
   display: none;
 }
-label.radio input[type="radio"] + span:before,
-label.radio input[type="radio"] + span:after {
+label.radio > input[type="radio"] + span:before,
+label.radio > input[type="radio"] + span:after {
   content: '';
   position: absolute;
   left: 0;
@@ -1211,16 +1220,16 @@ label.radio input[type="radio"] + span:after {
   border-radius: 50%;
   border: 2px solid #999;
 }
-label.radio input[type="radio"]:checked + span:before {
+label.radio > input[type="radio"]:checked + span:before {
   border-color: #2599f2;
 }
-label.radio input[type="radio"]:checked + span:after {
+label.radio > input[type="radio"]:checked + span:after {
   border-radius: 50%;
   border: 2px solid #2599f2;
   background-color: #2599f2;
   transform: scale(0.5);
 }
-label.checkbox input[type="checkbox"] + span:before {
+label.checkbox > input[type="checkbox"] + span:before {
   content: '';
   position: absolute;
   left: 0;
@@ -1232,7 +1241,7 @@ label.checkbox input[type="checkbox"] + span:before {
   border-radius: 1px;
   border: 2px solid #999;
 }
-label.checkbox input[type="checkbox"]:checked + span:before {
+label.checkbox > input[type="checkbox"]:checked + span:before {
   left: -4px;
   margin-top: -4px;
   width: 10px;
@@ -1272,10 +1281,8 @@ label.checkbox input[type="checkbox"]:checked + span:before {
 }
 .form-text {
   height: 36px;
-  line-height: 34px;
-}
-.form-horizonal .form-group {
-  width: 100%;
+  line-height: 36px;
+  padding-left: 10px;
 }
 .form-horizonal .form-group:before,
 .form-horizonal .form-group:after {
@@ -1357,7 +1364,7 @@ label.checkbox input[type="checkbox"]:checked + span:before {
   width: auto;
   margin-top: 15px;
   padding: 15px 25px;
-  border: 1px solid #aaa;
+  border: 1px solid #ccc;
   border-radius: 2px;
   background-color: #fff;
   opacity: 1;
@@ -1525,7 +1532,7 @@ table th[class*="col-"] {
   padding: 0 12px;
   height: 30px;
   line-height: 30px;
-  border: 1px solid #aaa;
+  border: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
   -webkit-user-select: none;
@@ -1555,7 +1562,7 @@ table th[class*="col-"] {
   margin: 4px 0 0;
   overflow: auto;
   background-color: #fff;
-  border: 1px solid #aaa;
+  border: 1px solid #ccc;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   transition: opacity 240ms, transform 240ms;
   transform-origin: 0% 0%;
@@ -1597,7 +1604,7 @@ table th[class*="col-"] {
 .dropdown-menu .divider {
   height: 0px;
   overflow: hidden;
-  border-bottom: 1px solid #c9c9c9;
+  border-bottom: 1px solid #ebebeb;
 }
 .select-trigger {
   position: relative;
@@ -1683,7 +1690,7 @@ table th[class*="col-"] {
   font-size: 16px;
 }
 .datepicker-panel {
-  width: 272px;
+  width: 266px;
 }
 .datepicker-head,
 .datepicker-foot {
@@ -1725,12 +1732,12 @@ table th[class*="col-"] {
 }
 .datepicker-body {
   height: 204px;
-  border-top: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
 }
 .datepicker-table {
   margin: 5px auto;
-  width: 96%;
+  width: 252px;
 }
 .datepicker-table th,
 .datepicker-table td {
@@ -1765,9 +1772,9 @@ table th[class*="col-"] {
 }
 .datepicker-time-col {
   float: left;
-  width: 90px;
+  width: 88px;
   max-height: 202px;
-  border-left: 1px solid #aaa;
+  border-left: 1px solid #ccc;
   overflow: hidden;
 }
 .datepicker-time-col:hover {
