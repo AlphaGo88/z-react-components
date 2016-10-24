@@ -1006,8 +1006,7 @@ var Z =
 	            placeholder: placeholder,
 	            disabled: disabled,
 	            readOnly: true,
-	            onClick: this.handleInputClick,
-	            onKeyDown: this.handleKeyDown
+	            onClick: this.handleInputClick
 	        });
 	    },
 	    renderPanelHead: function renderPanelHead() {
@@ -1344,17 +1343,17 @@ var Z =
 	                'div',
 	                {
 	                    className: 'dropdown-wrapper ' + className,
-	                    style: style
+	                    style: style,
+	                    tabIndex: '0',
+	                    onKeyDown: this.handleKeyDown
 	                },
-	                React.createElement('i', { className: 'fa fa-calendar datepicker-icon' }),
 	                input,
+	                React.createElement('i', { className: 'fa fa-calendar datepicker-icon' }),
 	                React.createElement(
 	                    'div',
 	                    {
 	                        className: classNames(['dropdown ' + dropdownClassName], 'datepicker-panel', { 'offscreen': !isOpen }),
-	                        style: dropdownStyle,
-	                        tabIndex: '0',
-	                        onKeyDown: this.handleKeyDown
+	                        style: dropdownStyle
 	                    },
 	                    panelHead,
 	                    panelBody,
@@ -1457,6 +1456,11 @@ var Z =
 	        className: React.PropTypes.string,
 
 	        /**
+	         * The css class name of the select element.
+	         */
+	        selectClassName: React.PropTypes.string,
+
+	        /**
 	         * The css class name of the dropdown element.
 	         */
 	        dropdownClassName: React.PropTypes.string,
@@ -1465,6 +1469,11 @@ var Z =
 	         * Overwrite the inline styles of the root element.
 	         */
 	        style: React.PropTypes.object,
+
+	        /**
+	         * Overwrite the inline styles of the select element.
+	         */
+	        selectStyle: React.PropTypes.object,
 
 	        /**
 	         * Overwrite the inline styles of the dropdown element.
@@ -1502,6 +1511,7 @@ var Z =
 	    getDefaultProps: function getDefaultProps() {
 	        return {
 	            className: '',
+	            selectClassName: '',
 	            dropdownClassName: '',
 	            multi: false,
 	            options: [],
@@ -1511,7 +1521,10 @@ var Z =
 	        };
 	    },
 	    getInitialState: function getInitialState() {
-	        return { isOpen: false };
+	        return {
+	            isOpen: false,
+	            hoverIndex: 0
+	        };
 	    },
 	    handleClickAway: function handleClickAway() {
 	        this.state.isOpen && this.setState({ isOpen: false });
@@ -1519,12 +1532,16 @@ var Z =
 	    handleTriggerClick: function handleTriggerClick(event) {
 	        if (!this.props.disabled) this.setState({ isOpen: !this.state.isOpen });
 	    },
+	    handleOptionHover: function handleOptionHover(index) {
+	        this.setState({ hoverIndex: index });
+	    },
 	    selectOption: function selectOption(optionValue) {
 	        if (this.props.multi) {
 	            this.props.onChange(this._value.concat([optionValue]));
 	        } else {
 	            this.setState({
-	                isOpen: false
+	                isOpen: false,
+	                hoverIndex: -1
 	            });
 	            if (optionValue !== this._value) {
 	                this.props.onChange(optionValue);
@@ -1536,25 +1553,88 @@ var Z =
 	        value.splice(value.indexOf(optionValue), 1);
 	        this.props.onChange(value);
 	    },
+	    handleKeyDown: function handleKeyDown(event) {
+	        var _this = this;
+
+	        var _props = this.props;
+	        var multi = _props.multi;
+	        var options = _props.options;
+	        var onChange = _props.onChange;
+	        var hoverIndex = this.state.hoverIndex;
+
+	        (function () {
+
+	            switch (event.which) {
+	                case 27:
+	                    // ESC
+	                    _this.setState({ isOpen: false });
+	                    break;
+
+	                case 13:
+	                    // Enter
+	                    var selectedValue = options[hoverIndex].value;
+
+	                    if (options[hoverIndex].disabled) {
+	                        break;
+	                    }
+	                    if (multi) {
+	                        var match = _this._value.filter(function (it) {
+	                            return it === selectedValue;
+	                        });
+	                        if (match.length > 0) {
+	                            _this.deSelectOption(selectedValue);
+	                        } else {
+	                            onChange(_this._value.concat([selectedValue]));
+	                        }
+	                    } else {
+	                        if (_this._value === selectedValue) {
+	                            _this.setState({ isOpen: false });
+	                        } else {
+	                            _this.setState({ isOpen: false });
+	                            onChange(selectedValue);
+	                        }
+	                    }
+	                    break;
+
+	                case 38:
+	                    // Up Arrow
+	                    _this.setState({
+	                        hoverIndex: hoverIndex === 0 ? options.length - 1 : hoverIndex - 1
+	                    });
+	                    break;
+
+	                case 40:
+	                    // Down Arrow
+	                    _this.setState({
+	                        hoverIndex: hoverIndex === options.length - 1 ? 0 : hoverIndex + 1
+	                    });
+	                    break;
+
+	                default:
+	            }
+	        })();
+	    },
 	    render: function render() {
-	        var _this = this,
+	        var _this2 = this,
 	            _classNames,
 	            _classNames2;
 
-	        var _props = this.props;
-	        var className = _props.className;
-	        var inputClassName = _props.inputClassName;
-	        var dropdownClassName = _props.dropdownClassName;
-	        var style = _props.style;
-	        var inputStyle = _props.inputStyle;
-	        var dropdownStyle = _props.dropdownStyle;
-	        var placeholder = _props.placeholder;
-	        var multi = _props.multi;
-	        var disabled = _props.disabled;
-	        var options = _props.options;
-	        var value = _props.value;
-	        var children = _props.children;
-	        var isOpen = this.state.isOpen;
+	        var _props2 = this.props;
+	        var className = _props2.className;
+	        var selectClassName = _props2.selectClassName;
+	        var dropdownClassName = _props2.dropdownClassName;
+	        var style = _props2.style;
+	        var selectStyle = _props2.selectStyle;
+	        var dropdownStyle = _props2.dropdownStyle;
+	        var placeholder = _props2.placeholder;
+	        var multi = _props2.multi;
+	        var disabled = _props2.disabled;
+	        var options = _props2.options;
+	        var value = _props2.value;
+	        var children = _props2.children;
+	        var _state = this.state;
+	        var isOpen = _state.isOpen;
+	        var hoverIndex = _state.hoverIndex;
 
 
 	        var displayText = '';
@@ -1566,7 +1646,7 @@ var Z =
 	                this._value = value;
 
 	                selectedItems = options.filter(function (item) {
-	                    return _this._value.indexOf(item.value) > -1;
+	                    return _this2._value.indexOf(item.value) > -1;
 	                });
 
 	                if (!selectedItems.length) {
@@ -1580,7 +1660,7 @@ var Z =
 	            if (value || value === 0) {
 	                this._value = value;
 	                selectedItems = options.filter(function (item) {
-	                    return item.value === _this._value;
+	                    return item.value === _this2._value;
 	                });
 
 	                if (selectedItems.length) {
@@ -1599,16 +1679,15 @@ var Z =
 	            React.createElement(
 	                'div',
 	                {
-	                    className: classNames((_classNames = {
-	                        'select-wrapper-single': !multi,
-	                        'select-wrapper-multi': multi
-	                    }, _defineProperty(_classNames, 'dropdown-wrapper ' + className, true), _defineProperty(_classNames, 'focus', isOpen), _classNames)),
-	                    style: style
+	                    className: 'dropdown-wrapper ' + className,
+	                    style: style,
+	                    tabIndex: '0',
+	                    onKeyDown: this.handleKeyDown
 	                },
 	                React.createElement(
 	                    'div',
 	                    {
-	                        className: 'select-trigger',
+	                        className: classNames((_classNames = {}, _defineProperty(_classNames, 'select-trigger ' + selectClassName, true), _defineProperty(_classNames, 'select-trigger-single', !multi), _defineProperty(_classNames, 'select-trigger-multi', multi), _defineProperty(_classNames, 'focus', isOpen), _defineProperty(_classNames, 'disabled', disabled), _classNames)),
 	                        onClick: this.handleTriggerClick
 	                    },
 	                    multi ? selectedItems.length ? React.createElement(
@@ -1621,7 +1700,7 @@ var Z =
 	                                    key: i,
 	                                    onClick: function onClick(e) {
 	                                        e.stopPropagation();
-	                                        _this.deSelectOption(item.value);
+	                                        _this2.deSelectOption(item.value);
 	                                    }
 	                                },
 	                                item.text,
@@ -1639,7 +1718,7 @@ var Z =
 	                    ),
 	                    multi || React.createElement(
 	                        'span',
-	                        { className: classNames('select-caret', { 'up': isOpen }) },
+	                        { className: classNames('caret', { 'up': isOpen }) },
 	                        React.createElement('b', null)
 	                    )
 	                ),
@@ -1653,18 +1732,22 @@ var Z =
 	                        'ul',
 	                        { className: 'select-options' },
 	                        options.map(function (item, i) {
-	                            var selected = multi ? _this._value.indexOf(item.value) > -1 : _this._value === item.value;
+	                            var selected = multi ? _this2._value.indexOf(item.value) > -1 : _this2._value === item.value;
 	                            return React.createElement(
 	                                'li',
 	                                {
 	                                    key: i,
 	                                    className: classNames('select-option', {
 	                                        'disabled': item.disabled,
-	                                        'selected': selected
+	                                        'selected': selected,
+	                                        'hover': i === hoverIndex
 	                                    }),
+	                                    onMouseOver: function onMouseOver(e) {
+	                                        return _this2.handleOptionHover(i);
+	                                    },
 	                                    onClick: function onClick(e) {
 	                                        if (item.disabled) return;
-	                                        multi && selected ? _this.deSelectOption(item.value) : _this.selectOption(item.value);
+	                                        multi && selected ? _this2.deSelectOption(item.value) : _this2.selectOption(item.value);
 	                                    }
 	                                },
 	                                item.text
@@ -3327,8 +3410,6 @@ var Z =
 	        this.props.onChange && this.props.onChange(value);
 	    },
 	    render: function render() {
-	        var _classNames3;
-
 	        var _props2 = this.props;
 	        var validationError = _props2.validationError;
 	        var validationErrors = _props2.validationErrors;
@@ -3361,7 +3442,11 @@ var Z =
 	                title
 	            ),
 	            React.createElement(Select, _extends({}, otherProps, {
-	                className: classNames('form-control', (_classNames3 = {}, _defineProperty(_classNames3, '' + controlClassName, controlClassName), _defineProperty(_classNames3, 'required', this.showRequired()), _defineProperty(_classNames3, 'error', this.showError()), _classNames3)),
+	                className: classNames('form-control', _defineProperty({}, '' + controlClassName, controlClassName)),
+	                selectClassName: classNames({
+	                    'required': this.showRequired(),
+	                    'error': this.showError()
+	                }),
 	                multi: multi,
 	                value: _value,
 	                onChange: this.changeValue

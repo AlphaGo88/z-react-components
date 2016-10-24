@@ -1,8 +1,11 @@
+//
+// Date Picker
+// --------------------------------------------------
+
 .datepicker-trigger {
     display: block;
     position: relative;
     width: 100%;
-    cursor: pointer;
 }
 
 .datepicker-icon {
@@ -10,6 +13,12 @@
     right: 8px;
     top: 10px;
     font-size: 16px;
+    cursor: pointer;
+}
+
+input[disabled].datepicker-trigger + .datepicker-icon {
+    color: @text-color-light;
+    cursor: @cursor-disabled;
 }
 
 .datepicker-panel {
@@ -39,7 +48,6 @@
         &:hover {
             color: #000;
         }
-
         &.disabled {
             color: @text-color-lighter;
             cursor: @cursor-disabled;
@@ -73,18 +81,15 @@
     margin: 5px auto;
     width: 252px;
 
-    th,
-    td {
+    th, td {
         padding: 1px 0;
         text-align: center;
         font-weight: normal;
         color: @text-color-light;
     }
-
     th {
         height: 28px;
     }
-
 }
 
 .datepicker-date {
@@ -99,12 +104,10 @@
     &:hover {
         background-color: #ddd;
     }
-
     &.active {
         background-color: @primary-color;
         color: #fff;
     }
-
     &.disabled {
         background-color: #fff;
         color: @text-color-lighter;
@@ -122,11 +125,9 @@
     &:hover {
         overflow-y: auto;
     }
-
     &:first-child {
         border-left-width: 0;
     }
-
     > li {
         box-sizing: content-box;
         width: 100%;
@@ -140,7 +141,6 @@
         &:hover {
             background-color: rgb(232, 232, 232);
         }
-
         &.active {
             background-color: @primary-color;
             color: #fff;

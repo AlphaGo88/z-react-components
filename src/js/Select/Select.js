@@ -14,6 +14,11 @@ const Select = React.createClass({
         className: React.PropTypes.string,
 
         /**
+         * The css class name of the select element.
+         */
+        selectClassName: React.PropTypes.string,
+
+        /**
          * The css class name of the dropdown element.
          */
         dropdownClassName: React.PropTypes.string,
@@ -22,6 +27,11 @@ const Select = React.createClass({
          * Overwrite the inline styles of the root element.
          */
         style: React.PropTypes.object,
+
+        /**
+         * Overwrite the inline styles of the select element.
+         */
+        selectStyle: React.PropTypes.object,
 
         /**
          * Overwrite the inline styles of the dropdown element.
@@ -63,6 +73,7 @@ const Select = React.createClass({
     getDefaultProps() {
         return {
             className: '',
+            selectClassName: '',
             dropdownClassName: '',
             multi: false,
             options: [],
@@ -73,7 +84,10 @@ const Select = React.createClass({
     },
 
     getInitialState() {
-        return { isOpen: false };
+        return { 
+            isOpen: false,
+            hoverIndex: 0
+        };
     },
 
     handleClickAway() {
@@ -84,12 +98,17 @@ const Select = React.createClass({
         if (!this.props.disabled) this.setState({ isOpen: !this.state.isOpen });
     },
 
+    handleOptionHover(index) {
+        this.setState({ hoverIndex: index });
+    },
+
     selectOption(optionValue) {
         if (this.props.multi) {
             this.props.onChange(this._value.concat([optionValue]));
         } else {
             this.setState({
-                isOpen: false
+                isOpen: false,
+                hoverIndex: -1
             });
             if (optionValue !== this._value) {
                 this.props.onChange(optionValue);
@@ -103,13 +122,65 @@ const Select = React.createClass({
         this.props.onChange(value);
     },
 
+    handleKeyDown(event) {
+        const { multi, options, onChange } = this.props;
+        const { hoverIndex } = this.state;
+
+        switch (event.which) {
+            case 27:
+                // ESC
+                this.setState({ isOpen: false });
+                break;
+
+            case 13:
+                // Enter
+                const selectedValue = options[hoverIndex].value;
+
+                if (options[hoverIndex].disabled) {
+                    break;
+                }
+                if (multi) {
+                    const match = this._value.filter(it => it === selectedValue);
+                    if (match.length > 0) {
+                        this.deSelectOption(selectedValue);
+                    } else {
+                        onChange(this._value.concat([selectedValue]));
+                    }
+                } else {
+                    if (this._value === selectedValue) {
+                        this.setState({ isOpen: false });
+                    } else {
+                        this.setState({ isOpen: false });
+                        onChange(selectedValue);
+                    }
+                }
+                break;
+
+            case 38:
+                // Up Arrow
+                this.setState({ 
+                    hoverIndex: (hoverIndex === 0) ? (options.length - 1) : (hoverIndex - 1)
+                });
+                break;
+
+            case 40:
+                // Down Arrow
+                this.setState({ 
+                    hoverIndex: (hoverIndex === options.length - 1) ? 0 : (hoverIndex + 1)
+                });
+                break;
+
+            default:
+        }
+    },
+
     render() {
         const { 
             className, 
-            inputClassName, 
+            selectClassName,
             dropdownClassName,
             style, 
-            inputStyle,
+            selectStyle,
             dropdownStyle,
             placeholder, 
             multi, 
@@ -118,7 +189,7 @@ const Select = React.createClass({
             value,
             children 
         } = this.props;
-        const { isOpen } = this.state;
+        const { isOpen, hoverIndex } = this.state;
 
         let displayText = '';
         let selectedItems = [];
@@ -159,16 +230,19 @@ const Select = React.createClass({
         return (
             <ClickAwayListener onClickAway={this.handleClickAway}>
                 <div 
-                    className={classNames({
-                        'select-wrapper-single': !multi,
-                        'select-wrapper-multi': multi,
-                        [`dropdown-wrapper ${className}`]: true,
-                        'focus': isOpen
-                    })}
-                    style={style} 
+                    className={`dropdown-wrapper ${className}`}
+                    style={style}
+                    tabIndex="0" 
+                    onKeyDown={this.handleKeyDown}
                 >
                     <div 
-                        className="select-trigger"
+                        className={classNames({
+                            [`select-trigger ${selectClassName}`]: true,
+                            'select-trigger-single': !multi,
+                            'select-trigger-multi': multi,
+                            'focus': isOpen,
+                            'disabled': disabled
+                        })}
                         onClick={this.handleTriggerClick}
                     >
                         {multi ?
@@ -196,7 +270,7 @@ const Select = React.createClass({
                             )
                         }
                         {multi ||
-                            <span className={classNames('select-caret', {'up': isOpen})}>
+                            <span className={classNames('caret', {'up': isOpen})}>
                                 <b></b>
                             </span>
                         }
@@ -216,8 +290,10 @@ const Select = React.createClass({
                                         key={i}
                                         className={classNames('select-option', {
                                             'disabled': item.disabled,
-                                            'selected': selected
+                                            'selected': selected,
+                                            'hover': i === hoverIndex
                                         })}
+                                        onMouseOver={e => this.handleOptionHover(i)}
                                         onClick={e => {
                                             if (item.disabled) return;
                                             (multi && selected) ? this.deSelectOption(item.value) : this.selectOption(item.value)

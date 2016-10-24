@@ -2,41 +2,73 @@
 // Select
 // --------------------------------------------------
 
-.select-wrapper-single,
-.select-wrapper-multi {
+
+.select-trigger {
     position: relative;
-    width: 200px;
+    width: 100%;
     min-height: @input-height;
     border: 1px solid @border-color-base;
 
     &.focus {
         border-color: darken(@border-color-base, 18%);
     }
-}
-
-.select-wrapper-single {
-    line-height: @input-height - 2;
-
-    > .select-trigger {
-        padding: 0 20px 0 @input-padding-horizonal;
+    &.disabled {
+        background-color: #efefef;
+        color: @text-color-lighter;
+        cursor: @cursor-disabled;
     }
-}
-
-.select-wrapper-multi .placeholder {
-    display: inline-block;
-    height: @input-height - 2;
-    line-height: @input-height - 2;
-}
-
-.select-trigger {
-    width: 100%;
-    min-height: @input-height - 2;
-    padding: 0 4px 0 8px;
-
     > .placeholder {
         color: @text-color-lighter;
     }
+}
 
+.select-trigger-single {
+    padding: 0 20px 0 @input-padding-horizonal;
+    line-height: @input-height - 2;
+
+    > .caret {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 20px;
+        cursor: pointer;
+
+        > b {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            margin: auto;
+            width: 0;
+            height: 0;
+            border-color: @text-color-light transparent transparent;
+            border-style: solid;
+            border-width: 6px 4px 0;
+        }
+        &.up > b {
+            border-color: transparent transparent @text-color-light;
+            border-width: 0 4px 6px;
+        }
+    }
+    &.disabled > .caret {
+        cursor: @cursor-disabled;
+
+        > b {
+            border-color: @text-color-lighter transparent transparent;
+        }
+    }
+}
+
+.select-trigger-multi {
+    padding: 0 4px 0 8px;
+
+    > .placeholder {
+        display: inline-block;
+        height: @input-height - 2;
+        line-height: @input-height - 2;
+    }
     > ul {
         padding-bottom: 4px;
 
@@ -79,16 +111,13 @@
         border-style: solid;
         border-width: 6px 4px 0;
     }
-
     &.up > b {
         border-color: transparent transparent @text-color-light;
         border-width: 0 4px 6px;
     }
-
     &.disabled {
         cursor: @cursor-disabled;
     }
-
     &.disabled > b {
         border-color: @text-color-lighter transparent transparent;
     }
@@ -110,26 +139,21 @@
         white-space: nowrap;
         cursor: pointer;
 
-        &:hover {
+        &.hover {
             background-color: rgb(232, 232, 232);
         }
-
         &.selected {
             color: @primary-color;
         }
-
         &.disabled {
-            background-color: #fff;
             color: @text-color-lighter;
             cursor: @cursor-disabled;
         }
-
         &.group-label {
             background-color: #fff;
             font-weight: bold;
             cursor: default;
         }
-
         &.group-option {
             padding: 0 30px;
         }

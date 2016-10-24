@@ -64,13 +64,13 @@ const SelectField = React.createClass({
                 </label>
                 <Select 
                     {...otherProps}
-                    className={classNames(
-                        'form-control', {
-                            [`${controlClassName}`]: controlClassName,
-                            'required': this.showRequired(),
-                            'error': this.showError()
-                        }
-                    )}
+                    className={classNames('form-control', {
+                        [`${controlClassName}`]: controlClassName
+                    })}
+                    selectClassName={classNames({
+                        'required': this.showRequired(),
+                        'error': this.showError()
+                    })}
                     multi={multi}
                     value={_value}
                     onChange={this.changeValue}

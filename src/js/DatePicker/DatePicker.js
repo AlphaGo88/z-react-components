@@ -466,7 +466,6 @@ const DatePicker = React.createClass({
                 disabled={disabled}
                 readOnly
                 onClick={this.handleInputClick}
-                onKeyDown={this.handleKeyDown}
             />
         );
     },
@@ -695,9 +694,11 @@ const DatePicker = React.createClass({
                 <div 
                     className={`dropdown-wrapper ${className}`}
                     style={style}
+                    tabIndex="0"
+                    onKeyDown={this.handleKeyDown}
                 >
-                    <i className="fa fa-calendar datepicker-icon"></i>
                     {input}
+                    <i className="fa fa-calendar datepicker-icon"></i>
                     <div 
                         className={classNames(
                             [`dropdown ${dropdownClassName}`]: true, 
@@ -705,8 +706,6 @@ const DatePicker = React.createClass({
                             {'offscreen': !isOpen }
                         )}
                         style={dropdownStyle}
-                        tabIndex="0"
-                        onKeyDown={this.handleKeyDown}
                     >
                         {panelHead}
                         {panelBody}
