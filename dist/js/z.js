@@ -1535,13 +1535,15 @@ var Z =
 	    handleOptionHover: function handleOptionHover(index) {
 	        this.setState({ hoverIndex: index });
 	    },
+	    handleMouseLeave: function handleMouseLeave() {
+	        this.setState({ hoverIndex: -1 });
+	    },
 	    selectOption: function selectOption(optionValue) {
 	        if (this.props.multi) {
 	            this.props.onChange(this._value.concat([optionValue]));
 	        } else {
 	            this.setState({
-	                isOpen: false,
-	                hoverIndex: -1
+	                isOpen: false
 	            });
 	            if (optionValue !== this._value) {
 	                this.props.onChange(optionValue);
@@ -1688,6 +1690,7 @@ var Z =
 	                    'div',
 	                    {
 	                        className: classNames((_classNames = {}, _defineProperty(_classNames, 'select-trigger ' + selectClassName, true), _defineProperty(_classNames, 'select-trigger-single', !multi), _defineProperty(_classNames, 'select-trigger-multi', multi), _defineProperty(_classNames, 'focus', isOpen), _defineProperty(_classNames, 'disabled', disabled), _classNames)),
+	                        style: selectStyle,
 	                        onClick: this.handleTriggerClick
 	                    },
 	                    multi ? selectedItems.length ? React.createElement(
@@ -1730,7 +1733,10 @@ var Z =
 	                    },
 	                    React.createElement(
 	                        'ul',
-	                        { className: 'select-options' },
+	                        {
+	                            className: 'select-options',
+	                            onMouseLeave: this.handleMouseLeave
+	                        },
 	                        options.map(function (item, i) {
 	                            var selected = multi ? _this2._value.indexOf(item.value) > -1 : _this2._value === item.value;
 	                            return React.createElement(

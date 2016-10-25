@@ -17,6 +17,12 @@
         color: @text-color-lighter;
         cursor: @cursor-disabled;
     }
+    &.required {
+        border-color: @color-warning;
+    }
+    &.error {
+        border-color: @color-danger;
+    }
     > .placeholder {
         color: @text-color-lighter;
     }
@@ -127,7 +133,6 @@
 .select-options {
     max-height: 288px;
     text-align: left;
-    background-color: #fff;
     overflow: auto;
 
     > .select-option {
@@ -135,12 +140,11 @@
         height: @input-height;
         line-height: @input-height;
         padding: 0 18px;
-        color: rgba(0, 0, 0, 0.870588);
         white-space: nowrap;
         cursor: pointer;
 
         &.hover {
-            background-color: rgb(232, 232, 232);
+            background-color: #eee;
         }
         &.selected {
             color: @primary-color;
@@ -150,7 +154,6 @@
             cursor: @cursor-disabled;
         }
         &.group-label {
-            background-color: #fff;
             font-weight: bold;
             cursor: default;
         }

@@ -102,13 +102,16 @@ const Select = React.createClass({
         this.setState({ hoverIndex: index });
     },
 
+    handleMouseLeave() {
+        this.setState({ hoverIndex: -1 });
+    },
+
     selectOption(optionValue) {
         if (this.props.multi) {
             this.props.onChange(this._value.concat([optionValue]));
         } else {
             this.setState({
-                isOpen: false,
-                hoverIndex: -1
+                isOpen: false
             });
             if (optionValue !== this._value) {
                 this.props.onChange(optionValue);
@@ -243,6 +246,7 @@ const Select = React.createClass({
                             'focus': isOpen,
                             'disabled': disabled
                         })}
+                        style={selectStyle}
                         onClick={this.handleTriggerClick}
                     >
                         {multi ?
@@ -282,7 +286,10 @@ const Select = React.createClass({
                         })}
                         style={dropdownStyle}
                     >
-                        <ul className="select-options">
+                        <ul 
+                            className="select-options"
+                            onMouseLeave={this.handleMouseLeave}
+                        >
                             {options.map((item, i) => {
                                 const selected = multi ? (this._value.indexOf(item.value) > -1) : (this._value === item.value);
                                 return (
