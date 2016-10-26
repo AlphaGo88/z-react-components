@@ -512,6 +512,8 @@ var Z =
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 	// DatePicker
 	// ------------------------
 
@@ -519,12 +521,12 @@ var Z =
 	var classNames = __webpack_require__(5);
 	var ClickAwayListener = __webpack_require__(12);
 
-	//判断是否为闰年
+	// Whether the year is a leap year
 	var isLeapYear = function isLeapYear(year) {
 	    return year % 400 === 0 || year % 4 === 0 && year % 100 !== 0;
 	};
 
-	//获取某一年某一月份的天数
+	// How many days does a month have
 	var getMonthDays = function getMonthDays(year, month) {
 	    return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month] || (isLeapYear(year) ? 29 : 28);
 	};
@@ -650,6 +652,7 @@ var Z =
 	        return {
 	            className: '',
 	            inputClassName: '',
+	            dropdownClassName: '',
 	            disabled: false,
 	            selectTime: false,
 	            onChange: function onChange() {},
@@ -668,23 +671,22 @@ var Z =
 	        var disableDates = _props.disableDates;
 
 	        var today = new Date();
-	        var selectedDate = today; //初始默认选中的日期
-	        var curDate = ''; //当前日期值(与input的值同步)，如果没有指定值或默认值则为''
+	        var selectedDate = today; // defaultly selected date(may not be synchronized to the component's value).
+	        var curDate = ''; // the current date object(synchronized with the component's value).
 
 	        if (value) {
-	            //如果指定日期，选中指定日期
+	            // select specified date
 	            selectedDate = new Date(value);
 	            curDate = selectedDate;
 	        } else if (defaultValue) {
-	            //如果有默认日期，选中默认日期
+	            // select default value
 	            selectedDate = new Date(defaultValue);
 	            curDate = selectedDate;
 	        } else {
-	            //如果没有指定或默认日期，
-	            //判断今天是否在disabled日期范围内
-	            //如果今天大于最大日期，默认选中最大日期
-	            //如果今天小于最小日期，默认选中最小日期
-	            //否则默认选中今天
+	            // If no value is specified:
+	            // If today is greater than `maxValue`, select `maxValue` defaultly.
+	            // If today is before `minValue`, select `minValue` defaultly.
+	            // Otherwise select today defaultly.
 	            if (maxValue && today.valueOf() > new Date(maxValue).valueOf()) {
 	                selectedDate = new Date(maxValue);
 	            } else if (minValue && today.valueOf() < new Date(minValue).valueOf()) {
@@ -697,19 +699,19 @@ var Z =
 
 	        return _extends({
 	            isOpen: false,
-	            view: 'date', //当前视图，日期选择('date')或时间选择('time')
+	            view: 'date',
 	            curDate: curDate
 	        }, dateProps);
 	    },
 
 
-	    //如果点击到别处关闭并还原日期
+	    // Restore the value when click away.
 	    handleClickAway: function handleClickAway() {
 	        this.state.isOpen && this.hideAndRestore();
 	    },
 
 
-	    //点击别处或取消，不保存，还原原来的日期
+	    // Restore the value when click away or cancel.
 	    hideAndRestore: function hideAndRestore() {
 	        var dateProps = this.state.curDate ? getDateProps(this.state.curDate) : getDateProps(this.initialSelectedDate);
 
@@ -718,10 +720,7 @@ var Z =
 	            view: 'date'
 	        }, dateProps));
 	    },
-
-
-	    //点击input，显示或隐藏选择框
-	    handleInputClick: function handleInputClick() {
+	    handleTriggerClick: function handleTriggerClick() {
 	        if (this.state.isOpen) {
 	            this.hideAndRestore();
 	        } else {
@@ -730,21 +729,21 @@ var Z =
 	    },
 
 
-	    //切换到选择时间（支持选择时间时有效）
+	    // Switch to time selection.
 	    selectTime: function selectTime() {
 	        this.setState({ view: 'time' });
 	    },
 
 
-	    //切换到选择日期（支持选择时间时有效）
+	    // Swith to date selection.
 	    selectDate: function selectDate() {
 	        this.setState({ view: 'date' });
 	    },
 
 
-	    //当切换年份或月份时，
-	    //如果切换到的年份和月份与当前日期的年份和月份相同，选中当前日期的日
-	    //否则不选中任何日(date = 0)
+	    // When go to a year or month,
+	    // If the year and month are same with current, select current date,
+	    // Otherwise select no date.
 	    inCurrentYearAndMonth: function inCurrentYearAndMonth(year, month) {
 	        var curDate = this.state.curDate;
 
@@ -804,9 +803,9 @@ var Z =
 	    },
 
 
-	    //选择某个日期
-	    //当可选择时间，仅选中
-	    //当不可选择时间，选中并更新到当前日期
+	    // Select a date.
+	    // If `selectTime` is true, just select it.
+	    // Other wise update the component's value.
 	    setDate: function setDate(date) {
 	        if (this.props.selectTime) {
 	            if (date !== this.state.date) this.setState({ date: date });
@@ -836,9 +835,6 @@ var Z =
 	    setSeconds: function setSeconds(seconds) {
 	        if (seconds !== this.state.seconds) this.setState({ seconds: seconds });
 	    },
-
-
-	    //选择今天(当selectTime == false)或现在(当selectTime == true)
 	    setToday: function setToday() {
 	        var today = new Date();
 	        var dateProps = getDateProps(today);
@@ -851,10 +847,10 @@ var Z =
 	        this.props.onChange(dateStr, today);
 	    },
 	    clear: function clear() {
-	        //恢复初始选中的日期
+	        // Restore the initially selected date.
 	        var dateProps = getDateProps(this.initialSelectedDate);
 	        this.setState(_extends({
-	            curDate: '', //当前日期为空，将同步到input的值
+	            curDate: '',
 	            isOpen: false,
 	            view: 'date'
 	        }, dateProps));
@@ -862,10 +858,10 @@ var Z =
 	    },
 
 
-	    //确认选择，当可选择时间时有效
+	    // Confirm selection when `multi` is true.
 	    ok: function ok() {
-	        //如果选择了日期，更新
-	        //如果没选择日期，相当于取消
+	        // Update if any date is selected.
+	        // Otherwise cancel.
 	        var _state2 = this.state;
 	        var year = _state2.year;
 	        var month = _state2.month;
@@ -887,9 +883,6 @@ var Z =
 	            this.hideAndRestore();
 	        }
 	    },
-
-
-	    //判断某个日期是否在disabled范围内
 	    isDateDisabled: function isDateDisabled(year, month, date) {
 	        var _props2 = this.props;
 	        var maxValue = _props2.maxValue;
@@ -950,7 +943,7 @@ var Z =
 	    },
 
 
-	    //按方向键，选择日期
+	    // Press on keyboard to select a date.
 	    pressKeyToDate: function pressKeyToDate(offset) {
 	        if (offset > 31 || offset < -31) return;
 
@@ -974,18 +967,22 @@ var Z =
 	            });
 	        }
 	    },
-	    renderInput: function renderInput() {
+	    renderTrigger: function renderTrigger() {
+	        var _classNames;
+
 	        var _props3 = this.props;
 	        var inputClassName = _props3.inputClassName;
 	        var inputStyle = _props3.inputStyle;
 	        var placeholder = _props3.placeholder;
 	        var selectTime = _props3.selectTime;
 	        var disabled = _props3.disabled;
-	        var value = _props3.value;
-	        var curDate = this.state.curDate;
+	        var _state4 = this.state;
+	        var curDate = _state4.curDate;
+	        var isOpen = _state4.isOpen;
 
-	        var dateStr = ''; //input显示的日期
+	        var dateStr = ''; // The date string displayed.
 
+	        // get date string base on current date object.
 	        if (curDate) {
 	            var dateProps = getDateProps(curDate);
 	            var year = dateProps.year;
@@ -998,16 +995,21 @@ var Z =
 	            dateStr = selectTime ? getDateTimeStr(year, month, date, hours, minutes, seconds) : getDateStr(year, month, date);
 	        }
 
-	        return React.createElement('input', {
-	            type: 'text',
-	            className: 'datepicker-trigger ' + inputClassName,
-	            style: inputStyle,
-	            value: dateStr,
-	            placeholder: placeholder,
-	            disabled: disabled,
-	            readOnly: true,
-	            onClick: this.handleInputClick
-	        });
+	        return React.createElement(
+	            'div',
+	            {
+	                className: classNames((_classNames = {}, _defineProperty(_classNames, 'datepicker-trigger ' + inputClassName, true), _defineProperty(_classNames, 'focus', isOpen), _defineProperty(_classNames, 'disabled', disabled), _classNames)),
+	                style: inputStyle,
+	                onClick: this.handleTriggerClick
+	            },
+	            React.createElement('input', {
+	                type: 'text',
+	                value: dateStr,
+	                placeholder: placeholder,
+	                readOnly: true
+	            }),
+	            React.createElement('i', { className: 'fa fa-calendar' })
+	        );
 	    },
 	    renderPanelHead: function renderPanelHead() {
 	        var _this = this;
@@ -1015,13 +1017,13 @@ var Z =
 	        var _props4 = this.props;
 	        var maxValue = _props4.maxValue;
 	        var minValue = _props4.minValue;
-	        var _state4 = this.state;
-	        var year = _state4.year;
-	        var month = _state4.month;
-	        var date = _state4.date;
-	        var hours = _state4.hours;
-	        var minutes = _state4.minutes;
-	        var seconds = _state4.seconds;
+	        var _state5 = this.state;
+	        var year = _state5.year;
+	        var month = _state5.month;
+	        var date = _state5.date;
+	        var hours = _state5.hours;
+	        var minutes = _state5.minutes;
+	        var seconds = _state5.seconds;
 
 	        var minDate = minValue && new Date(minValue) || '';
 	        var maxDate = maxValue && new Date(maxValue) || '';
@@ -1093,27 +1095,27 @@ var Z =
 	        var minValue = _props5.minValue;
 	        var disableDates = _props5.disableDates;
 	        var value = _props5.value;
-	        var _state5 = this.state;
-	        var view = _state5.view;
-	        var year = _state5.year;
-	        var month = _state5.month;
-	        var date = _state5.date;
+	        var _state6 = this.state;
+	        var view = _state6.view;
+	        var year = _state6.year;
+	        var month = _state6.month;
+	        var date = _state6.date;
 
-	        /* 生成日期 Start */
+	        /* Generates dates Start */
 
-	        var howManyDates = getMonthDays(year, month); //本月有多少天
-	        var offset = new Date(year, month, 1).getDay() || 7; //本月第一天是星期几
+	        var howManyDates = getMonthDays(year, month);
+	        var offset = new Date(year, month, 1).getDay() || 7; // What day is the first date of the month.
 
 	        var dates = [],
 	            rows = [],
 	            i = void 0;
 
-	        //第一行本月1号之前的空日期
+	        // Empty dates before the first date.
 	        for (i = 1; i < offset; i++) {
 	            dates.push({ value: 0 });
 	        }
 
-	        //本月的日期
+	        // Dates of current month.
 	        for (i = 1; i <= howManyDates; i++) {
 	            dates.push({
 	                value: i,
@@ -1122,13 +1124,14 @@ var Z =
 	            });
 	        }
 
-	        //按行分组
+	        // Rows of dates.
 	        for (i = 0; i <= dates.length; i += 7) {
 	            rows.push(dates.slice(i, i + 7));
 	        }
-	        /* 生成日期 End */
 
-	        /* 生成小时分秒 Start */
+	        /* Generates dates End */
+
+	        // Hours, minutes and seconds.
 	        var hours = [],
 	            minutes = [],
 	            seconds = [];
@@ -1142,7 +1145,6 @@ var Z =
 	            minutes = timeArr.slice(0, 60);
 	            seconds = timeArr.slice(0, 60);
 	        }
-	        /* 生成小时分秒 End */
 
 	        return React.createElement(
 	            'div',
@@ -1331,7 +1333,7 @@ var Z =
 	        var isOpen = this.state.isOpen;
 
 
-	        var input = this.renderInput();
+	        var trigger = this.renderTrigger();
 	        var panelHead = this.renderPanelHead();
 	        var panelBody = this.renderPanelBody();
 	        var panelFoot = this.renderPanelFoot();
@@ -1347,8 +1349,7 @@ var Z =
 	                    tabIndex: '0',
 	                    onKeyDown: this.handleKeyDown
 	                },
-	                input,
-	                React.createElement('i', { className: 'fa fa-calendar datepicker-icon' }),
+	                trigger,
 	                React.createElement(
 	                    'div',
 	                    {
@@ -3227,7 +3228,7 @@ var Z =
 
 	    mixins: [Formsy.Mixin],
 
-	    componentDidMount: function componentDidMount() {
+	    componentWillMount: function componentWillMount() {
 	        this.setValue(this.props.value || '');
 	    },
 	    render: function render() {
@@ -3261,7 +3262,7 @@ var Z =
 
 	    mixins: [Formsy.Mixin],
 
-	    componentDidMount: function componentDidMount() {
+	    componentWillMount: function componentWillMount() {
 	        this.setValue(this.props.value || '');
 	    },
 	    render: function render() {
@@ -3308,7 +3309,7 @@ var Z =
 	    // Add the Formsy Mixin
 	    mixins: [Formsy.Mixin],
 
-	    componentDidMount: function componentDidMount() {
+	    componentWillMount: function componentWillMount() {
 	        this.setValue(this.props.defaultValue || '');
 	    },
 
@@ -3399,7 +3400,7 @@ var Z =
 
 	    mixins: [Formsy.Mixin],
 
-	    componentDidMount: function componentDidMount() {
+	    componentWillMount: function componentWillMount() {
 	        var _props = this.props;
 	        var multi = _props.multi;
 	        var defaultValue = _props.defaultValue;
@@ -3495,7 +3496,7 @@ var Z =
 	    // Add the Formsy Mixin
 	    mixins: [Formsy.Mixin],
 
-	    componentDidMount: function componentDidMount() {
+	    componentWillMount: function componentWillMount() {
 	        this.setValue(this.props.defaultValue || '');
 	    },
 	    changeValue: function changeValue(dateStr, dateObj) {
@@ -3569,7 +3570,7 @@ var Z =
 
 	    mixins: [Formsy.Mixin],
 
-	    componentDidMount: function componentDidMount() {
+	    componentWillMount: function componentWillMount() {
 	        this.setValue(this.props.defaultValue || '');
 	    },
 	    changeValue: function changeValue(value) {
@@ -3635,7 +3636,7 @@ var Z =
 
 	    mixins: [Formsy.Mixin],
 
-	    componentDidMount: function componentDidMount() {
+	    componentWillMount: function componentWillMount() {
 	        this.setValue(this.props.defaultValue || []);
 	    },
 	    changeValue: function changeValue(value) {
@@ -3700,7 +3701,7 @@ var Z =
 
 	    mixins: [Formsy.Mixin],
 
-	    componentDidMount: function componentDidMount() {
+	    componentWillMount: function componentWillMount() {
 	        this.setValue(this.props.defaultValue || '');
 	    },
 	    changeValue: function changeValue(event) {

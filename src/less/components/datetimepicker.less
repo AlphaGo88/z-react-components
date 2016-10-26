@@ -3,22 +3,46 @@
 // --------------------------------------------------
 
 .datepicker-trigger {
-    display: block;
     position: relative;
     width: 100%;
-}
+    height: @input-height;
+    line-height: @input-height - 2;
+    border: 1px solid @border-color-base;
 
-.datepicker-icon {
-    position: absolute;
-    right: 8px;
-    top: 10px;
-    font-size: 16px;
-    cursor: pointer;
-}
+    &.focus {
+        border-color: darken(@border-color-base, 18%);
+    }
+    &.disabled {
+        background-color: #efefef;
+        color: @text-color-lighter;
+        cursor: @cursor-disabled;
 
-input[disabled].datepicker-trigger + .datepicker-icon {
-    color: @text-color-light;
-    cursor: @cursor-disabled;
+        > i {
+            color: @text-color-light;
+            cursor: @cursor-disabled;
+        }
+    }
+    &.required {
+        border-color: @color-warning;
+    }
+    &.error {
+        border-color: @color-danger;
+    }
+    > .placeholder {
+        color: @text-color-lighter;
+    }
+    > input {
+        width: 100%;
+        height: @input-height - 2;
+        padding-right: 22px;
+        border: 0
+    }
+    > i {
+        position: absolute;
+        top: 10px;
+        right: 5px;
+        cursor: pointer;
+    }
 }
 
 .datepicker-panel {

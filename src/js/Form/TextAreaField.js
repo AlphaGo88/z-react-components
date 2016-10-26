@@ -9,7 +9,7 @@ const TextAreaField = React.createClass({
 
     mixins: [Formsy.Mixin],
 
-    componentDidMount() {
+    componentWillMount() {
         this.setValue(this.props.defaultValue || '');
     },
 

@@ -10,7 +10,7 @@ const InputField = React.createClass({
     // Add the Formsy Mixin
     mixins: [Formsy.Mixin],
 
-    componentDidMount() {
+    componentWillMount() {
         this.setValue(this.props.defaultValue || '');
     },
 

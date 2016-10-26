@@ -5,12 +5,12 @@ const React = require('react');
 const classNames = require('classnames');
 const ClickAwayListener = require('../internal/ClickAwayListener');
 
-//判断是否为闰年
+// Whether the year is a leap year
 const isLeapYear = (year) => {
     return (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
 }
 
-//获取某一年某一月份的天数
+// How many days does a month have
 const getMonthDays = (year, month) => {
     return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month] || (isLeapYear(year) ? 29 : 28);
 }
@@ -134,6 +134,7 @@ const DatePicker = React.createClass({
         return {
             className: '',
             inputClassName: '',
+            dropdownClassName: '',
             disabled: false,
             selectTime: false,
             onChange() {},
@@ -144,23 +145,22 @@ const DatePicker = React.createClass({
     getInitialState() {
         const { defaultValue, value, maxValue, minValue, disableDates } = this.props;
         const today = new Date(); 
-        let selectedDate = today;   //初始默认选中的日期
-        let curDate = '';   //当前日期值(与input的值同步)，如果没有指定值或默认值则为''
+        let selectedDate = today;   // defaultly selected date(may not be synchronized to the component's value).
+        let curDate = '';   // the current date object(synchronized with the component's value).
 
         if (value) { 
-            //如果指定日期，选中指定日期
+            // select specified date
             selectedDate = new Date(value);
             curDate = selectedDate;
         } else if (defaultValue) {
-            //如果有默认日期，选中默认日期
+            // select default value
             selectedDate = new Date(defaultValue);
             curDate = selectedDate;
         } else {
-            //如果没有指定或默认日期，
-            //判断今天是否在disabled日期范围内
-            //如果今天大于最大日期，默认选中最大日期
-            //如果今天小于最小日期，默认选中最小日期
-            //否则默认选中今天
+            // If no value is specified:
+            // If today is greater than `maxValue`, select `maxValue` defaultly.
+            // If today is before `minValue`, select `minValue` defaultly.
+            // Otherwise select today defaultly.
             if (maxValue && today.valueOf() > new Date(maxValue).valueOf()) {
                 selectedDate = new Date(maxValue);
             } else if (minValue && today.valueOf() < new Date(minValue).valueOf()) {
@@ -173,18 +173,18 @@ const DatePicker = React.createClass({
 
         return {
             isOpen: false,
-            view: 'date',   //当前视图，日期选择('date')或时间选择('time')
+            view: 'date',
             curDate,
             ...dateProps
         };
     },
 
-    //如果点击到别处关闭并还原日期
+    // Restore the value when click away.
     handleClickAway() {
         this.state.isOpen && this.hideAndRestore();
     },
 
-    //点击别处或取消，不保存，还原原来的日期
+    // Restore the value when click away or cancel.
     hideAndRestore() {
         const dateProps = this.state.curDate ? 
             getDateProps(this.state.curDate) 
@@ -198,8 +198,7 @@ const DatePicker = React.createClass({
         });
     },
 
-    //点击input，显示或隐藏选择框
-    handleInputClick() {
+    handleTriggerClick() {
         if (this.state.isOpen) {
             this.hideAndRestore();
         } else {
@@ -207,19 +206,19 @@ const DatePicker = React.createClass({
         }
     },
 
-    //切换到选择时间（支持选择时间时有效）
+    // Switch to time selection.
     selectTime() {
         this.setState({ view: 'time' });
     },
 
-    //切换到选择日期（支持选择时间时有效）
+    // Swith to date selection.
     selectDate() {
         this.setState({ view: 'date' });
     },
     
-    //当切换年份或月份时，
-    //如果切换到的年份和月份与当前日期的年份和月份相同，选中当前日期的日
-    //否则不选中任何日(date = 0)
+    // When go to a year or month,
+    // If the year and month are same with current, select current date,
+    // Otherwise select no date.
     inCurrentYearAndMonth(year, month) {
         const { curDate } = this.state;
         const initialDate = this.initialSelectedDate;
@@ -283,9 +282,9 @@ const DatePicker = React.createClass({
         }
     },
 
-    //选择某个日期
-    //当可选择时间，仅选中
-    //当不可选择时间，选中并更新到当前日期
+    // Select a date.
+    // If `selectTime` is true, just select it.
+    // Other wise update the component's value.
     setDate(date) {
         if (this.props.selectTime) {
             if (date !== this.state.date) this.setState({ date });
@@ -316,7 +315,6 @@ const DatePicker = React.createClass({
         if (seconds !== this.state.seconds) this.setState({ seconds });
     },
 
-    //选择今天(当selectTime == false)或现在(当selectTime == true)
     setToday() {
         const today = new Date();
         const dateProps = getDateProps(today);
@@ -334,10 +332,10 @@ const DatePicker = React.createClass({
     },
 
     clear() {
-        //恢复初始选中的日期
+        // Restore the initially selected date.
         const dateProps = getDateProps(this.initialSelectedDate);
         this.setState({
-            curDate: '', //当前日期为空，将同步到input的值
+            curDate: '',
             isOpen: false,
             view: 'date',
             ...dateProps
@@ -345,10 +343,10 @@ const DatePicker = React.createClass({
         this.props.onChange('', null);
     },
 
-    //确认选择，当可选择时间时有效
+    // Confirm selection when `multi` is true.
     ok() {
-        //如果选择了日期，更新
-        //如果没选择日期，相当于取消
+        // Update if any date is selected.
+        // Otherwise cancel.
         const { year, month, date, hours, minutes, seconds } = this.state;
         if (date) {
             const dateStr = getDateTimeStr(year, month, date, hours, minutes, seconds);
@@ -364,7 +362,6 @@ const DatePicker = React.createClass({
         }
     },
 
-    //判断某个日期是否在disabled范围内
     isDateDisabled(year, month, date) {
         const { maxValue, minValue, disableDates } = this.props;
         const _maxValue = maxValue ? new Date(maxValue).valueOf() : 0;
@@ -421,7 +418,7 @@ const DatePicker = React.createClass({
         }
     },
 
-    //按方向键，选择日期
+    // Press on keyboard to select a date.
     pressKeyToDate(offset) {
         if (offset > 31 || offset < -31) return;
 
@@ -442,11 +439,12 @@ const DatePicker = React.createClass({
         }
     },
 
-    renderInput() {
-        const { inputClassName, inputStyle, placeholder, selectTime, disabled, value } = this.props;
-        const { curDate } = this.state;
-        let dateStr = '';   //input显示的日期
+    renderTrigger() {
+        const { inputClassName, inputStyle, placeholder, selectTime, disabled } = this.props;
+        const { curDate, isOpen } = this.state;
+        let dateStr = '';   // The date string displayed.
 
+        // get date string base on current date object.
         if (curDate) {
             const dateProps = getDateProps(curDate);
             const { year, month, date, hours, minutes, seconds } = dateProps;
@@ -457,16 +455,23 @@ const DatePicker = React.createClass({
         }
 
         return (
-            <input 
-                type="text" 
-                className={`datepicker-trigger ${inputClassName}`}
+            <div 
+                className={classNames({
+                    [`datepicker-trigger ${inputClassName}`]: true,
+                    'focus': isOpen,
+                    'disabled': disabled
+                })}
                 style={inputStyle}
-                value={dateStr} 
-                placeholder={placeholder} 
-                disabled={disabled}
-                readOnly
-                onClick={this.handleInputClick}
-            />
+                onClick={this.handleTriggerClick}
+            >
+                <input
+                    type="text"
+                    value={dateStr}
+                    placeholder={placeholder}
+                    readOnly
+                />
+                <i className="fa fa-calendar"></i>
+            </div>
         );
     },
 
@@ -533,18 +538,19 @@ const DatePicker = React.createClass({
         const { selectTime, maxValue, minValue, disableDates, value} = this.props;
         const { view, year, month, date } = this.state;
 
-        /* 生成日期 Start */
-        const howManyDates = getMonthDays(year, month);     //本月有多少天
-        const offset = new Date(year, month, 1).getDay() || 7;   //本月第一天是星期几
+        /* Generates dates Start */
+
+        const howManyDates = getMonthDays(year, month);
+        const offset = new Date(year, month, 1).getDay() || 7;   // What day is the first date of the month.
 
         let dates = [], rows = [], i;
 
-        //第一行本月1号之前的空日期
+        // Empty dates before the first date.
         for (i = 1; i < offset; i++) {
             dates.push({ value: 0 });
         }
 
-        //本月的日期
+        // Dates of current month.
         for (i = 1; i <= howManyDates; i++) {
             dates.push({
                 value: i,
@@ -553,13 +559,14 @@ const DatePicker = React.createClass({
             });
         }
 
-        //按行分组
+        // Rows of dates.
         for (i = 0; i <= dates.length; i += 7) {
             rows.push(dates.slice(i, i + 7));
         }
-        /* 生成日期 End */
 
-        /* 生成小时分秒 Start */
+        /* Generates dates End */
+
+        // Hours, minutes and seconds.
         let hours = [], minutes = [], seconds = [];
         if (selectTime) {
             let timeArr = [];
@@ -571,7 +578,6 @@ const DatePicker = React.createClass({
             minutes = timeArr.slice(0, 60);
             seconds = timeArr.slice(0, 60);
         }
-        /* 生成小时分秒 End */
 
         return (
             <div className="datepicker-body">
@@ -684,7 +690,7 @@ const DatePicker = React.createClass({
         const { className, dropdownClassName, style, dropdownStyle } = this.props;
         const { isOpen } = this.state;
 
-        const input = this.renderInput();
+        const trigger = this.renderTrigger();
         const panelHead = this.renderPanelHead();
         const panelBody = this.renderPanelBody();
         const panelFoot = this.renderPanelFoot();
@@ -697,8 +703,8 @@ const DatePicker = React.createClass({
                     tabIndex="0"
                     onKeyDown={this.handleKeyDown}
                 >
-                    {input}
-                    <i className="fa fa-calendar datepicker-icon"></i>
+                    {trigger}
+                    
                     <div 
                         className={classNames(
                             [`dropdown ${dropdownClassName}`]: true, 

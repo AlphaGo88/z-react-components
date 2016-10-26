@@ -10,7 +10,7 @@ const SelectField = React.createClass({
 
     mixins: [Formsy.Mixin],
 
-    componentDidMount() {
+    componentWillMount() {
         const { multi, defaultValue } = this.props;
 
         if (multi) {

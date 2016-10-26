@@ -8,7 +8,7 @@ const TextField = React.createClass({
 
     mixins: [Formsy.Mixin],
 
-    componentDidMount() {
+    componentWillMount() {
         this.setValue(this.props.value || '');
     },
 
