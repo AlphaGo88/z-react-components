@@ -1,5 +1,6 @@
 
 const { Formsy } = Z;
+const TextField = Formsy.TextField;
 const Input = Formsy.InputField;
 const Select = Formsy.SelectField;
 const RadioGroup = Formsy.RadioGroupField;
@@ -71,19 +72,22 @@ const MyAppForm = React.createClass({
         const { countries, cities, fruits } = this.props;
         const { country } = this.state;
         return (
-          <Formsy.Form style={{width: 400}} onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
-            <Input className="col-6" name="name" title="name" />
-            <Date className="col-6" name="birth" title="birth" selectTime={true} disableDates={(date) => date.getDay() === 5}
-            />
-            <Select className="col-6" name="select1" options={countries} title="country" onChange={this.countryChange}/>
-            <Select ref="citySelect" className="col-6" name="select2" options={cities[country]} title="city"/>
-            <RadioGroup className="col-6" name="radio" items={countries} required/>
-            <CheckboxGroup className="col-6" name="checkbox" items={fruits} required/>
-            <TextArea className="col-6" name="ta"/>
-            <div className="form-group col-12">
-                <button className="btn-float btn-primary" disabled={!this.state.canSubmit}>Submit</button>
+            <div style={{padding: 20}}>
+              <Formsy.Form style={{width: 400}} onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
+                <TextField className="col-6" name="id" title="id" value="111">330234</TextField>
+                <Input className="col-6" name="name" title="name" />
+                <Date className="col-6" name="birth" title="birth"/>
+                <Date className="col-6" name="birth" title="graduate" selectTime={true}/>
+                <Select className="col-6" name="select1" options={countries} title="country" onChange={this.countryChange}/>
+                <Select ref="citySelect" className="col-6" name="select2" options={cities[country]} title="city"/>
+                <RadioGroup className="col-6" name="radio" items={countries} required/>
+                <CheckboxGroup className="col-6" name="checkbox" items={fruits} required/>
+                <TextArea className="col-6" name="ta"/>
+                <div className="form-group col-12">
+                    <button className="btn-float btn-primary" disabled={!this.state.canSubmit}>Submit</button>
+                </div>
+              </Formsy.Form>
             </div>
-          </Formsy.Form>
         );
     }
 });

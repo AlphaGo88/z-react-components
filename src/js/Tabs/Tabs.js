@@ -2,7 +2,7 @@
 // ------------------------
 
 const React = require('react');
-const classNames = require('classnames');
+const cx = require('classnames');
 const Tab = require('./Tab');
 
 let Tabs = React.createClass({
@@ -48,8 +48,6 @@ let Tabs = React.createClass({
 
     getDefaultProps() {
         return {
-            className: '',
-            tabClassName: '',
             activeIndex: 0,
             onChange() {}
         };
@@ -73,32 +71,31 @@ let Tabs = React.createClass({
 
         return (
             <div 
-                className={`${className}`}
+                className={className}
                 style={style}
             >
                 <ul className="tabs">
-                    {children.map((child, i) => (
+                    {React.Children.map(children, (child, i) => (
                         <li 
-                            key={i}
-                            className={classNames({
-                                [`tab ${tabClassName}`]: true,
+                            className={cx('tab', tabClassName, {
                                 'active': i === activeIndex
                             })}
                             style={tabStyle}
                             onClick={e => this.handleChange(i)}
                         >
                             {child.props.label}
+                            {i === activeIndex &&
+                                <div className="marker"/>
+                            }
                         </li>
                     ))}
                 </ul>
-                {children.map((child, i) => (
+                {React.Children.map(children, (child, i) => (
                     <div 
-                        key={i}
-                        className={classNames('tab-content', {
-                            [`${child.props.className}`]: child.props.className,
+                        className={cx('tab-content', child.props.contentClassName, {
                             'active': i === activeIndex
                         })}
-                        style={child.props.style}
+                        style={child.props.contentStyle}
                     >
                         {child.props.children}
                     </div>

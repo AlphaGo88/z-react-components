@@ -2,7 +2,7 @@
 // ------------------------
 
 const React = require('react');
-const classNames = require('classnames');
+const cx = require('classnames');
 const ClickAwayListener = require('../internal/ClickAwayListener');
 
 const Select = React.createClass({
@@ -72,9 +72,6 @@ const Select = React.createClass({
 
     getDefaultProps() {
         return {
-            className: '',
-            selectClassName: '',
-            dropdownClassName: '',
             multi: false,
             options: [],
             disabled: false,
@@ -189,22 +186,25 @@ const Select = React.createClass({
             multi, 
             disabled, 
             options, 
-            value,
-            children 
+            value
         } = this.props;
         const { isOpen, hoverIndex } = this.state;
 
         let displayText = '';
         let selectedItems = [];
+        let k, idx;
 
         if (multi) {
             // get selected items when `multi` is true
             if (value && value.length > 0) {
                 this._value = value;
-                
-                selectedItems = options.filter(item => 
-                    this._value.indexOf(item.value) > -1
-                );
+
+                for (k = 0; k < options.length; k++) {
+                    idx = this._value.indexOf(options[k].value);
+                    if (idx > -1) {
+                        selectedItems[idx] = options[k];
+                    }
+                }
 
                 if (!selectedItems.length) {
                     console.warn('The `value` prop of `Select` does not match any of its options.');
@@ -233,14 +233,13 @@ const Select = React.createClass({
         return (
             <ClickAwayListener onClickAway={this.handleClickAway}>
                 <div 
-                    className={`dropdown-wrapper ${className}`}
+                    className={cx('dropdown-wrapper select-wrapper', className)}
                     style={style}
                     tabIndex="0" 
                     onKeyDown={this.handleKeyDown}
                 >
                     <div 
-                        className={classNames({
-                            [`select-trigger ${selectClassName}`]: true,
+                        className={cx(selectClassName, {
                             'select-trigger-single': !multi,
                             'select-trigger-multi': multi,
                             'focus': isOpen,
@@ -249,7 +248,7 @@ const Select = React.createClass({
                         style={selectStyle}
                         onClick={this.handleTriggerClick}
                     >
-                        {multi ?
+                        {multi &&
                             (selectedItems.length ?
                                 <ul>
                                     {selectedItems.map((item, i) => (
@@ -268,34 +267,32 @@ const Select = React.createClass({
                                 :
                                 <span className="placeholder">{placeholder}</span>
                             )
-                            :
-                            (displayText ||
-                                <span className="placeholder">{placeholder}</span>
-                            )
+                        }
+                        {multi || displayText ||
+                            <span className="placeholder">{placeholder}</span>
                         }
                         {multi ||
-                            <span className={classNames('caret', {'up': isOpen})}>
+                            <span className={cx({
+                                'caret-down': !isOpen,
+                                'caret-up': isOpen
+                            })}>
                                 <b></b>
                             </span>
                         }
                     </div>
                     <div 
-                        className={classNames({
-                            [`dropdown ${dropdownClassName}`]: true, 
+                        className={cx('dropdown select-dropdown', dropdownClassName, {
                             'offscreen': !isOpen 
                         })}
                         style={dropdownStyle}
                     >
-                        <ul 
-                            className="select-options"
-                            onMouseLeave={this.handleMouseLeave}
-                        >
+                        <ul onMouseLeave={this.handleMouseLeave}>
                             {options.map((item, i) => {
                                 const selected = multi ? (this._value.indexOf(item.value) > -1) : (this._value === item.value);
                                 return (
                                     <li 
                                         key={i}
-                                        className={classNames('select-option', {
+                                        className={cx('select-option', {
                                             'disabled': item.disabled,
                                             'selected': selected,
                                             'hover': i === hoverIndex

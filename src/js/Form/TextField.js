@@ -3,6 +3,7 @@
 
 const React = require('react');
 const Formsy = require('formsy-react');
+const cx = require('classnames');
 
 const TextField = React.createClass({
 
@@ -13,21 +14,21 @@ const TextField = React.createClass({
     },
 
     render() {
+        const { 
+            className, 
+            labelClassName,
+            title
+        } = this.props;
+
         return (
-            <div className={classNames(
-                'form-group', {
-                    [`${className}`]: className
-                }
-            )}>
+            <div className={cx('form-group', className)}>
                 <label 
-                    className={classNames(
-                        'form-label', {
-                            [`${labelClassName}`]: labelClassName
-                        }
-                    )} 
-                />
+                    className={cx('form-label', labelClassName)} 
+                >
+                    {title}
+                </label>
                 <span className="form-text">
-                    {this.getValue()}
+                    {this.props.children}
                 </span>
             </div>
         );

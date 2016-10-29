@@ -2,7 +2,7 @@
 // ---------------------------
 
 const React = require('react');
-const classNames = require('classnames');
+const cx = require('classnames');
 
 const CheckboxGroup = React.createClass({
 
@@ -59,8 +59,6 @@ const CheckboxGroup = React.createClass({
 
     getDefaultProps() {
         return {
-            className: '',
-            itemClassName: '',
             align: 'x',
             items: [],
             value: [],
@@ -95,8 +93,7 @@ const CheckboxGroup = React.createClass({
         return (
             <ul 
                 style={style}
-                className={classNames({
-                    [`checkbox-group ${className}`]: true,
+                className={cx('checkbox-group', className, {
                     'horizonal': align === 'x'
                 })}
             >
@@ -104,11 +101,10 @@ const CheckboxGroup = React.createClass({
                     <li 
                         key={i}
                         style={itemStyle}
-                        className={`${itemClassName}`}
+                        className={itemClassName}
                     >
                         <label 
-                            key={i} 
-                            className={classNames('checkbox', {
+                            className={cx('checkbox', {
                                 'disabled': item.disabled || this.props.disabled
                             })}
                         >
@@ -122,8 +118,7 @@ const CheckboxGroup = React.createClass({
                             <span>{item.text}</span>
                         </label>
                     </li>
-                ))
-            }
+                ))}
             </ul>
         );
     }

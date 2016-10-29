@@ -12,33 +12,6 @@
 @table-bg-hover: @default-color;
 
 
-// Mixins
-
-.table-row-state(@state; @background) {
-    // Exact selectors below required to override `.table-striped` and prevent
-    .table tr {
-        > td.@{state},
-        > th.@{state},
-        &.@{state} > td,
-        &.@{state} > th {
-            background-color: @background;
-        }
-    }
-
-    // Hover states for `.table-hover`
-    // Note: this is not available for cells or rows within `thead` or `tfoot`.
-    .table-hover > tbody > tr {
-        > td.@{state}:hover,
-        > th.@{state}:hover,
-        &.@{state}:hover > td,
-        &:hover > .@{state},
-        &.@{state}:hover > th {
-            background-color: darken(@background, 5%);
-        }
-    }
-}
-
-
 caption {
     padding-top: @table-cell-padding;
     padding-bottom: @table-cell-padding;
@@ -119,12 +92,3 @@ table {
         }
     }
 }
-
-
-// Generate the contextual background
-
-.table-row-state(active; @table-bg-hover);
-.table-row-state(success; @state-success-bg);
-.table-row-state(info; @state-info-bg);
-.table-row-state(warning; @state-warning-bg);
-.table-row-state(danger; @state-danger-bg);

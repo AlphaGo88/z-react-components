@@ -187,6 +187,22 @@ label.checkbox {
         margin-bottom: 0;
     }
 
+    .form-label,
+    .form-control,
+    .form-text {
+        display: block;
+        width: 100%;
+    }
+
+    .form-label {
+        margin-bottom: 4px;
+    }
+
+    .form-text {
+        height: @input-height;
+        line-height: @input-height;
+    }
+
     > .btn-float,
     > .btn-flat,
     > .btn-outline {
@@ -197,23 +213,6 @@ label.checkbox {
         margin-top: 4px;
         color: @color-danger;
     }
-}
-
-.form-label,
-.form-control,
-.form-text {
-    display: block;
-    width: 100%;
-}
-
-.form-label {
-    margin-bottom: 4px;
-}
-
-.form-text {
-    height: @input-height;
-    line-height: @input-height;
-    padding-left: @input-padding-horizonal;
 }
 
 // forms whose labels and inputs are horizonal aligned

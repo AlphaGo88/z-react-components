@@ -115,7 +115,7 @@ var Z =
 	// ------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 
 	var Dialog = React.createClass({
 	    displayName: 'Dialog',
@@ -128,9 +128,39 @@ var Z =
 	        className: React.PropTypes.string,
 
 	        /**
+	         * The css class name of the title container.
+	         */
+	        titleClassName: React.PropTypes.string,
+
+	        /**
+	         * The css class name of the content container.
+	         */
+	        contentClassName: React.PropTypes.string,
+
+	        /**
+	         * The css class name of the actions container.
+	         */
+	        actionsContainerClassName: React.PropTypes.string,
+
+	        /**
 	         * The inline styles of the dialog element.
 	         */
 	        style: React.PropTypes.object,
+
+	        /**
+	         * The inline styles of the title container.
+	         */
+	        titleStyle: React.PropTypes.object,
+
+	        /**
+	         * The inline styles of the content container.
+	         */
+	        contentStyle: React.PropTypes.object,
+
+	        /**
+	         * The inline styles of the actions container.
+	         */
+	        actionsContainerStyle: React.PropTypes.object,
 
 	        /**
 	         * The dialog's title.
@@ -144,7 +174,6 @@ var Z =
 
 	        /**
 	         * Replace default action buttons with this prop.
-	         * Pass a react element or an Array of react elements.
 	         */
 	        actions: React.PropTypes.node,
 
@@ -166,7 +195,6 @@ var Z =
 
 	    getDefaultProps: function getDefaultProps() {
 	        return {
-	            className: '',
 	            isOpen: false,
 	            onOK: function onOK() {},
 	            onCancel: function onCancel() {}
@@ -175,7 +203,13 @@ var Z =
 	    render: function render() {
 	        var _props = this.props;
 	        var className = _props.className;
+	        var titleClassName = _props.titleClassName;
+	        var contentClassName = _props.contentClassName;
+	        var actionsContainerClassName = _props.actionsContainerClassName;
 	        var style = _props.style;
+	        var titleStyle = _props.titleStyle;
+	        var contentStyle = _props.contentStyle;
+	        var actionsContainerStyle = _props.actionsContainerStyle;
 	        var title = _props.title;
 	        var children = _props.children;
 	        var actions = _props.actions;
@@ -186,30 +220,54 @@ var Z =
 
 	        return React.createElement(
 	            'div',
-	            { className: classNames('modal-mask', { 'show': isOpen }) },
+	            {
+	                className: cx('z-dialog-mask', {
+	                    'show': isOpen
+	                })
+	            },
 	            React.createElement(
 	                'div',
-	                { className: 'modal ' + className, style: style },
+	                {
+	                    style: style,
+	                    className: cx('dialog', className)
+	                },
 	                title && React.createElement(
 	                    'h3',
-	                    { className: 'modal-title' },
+	                    {
+	                        style: titleStyle,
+	                        className: cx('dialog-title', titleClassName)
+	                    },
 	                    title
 	                ),
 	                React.createElement(
 	                    'div',
-	                    { className: 'modal-body' },
+	                    {
+	                        style: contentStyle,
+	                        className: cx('dialog-content', contentClassName)
+	                    },
 	                    children
 	                ),
 	                React.createElement(
 	                    'div',
-	                    { className: 'modal-foot' },
+	                    {
+	                        style: actionsContainerStyle,
+	                        className: cx('dialog-action-container', actionsContainerClassName)
+	                    },
 	                    actions || [React.createElement(
 	                        'span',
-	                        { key: 0, className: 'btn-flat btn-primary', onClick: onCancel },
+	                        {
+	                            key: 0,
+	                            className: 'btn-flat btn-primary',
+	                            onClick: onCancel
+	                        },
 	                        '\u53D6\u6D88'
 	                    ), React.createElement(
 	                        'span',
-	                        { key: 1, className: 'btn-flat btn-primary', onClick: onOK },
+	                        {
+	                            key: 1,
+	                            className: 'btn-flat btn-primary',
+	                            onClick: onOK
+	                        },
 	                        '\u786E\u8BA4'
 	                    )]
 	                )
@@ -370,7 +428,7 @@ var Z =
 	// ------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 
 	var Pagination = React.createClass({
 	    displayName: 'Pagination',
@@ -383,9 +441,19 @@ var Z =
 	        className: React.PropTypes.string,
 
 	        /**
+	         * The css class name of the pages.
+	         */
+	        pageClassName: React.PropTypes.string,
+
+	        /**
 	         * The inline styles of the root element.
 	         */
 	        style: React.PropTypes.object,
+
+	        /**
+	         * The inline styles of the pages.
+	         */
+	        pageStyle: React.PropTypes.object,
 
 	        /**
 	         * How many page numbers are displayed at the same time.
@@ -416,7 +484,6 @@ var Z =
 
 	    getDefaultProps: function getDefaultProps() {
 	        return {
-	            className: '',
 	            recordCount: 0,
 	            pageDisplay: 5,
 	            pageSize: 10,
@@ -428,6 +495,8 @@ var Z =
 	        var _props = this.props;
 	        var className = _props.className;
 	        var style = _props.style;
+	        var pageClassName = _props.pageClassName;
+	        var pageStyle = _props.pageStyle;
 	        var recordCount = _props.recordCount;
 	        var pageDisplay = _props.pageDisplay;
 	        var pageSize = _props.pageSize;
@@ -450,26 +519,35 @@ var Z =
 
 	        return React.createElement(
 	            'div',
-	            { style: style, className: 'pagination ' + className },
-	            current === 1 || [React.createElement(
-	                'span',
-	                { key: 0, className: 'page', onClick: function onClick(e) {
-	                        return onChange(1);
-	                    } },
-	                '\u9996\u9875'
-	            ), React.createElement(
-	                'span',
-	                { key: 1, className: 'page', onClick: function onClick(e) {
-	                        return onChange(current - 1);
-	                    } },
-	                '\u4E0A\u4E00\u9875'
-	            )],
+	            {
+	                style: style,
+	                className: cx('pagination', className)
+	            },
+	            React.createElement('span', {
+	                className: cx('page-btn fa fa-angle-double-left', {
+	                    'disabled': current === 1
+	                }),
+	                onClick: function onClick(e) {
+	                    if (1 !== current) onChange(1);
+	                }
+	            }),
+	            React.createElement('span', {
+	                className: cx('page-btn fa fa-angle-left', {
+	                    'disabled': current === 1
+	                }),
+	                onClick: function onClick(e) {
+	                    if (1 !== current) onChange(current - 1);
+	                }
+	            }),
 	            pageNos.map(function (pageNo) {
 	                return React.createElement(
 	                    'span',
 	                    {
 	                        key: pageNo,
-	                        className: classNames('page', { 'active': pageNo === current }),
+	                        style: pageStyle,
+	                        className: cx('page', pageClassName, {
+	                            'active': pageNo === current
+	                        }),
 	                        onClick: function onClick(e) {
 	                            if (pageNo !== current) onChange(pageNo);
 	                        }
@@ -477,19 +555,22 @@ var Z =
 	                    pageNo
 	                );
 	            }),
-	            current === pageCount || [React.createElement(
-	                'span',
-	                { key: 0, className: 'page', onClick: function onClick(e) {
-	                        return onChange(current + 1);
-	                    } },
-	                '\u4E0B\u4E00\u9875'
-	            ), React.createElement(
-	                'span',
-	                { key: 1, className: 'page', onClick: function onClick(e) {
-	                        return onChange(pageCount);
-	                    } },
-	                '\u5C3E\u9875'
-	            )]
+	            React.createElement('span', {
+	                className: cx('page-btn fa fa-angle-right', {
+	                    'disabled': current === pageCount
+	                }),
+	                onClick: function onClick(e) {
+	                    if (pageCount !== current) onChange(current + 1);
+	                }
+	            }),
+	            React.createElement('span', {
+	                className: cx('page-btn fa fa-angle-double-right', {
+	                    'disabled': current === pageCount
+	                }),
+	                onClick: function onClick(e) {
+	                    if (pageCount !== current) onChange(pageCount);
+	                }
+	            })
 	        );
 	    }
 	});
@@ -512,13 +593,11 @@ var Z =
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	// DatePicker
 	// ------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 	var ClickAwayListener = __webpack_require__(12);
 
 	// Whether the year is a leap year
@@ -650,9 +729,6 @@ var Z =
 
 	    getDefaultProps: function getDefaultProps() {
 	        return {
-	            className: '',
-	            inputClassName: '',
-	            dropdownClassName: '',
 	            disabled: false,
 	            selectTime: false,
 	            onChange: function onChange() {},
@@ -721,6 +797,9 @@ var Z =
 	        }, dateProps));
 	    },
 	    handleTriggerClick: function handleTriggerClick() {
+	        if (this.props.disabled) {
+	            return;
+	        }
 	        if (this.state.isOpen) {
 	            this.hideAndRestore();
 	        } else {
@@ -735,7 +814,7 @@ var Z =
 	    },
 
 
-	    // Swith to date selection.
+	    // Switch to date selection.
 	    selectDate: function selectDate() {
 	        this.setState({ view: 'date' });
 	    },
@@ -968,8 +1047,6 @@ var Z =
 	        }
 	    },
 	    renderTrigger: function renderTrigger() {
-	        var _classNames;
-
 	        var _props3 = this.props;
 	        var inputClassName = _props3.inputClassName;
 	        var inputStyle = _props3.inputStyle;
@@ -998,17 +1075,21 @@ var Z =
 	        return React.createElement(
 	            'div',
 	            {
-	                className: classNames((_classNames = {}, _defineProperty(_classNames, 'datepicker-trigger ' + inputClassName, true), _defineProperty(_classNames, 'focus', isOpen), _defineProperty(_classNames, 'disabled', disabled), _classNames)),
+	                className: cx('datepicker-trigger', inputClassName, {
+	                    'focus': isOpen,
+	                    'disabled': disabled
+	                }),
 	                style: inputStyle,
 	                onClick: this.handleTriggerClick
 	            },
 	            React.createElement('input', {
 	                type: 'text',
+	                className: 'datepicker-input',
 	                value: dateStr,
 	                placeholder: placeholder,
 	                readOnly: true
 	            }),
-	            React.createElement('i', { className: 'fa fa-calendar' })
+	            React.createElement('i', { className: 'fa fa-calendar icon' })
 	        );
 	    },
 	    renderPanelHead: function renderPanelHead() {
@@ -1043,14 +1124,14 @@ var Z =
 	            { className: 'datepicker-head' },
 	            React.createElement(
 	                'div',
-	                { className: classNames({ 'hide': this.state.view === 'time' }) },
+	                { className: cx({ 'hide': this.state.view === 'time' }) },
 	                React.createElement('a', {
-	                    className: classNames('fa fa-angle-double-left datepicker-prev-year-btn', { 'disabled': preYearDisabled }),
+	                    className: cx('fa fa-angle-double-left datepicker-prev-year-btn', { 'disabled': preYearDisabled }),
 	                    onClick: function onClick() {
 	                        return preYearDisabled || _this.prevYear();
 	                    } }),
 	                React.createElement('a', {
-	                    className: classNames('fa fa-angle-left datepicker-prev-month-btn', { 'disabled': preMonthDisabled }),
+	                    className: cx('fa fa-angle-left datepicker-prev-month-btn', { 'disabled': preMonthDisabled }),
 	                    onClick: function onClick() {
 	                        return preMonthDisabled || _this.prevMonth();
 	                    } }),
@@ -1065,12 +1146,12 @@ var Z =
 	                    month + 1 + '\u6708'
 	                ),
 	                React.createElement('a', {
-	                    className: classNames('fa fa-angle-right datepicker-next-month-btn', { 'disabled': nextMonthDisabled }),
+	                    className: cx('fa fa-angle-right datepicker-next-month-btn', { 'disabled': nextMonthDisabled }),
 	                    onClick: function onClick() {
 	                        return nextMonthDisabled || _this.nextMonth();
 	                    } }),
 	                React.createElement('a', {
-	                    className: classNames('fa fa-angle-double-right datepicker-next-year-btn', { 'disabled': nextYearDisabled }),
+	                    className: cx('fa fa-angle-double-right datepicker-next-year-btn', { 'disabled': nextYearDisabled }),
 	                    onClick: function onClick() {
 	                        return nextYearDisabled || _this.nextYear();
 	                    } })
@@ -1151,7 +1232,7 @@ var Z =
 	            { className: 'datepicker-body' },
 	            React.createElement(
 	                'table',
-	                { className: classNames('datepicker-table', { 'hide': view === 'time' }) },
+	                { className: cx('datepicker-table', { 'hide': view === 'time' }) },
 	                React.createElement(
 	                    'thead',
 	                    null,
@@ -1209,7 +1290,7 @@ var Z =
 	                                    item.value > 0 && React.createElement(
 	                                        'span',
 	                                        {
-	                                            className: classNames('datepicker-date', {
+	                                            className: cx('datepicker-date', {
 	                                                'disabled': item.disabled,
 	                                                'active': item.active
 	                                            }),
@@ -1225,10 +1306,10 @@ var Z =
 	                    })
 	                )
 	            ),
-	            React.createElement('div', { className: classNames('datepicker-yearSelect', { 'hide': view === 'year' }) }),
+	            React.createElement('div', { className: cx('datepicker-yearSelect', { 'hide': view === 'year' }) }),
 	            selectTime && React.createElement(
 	                'div',
-	                { className: classNames('clearfix', { 'hide': view === 'date' }) },
+	                { className: cx('clearfix', { 'hide': view === 'date' }) },
 	                React.createElement(
 	                    'ul',
 	                    { className: 'datepicker-time-col' },
@@ -1240,7 +1321,7 @@ var Z =
 	                                onClick: function onClick(e) {
 	                                    _this2.setHours(idx);
 	                                },
-	                                className: classNames({ 'active': idx === _this2.state.hours })
+	                                className: cx({ 'active': idx === _this2.state.hours })
 	                            },
 	                            hour + '\u65F6'
 	                        );
@@ -1257,7 +1338,7 @@ var Z =
 	                                onClick: function onClick(e) {
 	                                    _this2.setMinutes(idx);
 	                                },
-	                                className: classNames({ 'active': idx === _this2.state.minutes })
+	                                className: cx({ 'active': idx === _this2.state.minutes })
 	                            },
 	                            minute + '\u5206'
 	                        );
@@ -1274,7 +1355,7 @@ var Z =
 	                                onClick: function onClick(e) {
 	                                    _this2.setSeconds(idx);
 	                                },
-	                                className: classNames({ 'active': idx === _this2.state.seconds })
+	                                className: cx({ 'active': idx === _this2.state.seconds })
 	                            },
 	                            second + '\u79D2'
 	                        );
@@ -1344,7 +1425,7 @@ var Z =
 	            React.createElement(
 	                'div',
 	                {
-	                    className: 'dropdown-wrapper ' + className,
+	                    className: cx('dropdown-wrapper', className),
 	                    style: style,
 	                    tabIndex: '0',
 	                    onKeyDown: this.handleKeyDown
@@ -1353,7 +1434,9 @@ var Z =
 	                React.createElement(
 	                    'div',
 	                    {
-	                        className: classNames(['dropdown ' + dropdownClassName], 'datepicker-panel', { 'offscreen': !isOpen }),
+	                        className: cx('dropdown datepicker-panel', dropdownClassName, {
+	                            'offscreen': !isOpen
+	                        }),
 	                        style: dropdownStyle
 	                    },
 	                    panelHead,
@@ -1437,13 +1520,11 @@ var Z =
 
 	'use strict';
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	// Select
 	// ------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 	var ClickAwayListener = __webpack_require__(12);
 
 	var Select = React.createClass({
@@ -1511,9 +1592,6 @@ var Z =
 
 	    getDefaultProps: function getDefaultProps() {
 	        return {
-	            className: '',
-	            selectClassName: '',
-	            dropdownClassName: '',
 	            multi: false,
 	            options: [],
 	            disabled: false,
@@ -1618,9 +1696,7 @@ var Z =
 	        })();
 	    },
 	    render: function render() {
-	        var _this2 = this,
-	            _classNames,
-	            _classNames2;
+	        var _this2 = this;
 
 	        var _props2 = this.props;
 	        var className = _props2.className;
@@ -1634,7 +1710,6 @@ var Z =
 	        var disabled = _props2.disabled;
 	        var options = _props2.options;
 	        var value = _props2.value;
-	        var children = _props2.children;
 	        var _state = this.state;
 	        var isOpen = _state.isOpen;
 	        var hoverIndex = _state.hoverIndex;
@@ -1642,15 +1717,20 @@ var Z =
 
 	        var displayText = '';
 	        var selectedItems = [];
+	        var k = void 0,
+	            idx = void 0;
 
 	        if (multi) {
 	            // get selected items when `multi` is true
 	            if (value && value.length > 0) {
 	                this._value = value;
 
-	                selectedItems = options.filter(function (item) {
-	                    return _this2._value.indexOf(item.value) > -1;
-	                });
+	                for (k = 0; k < options.length; k++) {
+	                    idx = this._value.indexOf(options[k].value);
+	                    if (idx > -1) {
+	                        selectedItems[idx] = options[k];
+	                    }
+	                }
 
 	                if (!selectedItems.length) {
 	                    console.warn('The `value` prop of `Select` does not match any of its options.');
@@ -1682,7 +1762,7 @@ var Z =
 	            React.createElement(
 	                'div',
 	                {
-	                    className: 'dropdown-wrapper ' + className,
+	                    className: cx('dropdown-wrapper select-wrapper', className),
 	                    style: style,
 	                    tabIndex: '0',
 	                    onKeyDown: this.handleKeyDown
@@ -1690,11 +1770,16 @@ var Z =
 	                React.createElement(
 	                    'div',
 	                    {
-	                        className: classNames((_classNames = {}, _defineProperty(_classNames, 'select-trigger ' + selectClassName, true), _defineProperty(_classNames, 'select-trigger-single', !multi), _defineProperty(_classNames, 'select-trigger-multi', multi), _defineProperty(_classNames, 'focus', isOpen), _defineProperty(_classNames, 'disabled', disabled), _classNames)),
+	                        className: cx(selectClassName, {
+	                            'select-trigger-single': !multi,
+	                            'select-trigger-multi': multi,
+	                            'focus': isOpen,
+	                            'disabled': disabled
+	                        }),
 	                        style: selectStyle,
 	                        onClick: this.handleTriggerClick
 	                    },
-	                    multi ? selectedItems.length ? React.createElement(
+	                    multi && (selectedItems.length ? React.createElement(
 	                        'ul',
 	                        null,
 	                        selectedItems.map(function (item, i) {
@@ -1715,36 +1800,39 @@ var Z =
 	                        'span',
 	                        { className: 'placeholder' },
 	                        placeholder
-	                    ) : displayText || React.createElement(
+	                    )),
+	                    multi || displayText || React.createElement(
 	                        'span',
 	                        { className: 'placeholder' },
 	                        placeholder
 	                    ),
 	                    multi || React.createElement(
 	                        'span',
-	                        { className: classNames('caret', { 'up': isOpen }) },
+	                        { className: cx({
+	                                'caret-down': !isOpen,
+	                                'caret-up': isOpen
+	                            }) },
 	                        React.createElement('b', null)
 	                    )
 	                ),
 	                React.createElement(
 	                    'div',
 	                    {
-	                        className: classNames((_classNames2 = {}, _defineProperty(_classNames2, 'dropdown ' + dropdownClassName, true), _defineProperty(_classNames2, 'offscreen', !isOpen), _classNames2)),
+	                        className: cx('dropdown select-dropdown', dropdownClassName, {
+	                            'offscreen': !isOpen
+	                        }),
 	                        style: dropdownStyle
 	                    },
 	                    React.createElement(
 	                        'ul',
-	                        {
-	                            className: 'select-options',
-	                            onMouseLeave: this.handleMouseLeave
-	                        },
+	                        { onMouseLeave: this.handleMouseLeave },
 	                        options.map(function (item, i) {
 	                            var selected = multi ? _this2._value.indexOf(item.value) > -1 : _this2._value === item.value;
 	                            return React.createElement(
 	                                'li',
 	                                {
 	                                    key: i,
-	                                    className: classNames('select-option', {
+	                                    className: cx('select-option', {
 	                                        'disabled': item.disabled,
 	                                        'selected': selected,
 	                                        'hover': i === hoverIndex
@@ -1783,13 +1871,11 @@ var Z =
 
 	'use strict';
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	// RadioGroup
 	// ---------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 
 	var RadioGroup = React.createClass({
 	    displayName: 'RadioGroup',
@@ -1848,8 +1934,6 @@ var Z =
 
 	    getDefaultProps: function getDefaultProps() {
 	        return {
-	            className: '',
-	            itemClassName: '',
 	            align: 'x',
 	            items: [],
 	            value: '',
@@ -1862,8 +1946,7 @@ var Z =
 	        }
 	    },
 	    render: function render() {
-	        var _classNames,
-	            _this = this;
+	        var _this = this;
 
 	        var _props = this.props;
 	        var className = _props.className;
@@ -1879,7 +1962,9 @@ var Z =
 	            'ul',
 	            {
 	                style: style,
-	                className: classNames((_classNames = {}, _defineProperty(_classNames, 'radio-group ' + className, true), _defineProperty(_classNames, 'horizonal', align === 'x'), _classNames))
+	                className: cx('radio-group', className, {
+	                    'horizonal': align === 'x'
+	                })
 	            },
 	            items.map(function (item, i) {
 	                return React.createElement(
@@ -1887,13 +1972,12 @@ var Z =
 	                    {
 	                        key: i,
 	                        style: itemStyle,
-	                        className: '' + itemClassName
+	                        className: itemClassName
 	                    },
 	                    React.createElement(
 	                        'label',
 	                        {
-	                            key: i,
-	                            className: classNames('radio', {
+	                            className: cx('radio', {
 	                                'disabled': item.disabled || _this.props.disabled
 	                            })
 	                        },
@@ -1934,13 +2018,11 @@ var Z =
 
 	'use strict';
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	// CheckboxGroup
 	// ---------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 
 	var CheckboxGroup = React.createClass({
 	    displayName: 'CheckboxGroup',
@@ -1999,8 +2081,6 @@ var Z =
 
 	    getDefaultProps: function getDefaultProps() {
 	        return {
-	            className: '',
-	            itemClassName: '',
 	            align: 'x',
 	            items: [],
 	            value: [],
@@ -2022,8 +2102,7 @@ var Z =
 	        this.props.onChange(newValue);
 	    },
 	    render: function render() {
-	        var _classNames,
-	            _this = this;
+	        var _this = this;
 
 	        var _props = this.props;
 	        var className = _props.className;
@@ -2039,7 +2118,9 @@ var Z =
 	            'ul',
 	            {
 	                style: style,
-	                className: classNames((_classNames = {}, _defineProperty(_classNames, 'checkbox-group ' + className, true), _defineProperty(_classNames, 'horizonal', align === 'x'), _classNames))
+	                className: cx('checkbox-group', className, {
+	                    'horizonal': align === 'x'
+	                })
 	            },
 	            items.map(function (item, i) {
 	                return React.createElement(
@@ -2047,13 +2128,12 @@ var Z =
 	                    {
 	                        key: i,
 	                        style: itemStyle,
-	                        className: '' + itemClassName
+	                        className: itemClassName
 	                    },
 	                    React.createElement(
 	                        'label',
 	                        {
-	                            key: i,
-	                            className: classNames('checkbox', {
+	                            className: cx('checkbox', {
 	                                'disabled': item.disabled || _this.props.disabled
 	                            })
 	                        },
@@ -2094,13 +2174,11 @@ var Z =
 
 	'use strict';
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	// Tabs
 	// ------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 	var Tab = __webpack_require__(21);
 
 	var Tabs = React.createClass({
@@ -2148,8 +2226,6 @@ var Z =
 
 	    getDefaultProps: function getDefaultProps() {
 	        return {
-	            className: '',
-	            tabClassName: '',
 	            activeIndex: 0,
 	            onChange: function onChange() {}
 	        };
@@ -2174,38 +2250,37 @@ var Z =
 	        return React.createElement(
 	            'div',
 	            {
-	                className: '' + className,
+	                className: className,
 	                style: style
 	            },
 	            React.createElement(
 	                'ul',
 	                { className: 'tabs' },
-	                children.map(function (child, i) {
-	                    var _classNames;
-
+	                React.Children.map(children, function (child, i) {
 	                    return React.createElement(
 	                        'li',
 	                        {
-	                            key: i,
-	                            className: classNames((_classNames = {}, _defineProperty(_classNames, 'tab ' + tabClassName, true), _defineProperty(_classNames, 'active', i === activeIndex), _classNames)),
+	                            className: cx('tab', tabClassName, {
+	                                'active': i === activeIndex
+	                            }),
 	                            style: tabStyle,
 	                            onClick: function onClick(e) {
 	                                return _this.handleChange(i);
 	                            }
 	                        },
-	                        child.props.label
+	                        child.props.label,
+	                        i === activeIndex && React.createElement('div', { className: 'marker' })
 	                    );
 	                })
 	            ),
-	            children.map(function (child, i) {
-	                var _classNames2;
-
+	            React.Children.map(children, function (child, i) {
 	                return React.createElement(
 	                    'div',
 	                    {
-	                        key: i,
-	                        className: classNames('tab-content', (_classNames2 = {}, _defineProperty(_classNames2, '' + child.props.className, child.props.className), _defineProperty(_classNames2, 'active', i === activeIndex), _classNames2)),
-	                        style: child.props.style
+	                        className: cx('tab-content', child.props.contentClassName, {
+	                            'active': i === activeIndex
+	                        }),
+	                        style: child.props.contentStyle
 	                    },
 	                    child.props.children
 	                );
@@ -3248,13 +3323,12 @@ var Z =
 
 	'use strict';
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	// Text Field
 	// ---------------------------
 
 	var React = __webpack_require__(2);
 	var Formsy = __webpack_require__(24);
+	var cx = __webpack_require__(5);
 
 	var TextField = React.createClass({
 	    displayName: 'TextField',
@@ -3266,16 +3340,26 @@ var Z =
 	        this.setValue(this.props.value || '');
 	    },
 	    render: function render() {
+	        var _props = this.props;
+	        var className = _props.className;
+	        var labelClassName = _props.labelClassName;
+	        var title = _props.title;
+
+
 	        return React.createElement(
 	            'div',
-	            { className: classNames('form-group', _defineProperty({}, '' + className, className)) },
-	            React.createElement('label', {
-	                className: classNames('form-label', _defineProperty({}, '' + labelClassName, labelClassName))
-	            }),
+	            { className: cx('form-group', className) },
+	            React.createElement(
+	                'label',
+	                {
+	                    className: cx('form-label', labelClassName)
+	                },
+	                title
+	            ),
 	            React.createElement(
 	                'span',
 	                { className: 'form-text' },
-	                this.getValue()
+	                this.props.children
 	            )
 	        );
 	    }
@@ -3291,15 +3375,13 @@ var Z =
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 	// Input Field
 	// ---------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 	var Formsy = __webpack_require__(24);
 
 	var InputField = React.createClass({
@@ -3320,7 +3402,6 @@ var Z =
 	        this.setValue(event.target.value);
 	    },
 	    render: function render() {
-	        var _classNames3;
 
 	        // showRequired() is true when the value is empty and 
 	        // the required prop is passed to the input. 
@@ -3345,19 +3426,20 @@ var Z =
 
 	        return React.createElement(
 	            'div',
-	            { className: classNames('form-group', _defineProperty({}, '' + className, className)) },
+	            { className: cx('form-group', className) },
 	            React.createElement(
 	                'label',
 	                {
-	                    className: classNames('form-label', _defineProperty({}, '' + labelClassName, labelClassName)),
+	                    className: cx('form-label', labelClassName),
 	                    htmlFor: name
 	                },
 	                title
 	            ),
 	            React.createElement('input', _extends({}, otherProps, {
-	                className: classNames((_classNames3 = {
-	                    'form-control': true
-	                }, _defineProperty(_classNames3, '' + controlClassName, controlClassName), _defineProperty(_classNames3, 'required', this.showRequired()), _defineProperty(_classNames3, 'error', this.showError()), _classNames3)),
+	                className: cx('form-control', controlClassName, {
+	                    'required': this.showRequired(),
+	                    'error': this.showError()
+	                }),
 	                type: type || 'text',
 	                name: name,
 	                value: this.getValue(),
@@ -3382,15 +3464,13 @@ var Z =
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 	// Select Field
 	// ---------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 	var Select = __webpack_require__(13);
 	var Formsy = __webpack_require__(24);
 
@@ -3440,17 +3520,17 @@ var Z =
 
 	        return React.createElement(
 	            'div',
-	            { className: classNames('form-group', _defineProperty({}, '' + className, className)) },
+	            { className: cx('form-group', className) },
 	            React.createElement(
 	                'label',
 	                {
-	                    className: classNames('form-label', _defineProperty({}, '' + labelClassName, labelClassName))
+	                    className: cx('form-label', labelClassName)
 	                },
 	                title
 	            ),
 	            React.createElement(Select, _extends({}, otherProps, {
-	                className: classNames('form-control', _defineProperty({}, '' + controlClassName, controlClassName)),
-	                selectClassName: classNames({
+	                className: cx('form-control', controlClassName),
+	                selectClassName: cx({
 	                    'required': this.showRequired(),
 	                    'error': this.showError()
 	                }),
@@ -3477,15 +3557,13 @@ var Z =
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 	// Datepicker Field
 	// ---------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 	var DatePicker = __webpack_require__(10);
 	var Formsy = __webpack_require__(24);
 
@@ -3519,15 +3597,15 @@ var Z =
 
 	        return React.createElement(
 	            'div',
-	            { className: classNames('form-group', _defineProperty({}, '' + className, className)) },
+	            { className: cx('form-group', className) },
 	            React.createElement(
 	                'label',
-	                { className: classNames('form-label', _defineProperty({}, '' + labelClassName, labelClassName)) },
+	                { className: cx('form-label', labelClassName) },
 	                title
 	            ),
 	            React.createElement(DatePicker, _extends({}, otherProps, {
-	                className: classNames('form-control', _defineProperty({}, '' + controlClassName, controlClassName)),
-	                inputClassName: classNames({
+	                className: cx('form-control', controlClassName),
+	                inputClassName: cx({
 	                    'required': this.showRequired(),
 	                    'error': this.showError()
 	                }),
@@ -3553,15 +3631,13 @@ var Z =
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 	// RadioGroup Field
 	// ---------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 	var Formsy = __webpack_require__(24);
 	var RadioGroup = __webpack_require__(15);
 
@@ -3591,16 +3667,16 @@ var Z =
 
 	        return React.createElement(
 	            'div',
-	            { className: classNames('form-group', _defineProperty({}, '' + className, className)) },
+	            { className: cx('form-group', className) },
 	            title && React.createElement(
 	                'label',
 	                {
-	                    className: classNames('form-label', _defineProperty({}, '' + labelClassName, labelClassName))
+	                    className: cx('form-label', labelClassName)
 	                },
 	                title
 	            ),
 	            React.createElement(RadioGroup, _extends({}, otherProps, {
-	                className: classNames('form-control', _defineProperty({}, '' + controlClassName, controlClassName)),
+	                className: cx('form-control', controlClassName),
 	                value: this.getValue(),
 	                onChange: this.changeValue
 	            }))
@@ -3618,15 +3694,13 @@ var Z =
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 	// CheckboxGroup Field
 	// ---------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 	var Formsy = __webpack_require__(24);
 	var CheckboxGroup = __webpack_require__(17);
 
@@ -3657,16 +3731,16 @@ var Z =
 
 	        return React.createElement(
 	            'div',
-	            { className: classNames('form-group', _defineProperty({}, '' + className, className)) },
+	            { className: cx('form-group', className) },
 	            title && React.createElement(
 	                'label',
 	                {
-	                    className: classNames('form-label', _defineProperty({}, '' + labelClassName, labelClassName))
+	                    className: cx('form-label', labelClassName)
 	                },
 	                title
 	            ),
 	            React.createElement(CheckboxGroup, _extends({}, otherProps, {
-	                className: classNames('form-control', _defineProperty({}, '' + controlClassName, controlClassName)),
+	                className: cx('form-control', controlClassName),
 	                value: this.getValue(),
 	                onChange: this.changeValue
 	            }))
@@ -3684,15 +3758,13 @@ var Z =
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 	// TextArea Field
 	// ---------------------------
 
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(5);
+	var cx = __webpack_require__(5);
 	var Formsy = __webpack_require__(24);
 
 	var TextAreaField = React.createClass({
@@ -3708,8 +3780,6 @@ var Z =
 	        this.setValue(event.target.value);
 	    },
 	    render: function render() {
-	        var _classNames3;
-
 	        var _props = this.props;
 	        var validationError = _props.validationError;
 	        var validationErrors = _props.validationErrors;
@@ -3726,18 +3796,19 @@ var Z =
 
 	        return React.createElement(
 	            'div',
-	            { className: classNames('form-group', _defineProperty({}, '' + className, className)) },
+	            { className: cx('form-group', className) },
 	            React.createElement(
 	                'label',
 	                {
-	                    className: classNames('form-label', _defineProperty({}, '' + labelClassName, labelClassName))
+	                    className: cx('form-label', labelClassName)
 	                },
 	                title
 	            ),
 	            React.createElement('textarea', _extends({}, otherProps, {
-	                className: classNames((_classNames3 = {
-	                    'form-control': true
-	                }, _defineProperty(_classNames3, '' + controlClassName, controlClassName), _defineProperty(_classNames3, 'required', this.showRequired()), _defineProperty(_classNames3, 'error', this.showError()), _classNames3)),
+	                className: cx('form-control', controlClassName, {
+	                    'required': this.showRequired(),
+	                    'error': this.showError()
+	                }),
 	                name: name,
 	                value: this.getValue(),
 	                onChange: this.changeValue

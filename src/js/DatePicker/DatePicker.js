@@ -2,7 +2,7 @@
 // ------------------------
 
 const React = require('react');
-const classNames = require('classnames');
+const cx = require('classnames');
 const ClickAwayListener = require('../internal/ClickAwayListener');
 
 // Whether the year is a leap year
@@ -132,9 +132,6 @@ const DatePicker = React.createClass({
 
     getDefaultProps() {
         return {
-            className: '',
-            inputClassName: '',
-            dropdownClassName: '',
             disabled: false,
             selectTime: false,
             onChange() {},
@@ -199,6 +196,9 @@ const DatePicker = React.createClass({
     },
 
     handleTriggerClick() {
+        if (this.props.disabled) {
+            return;
+        }
         if (this.state.isOpen) {
             this.hideAndRestore();
         } else {
@@ -211,7 +211,7 @@ const DatePicker = React.createClass({
         this.setState({ view: 'time' });
     },
 
-    // Swith to date selection.
+    // Switch to date selection.
     selectDate() {
         this.setState({ view: 'date' });
     },
@@ -456,8 +456,7 @@ const DatePicker = React.createClass({
 
         return (
             <div 
-                className={classNames({
-                    [`datepicker-trigger ${inputClassName}`]: true,
+                className={cx('datepicker-trigger', inputClassName, {
                     'focus': isOpen,
                     'disabled': disabled
                 })}
@@ -466,11 +465,12 @@ const DatePicker = React.createClass({
             >
                 <input
                     type="text"
+                    className="datepicker-input"
                     value={dateStr}
                     placeholder={placeholder}
                     readOnly
                 />
-                <i className="fa fa-calendar"></i>
+                <i className="fa fa-calendar icon"></i>
             </div>
         );
     },
@@ -493,16 +493,16 @@ const DatePicker = React.createClass({
 
         return (
             <div className="datepicker-head">
-                <div className={classNames({'hide': this.state.view === 'time'})}>
+                <div className={cx({'hide': this.state.view === 'time'})}>
                     <a 
-                        className={classNames(
+                        className={cx(
                             'fa fa-angle-double-left datepicker-prev-year-btn',
                             {'disabled': preYearDisabled}
                         )} 
                         onClick={() => preYearDisabled || this.prevYear()}>
                     </a>
                     <a 
-                        className={classNames(
+                        className={cx(
                             'fa fa-angle-left datepicker-prev-month-btn', 
                             {'disabled': preMonthDisabled}
                         )} 
@@ -511,14 +511,14 @@ const DatePicker = React.createClass({
                     <b>{`${year}年`}</b>
                     <b>{`${month + 1}月`}</b>
                     <a 
-                        className={classNames(
+                        className={cx(
                             'fa fa-angle-right datepicker-next-month-btn', 
                             {'disabled': nextMonthDisabled}
                         )} 
                         onClick={() => nextMonthDisabled || this.nextMonth()}>
                     </a>
                     <a 
-                        className={classNames(
+                        className={cx(
                             'fa fa-angle-double-right datepicker-next-year-btn',
                             {'disabled': nextYearDisabled}
                         )} 
@@ -581,7 +581,7 @@ const DatePicker = React.createClass({
 
         return (
             <div className="datepicker-body">
-                <table className={classNames('datepicker-table', {'hide': view === 'time'})}>
+                <table className={cx('datepicker-table', {'hide': view === 'time'})}>
                     <thead>
                         <tr>
                             <th>一</th>
@@ -600,7 +600,7 @@ const DatePicker = React.createClass({
                                     <td key={idx}>
                                         {item.value > 0 &&
                                             <span 
-                                                className={classNames('datepicker-date', { 
+                                                className={cx('datepicker-date', { 
                                                     'disabled': item.disabled, 
                                                     'active': item.active 
                                                 })}
@@ -617,17 +617,17 @@ const DatePicker = React.createClass({
                         ))}
                     </tbody>
                 </table>
-                <div className={classNames('datepicker-yearSelect', {'hide': view === 'year'})}>
+                <div className={cx('datepicker-yearSelect', {'hide': view === 'year'})}>
                     
                 </div>
                 {selectTime &&
-                    <div className={classNames('clearfix', {'hide': view === 'date'})}>
+                    <div className={cx('clearfix', {'hide': view === 'date'})}>
                         <ul className="datepicker-time-col">
                             {hours.map((hour, idx) => (
                                 <li 
                                     key={idx} 
                                     onClick={e => {this.setHours(idx)}} 
-                                    className={classNames({'active': idx === this.state.hours})}
+                                    className={cx({'active': idx === this.state.hours})}
                                 >
                                     {`${hour}时`}
                                 </li>
@@ -638,7 +638,7 @@ const DatePicker = React.createClass({
                                 <li 
                                     key={idx} 
                                     onClick={e => {this.setMinutes(idx)}} 
-                                    className={classNames({'active': idx === this.state.minutes})}
+                                    className={cx({'active': idx === this.state.minutes})}
                                 >
                                     {`${minute}分`}
                                 </li>
@@ -649,7 +649,7 @@ const DatePicker = React.createClass({
                                 <li 
                                     key={idx} 
                                     onClick={e => {this.setSeconds(idx)}} 
-                                    className={classNames({'active': idx === this.state.seconds})}
+                                    className={cx({'active': idx === this.state.seconds})}
                                 >
                                     {`${second}秒`}
                                 </li>
@@ -698,19 +698,16 @@ const DatePicker = React.createClass({
         return (
             <ClickAwayListener onClickAway={this.handleClickAway}>
                 <div 
-                    className={`dropdown-wrapper ${className}`}
+                    className={cx('dropdown-wrapper', className)}
                     style={style}
                     tabIndex="0"
                     onKeyDown={this.handleKeyDown}
                 >
                     {trigger}
-                    
                     <div 
-                        className={classNames(
-                            [`dropdown ${dropdownClassName}`]: true, 
-                            'datepicker-panel',
-                            {'offscreen': !isOpen }
-                        )}
+                        className={cx('dropdown datepicker-panel', dropdownClassName, {
+                            'offscreen': !isOpen
+                        })}
                         style={dropdownStyle}
                     >
                         {panelHead}

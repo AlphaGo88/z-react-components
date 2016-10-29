@@ -12,36 +12,38 @@
     &.focus {
         border-color: darken(@border-color-base, 18%);
     }
-    &.disabled {
-        background-color: #efefef;
-        color: @text-color-lighter;
-        cursor: @cursor-disabled;
-
-        > i {
-            color: @text-color-light;
-            cursor: @cursor-disabled;
-        }
-    }
     &.required {
         border-color: @color-warning;
     }
     &.error {
         border-color: @color-danger;
     }
-    > .placeholder {
+    &.disabled {
+        background-color: #efefef;
         color: @text-color-lighter;
+
+        > .datepicker-input {
+            cursor: @cursor-disabled;
+        }
+        > .icon {
+            color: @text-color-light;
+            cursor: @cursor-disabled;
+        }
     }
-    > input {
+    > .datepicker-input {
         width: 100%;
-        height: @input-height - 2;
+        height: 100%;
         padding-right: 22px;
-        border: 0
+        border: 0;
     }
-    > i {
+    > .icon {
         position: absolute;
         top: 10px;
         right: 5px;
         cursor: pointer;
+    }
+    > .placeholder {
+        color: @text-color-lighter;
     }
 }
 
@@ -179,6 +181,10 @@
     span {
         cursor: pointer;
         color: @primary-color;
+
+        &:hover {
+            color: @primary-color-dark;
+        }
     }
 }
 

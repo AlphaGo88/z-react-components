@@ -2,7 +2,7 @@
 // ------------------------
 
 const React = require('react');
-const classNames = require('classnames');
+const cx = require('classnames');
 
 const Pagination = React.createClass({
 
@@ -13,9 +13,19 @@ const Pagination = React.createClass({
         className: React.PropTypes.string,
 
         /**
+         * The css class name of the pages.
+         */
+        pageClassName: React.PropTypes.string,
+
+        /**
          * The inline styles of the root element.
          */
         style: React.PropTypes.object,
+
+        /**
+         * The inline styles of the pages.
+         */
+        pageStyle: React.PropTypes.object,
 
         /**
          * How many page numbers are displayed at the same time.
@@ -46,7 +56,6 @@ const Pagination = React.createClass({
 
     getDefaultProps() {
         return {
-            className: '',
             recordCount: 0,
             pageDisplay: 5,
             pageSize: 10,
@@ -59,6 +68,8 @@ const Pagination = React.createClass({
         const { 
             className,
             style,
+            pageClassName,
+            pageStyle,
             recordCount, 
             pageDisplay, 
             pageSize, 
@@ -80,38 +91,56 @@ const Pagination = React.createClass({
         }
 
         return (
-            <div style={style} className={`pagination ${className}`}>
-                {current === 1 ||
-                    [
-                        <span key={0} className="page" onClick={e => onChange(1)}>
-                            首页
-                        </span>,
-                        <span key={1} className="page" onClick={e => onChange(current - 1)}>
-                            上一页
-                        </span>
-                    ]
-                }
+            <div 
+                style={style} 
+                className={cx('pagination', className)}
+            >
+                <span 
+                    className={cx('page-btn fa fa-angle-double-left', {
+                        'disabled': current === 1
+                    })}
+                    onClick={e => {
+                        if (1 !== current) onChange(1);
+                    }}
+                />
+                <span 
+                    className={cx('page-btn fa fa-angle-left', {
+                        'disabled': current === 1
+                    })}
+                    onClick={e => {
+                        if (1 !== current) onChange(current - 1);
+                    }}
+                />
                 {pageNos.map(pageNo => (
                     <span 
-                        key={pageNo} 
-                        className={classNames('page', {'active': pageNo === current})} 
+                        key={pageNo}
+                        style={pageStyle} 
+                        className={cx('page', pageClassName, {
+                            'active': pageNo === current
+                        })} 
                         onClick={e => {
-                            if(pageNo !== current) onChange(pageNo);
+                            if (pageNo !== current) onChange(pageNo);
                         }}
                     >
                         {pageNo}
                     </span>
                 ))}
-                {current === pageCount ||
-                    [
-                        <span key={0} className="page" onClick={e => onChange(current + 1)}>
-                            下一页
-                        </span>,
-                        <span key={1} className="page" onClick={e => onChange(pageCount)}>
-                            尾页
-                        </span>
-                    ]
-                }
+                <span 
+                    className={cx('page-btn fa fa-angle-right', {
+                        'disabled': current === pageCount
+                    })}
+                    onClick={e => {
+                        if (pageCount !== current) onChange(current + 1);
+                    }}
+                />
+                <span 
+                    className={cx('page-btn fa fa-angle-double-right', {
+                        'disabled': current === pageCount
+                    })}
+                    onClick={e => {
+                        if (pageCount !== current) onChange(pageCount);
+                    }}
+                />
             </div>
         );
     }

@@ -2,7 +2,7 @@
 // ---------------------------
 
 const React = require('react');
-const classNames = require('classnames');
+const cx = require('classnames');
 const Select = require('../Select');
 const Formsy = require('formsy-react');
 
@@ -48,26 +48,16 @@ const SelectField = React.createClass({
         }
 
         return (
-            <div className={classNames(
-                'form-group', {
-                    [`${className}`]: className
-                }
-            )}>
+            <div className={cx('form-group', className)}>
                 <label 
-                    className={classNames(
-                        'form-label', {
-                            [`${labelClassName}`]: labelClassName
-                        }
-                    )}
+                    className={cx('form-label', labelClassName)}
                 >
                     {title}
                 </label>
                 <Select 
                     {...otherProps}
-                    className={classNames('form-control', {
-                        [`${controlClassName}`]: controlClassName
-                    })}
-                    selectClassName={classNames({
+                    className={cx('form-control', controlClassName)}
+                    selectClassName={cx({
                         'required': this.showRequired(),
                         'error': this.showError()
                     })}

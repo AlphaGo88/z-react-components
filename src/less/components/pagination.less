@@ -3,28 +3,44 @@
 // --------------------------------------------------
 
 .pagination {
-    
-    > .page {
+
+    > .page,
+    > .page-btn {
         display: inline-block;
-        margin-right: 5px;
-        padding: 0 12px;
-        height: 30px;
-        line-height: 30px;
-        border: 1px solid @border-color-base;
-        background-color: #fff;
+        height: 26px;
+        line-height: 26px;
         cursor: pointer;
         .user-select(none);
+    }
+    
+    > .page {
+        margin: 0 2px;
+        padding: 0 10px;
 
         &:hover {
             color: @primary-color;
-            background-color: #f5f5f5;
         }
 
         &.active {
             color: #fff;
-            border-color: @primary-color;
+            border-radius: 4px;
             background-color: @primary-color;
             cursor: default;
+        }
+    }
+
+    > .page-btn {
+        margin: 0 6px;
+        font-size: 16px;
+        color: #666;
+
+        &:hover {
+            color: #000;
+        }
+
+        &.disabled {
+            color: #999;
+            cursor: @cursor-disabled;
         }
     }
 }

@@ -2,7 +2,7 @@
 // ---------------------------
 
 const React = require('react');
-const classNames = require('classnames');
+const cx = require('classnames');
 const Formsy = require('formsy-react');
 const RadioGroup = require('../RadioGroup');
 
@@ -31,29 +31,17 @@ const RadioGroupField = React.createClass({
         } = this.props;
 
         return (
-            <div className={classNames(
-                'form-group', {
-                    [`${className}`]: className
-                }
-            )}>
+            <div className={cx('form-group', className)}>
                 {title && 
                     <label 
-                        className={classNames(
-                            'form-label', {
-                                [`${labelClassName}`]: labelClassName
-                            }
-                        )}
+                        className={cx('form-label', labelClassName)}
                     >
                         {title}
                     </label>
                 }
                 <RadioGroup
                     {...otherProps}
-                    className={classNames(
-                        'form-control', {
-                            [`${controlClassName}`]: controlClassName
-                        }
-                    )}
+                    className={cx('form-control', controlClassName)}
                     value={this.getValue()}
                     onChange={this.changeValue}
                 />

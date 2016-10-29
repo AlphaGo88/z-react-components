@@ -2,8 +2,12 @@
 // Select
 // --------------------------------------------------
 
+.select-wrapper {
+    width: 200px;
+}
 
-.select-trigger {
+.select-trigger-single,
+.select-trigger-multi {
     position: relative;
     width: 100%;
     min-height: @input-height;
@@ -32,38 +36,40 @@
     padding: 0 20px 0 @input-padding-horizonal;
     line-height: @input-height - 2;
 
-    > .caret {
+    > .caret-up,
+    > .caret-down {
         position: absolute;
         top: 0;
         right: 0;
         height: 100%;
         width: 20px;
         cursor: pointer;
-
-        > b {
-            position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
-            bottom: 0;
-            margin: auto;
-            width: 0;
-            height: 0;
-            border-color: @text-color-light transparent transparent;
-            border-style: solid;
-            border-width: 6px 4px 0;
-        }
-        &.up > b {
-            border-color: transparent transparent @text-color-light;
-            border-width: 0 4px 6px;
-        }
     }
-    &.disabled > .caret {
+    &.disabled > .caret-up,
+    &.disabled > .caret-down {
         cursor: @cursor-disabled;
-
-        > b {
-            border-color: @text-color-lighter transparent transparent;
-        }
+    }
+    b {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        margin: auto;
+        width: 0;
+        height: 0;
+        border-style: solid;
+    }
+    > .caret-up > b {
+        border-color: transparent transparent @text-color-light;
+        border-width: 0 4px 6px;
+    }
+    > .caret-down > b {
+        border-color: @text-color-light transparent transparent;
+        border-width: 6px 4px 0;
+    }
+    &.disabled b {
+        border-color: @text-color-lighter transparent transparent;
     }
 }
 
@@ -96,55 +102,18 @@
     }
 }
 
-.select-caret {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 20px;
-    cursor: pointer;
-
-    > b {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
-        margin: auto;
-        width: 0;
-        height: 0;
-        border-color: @text-color-light transparent transparent;
-        border-style: solid;
-        border-width: 6px 4px 0;
-    }
-    &.up > b {
-        border-color: transparent transparent @text-color-light;
-        border-width: 0 4px 6px;
-    }
-    &.disabled {
-        cursor: @cursor-disabled;
-    }
-    &.disabled > b {
-        border-color: @text-color-lighter transparent transparent;
-    }
-}
-
-// options(ul) for select
-.select-options {
+.select-dropdown {
+    padding: 10px 0;
     max-height: 288px;
-    text-align: left;
-    overflow: auto;
 
-    > .select-option {
+    .select-option {
         display: block;
-        height: @input-height;
-        line-height: @input-height;
-        padding: 0 18px;
+        padding: 7px 18px;
         white-space: nowrap;
         cursor: pointer;
 
         &.hover {
-            background-color: #eee;
+            background-color: #e0e0e0;
         }
         &.selected {
             color: @primary-color;

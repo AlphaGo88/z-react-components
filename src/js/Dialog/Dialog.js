@@ -2,7 +2,7 @@
 // ------------------------
 
 const React = require('react');
-const classNames = require('classnames');
+const cx = require('classnames');
 
 const Dialog = React.createClass({
 
@@ -13,9 +13,39 @@ const Dialog = React.createClass({
         className: React.PropTypes.string,
 
         /**
+         * The css class name of the title container.
+         */
+        titleClassName: React.PropTypes.string,
+
+        /**
+         * The css class name of the content container.
+         */
+        contentClassName: React.PropTypes.string,
+
+        /**
+         * The css class name of the actions container.
+         */
+        actionsContainerClassName: React.PropTypes.string,
+
+        /**
          * The inline styles of the dialog element.
          */
         style: React.PropTypes.object,
+
+        /**
+         * The inline styles of the title container.
+         */
+        titleStyle: React.PropTypes.object,
+
+        /**
+         * The inline styles of the content container.
+         */
+        contentStyle: React.PropTypes.object,
+
+        /**
+         * The inline styles of the actions container.
+         */
+        actionsContainerStyle: React.PropTypes.object,
 
         /**
          * The dialog's title.
@@ -29,7 +59,6 @@ const Dialog = React.createClass({
 
         /**
          * Replace default action buttons with this prop.
-         * Pass a react element or an Array of react elements.
          */
         actions: React.PropTypes.node,
 
@@ -51,7 +80,6 @@ const Dialog = React.createClass({
 
     getDefaultProps() {
         return {
-            className: '',
             isOpen: false,
             onOK() {},
             onCancel() {}
@@ -59,20 +87,67 @@ const Dialog = React.createClass({
     },
 
     render() {
-        const { className, style, title, children, actions, isOpen, onOK, onCancel } = this.props;
+        const { 
+            className, 
+            titleClassName, 
+            contentClassName, 
+            actionsContainerClassName, 
+            style, 
+            titleStyle, 
+            contentStyle, 
+            actionsContainerStyle, 
+            title, 
+            children, 
+            actions, 
+            isOpen, 
+            onOK, 
+            onCancel 
+        } = this.props;
 
         return (
-            <div className={classNames('modal-mask', { 'show': isOpen })}>
-                <div className={`modal ${className}`} style={style}>
+            <div 
+                className={cx('z-dialog-mask', { 
+                    'show': isOpen 
+                })}
+            >
+                <div 
+                    style={style}
+                    className={cx('dialog', className)} 
+                >
                     {title && 
-                        <h3 className="modal-title">{title}</h3>
+                        <h3 
+                            style={titleStyle}
+                            className={cx('dialog-title', titleClassName)}
+                        >
+                            {title}
+                        </h3>
                     }
-                    <div className="modal-body">{children}</div>
-                    <div className="modal-foot">
+                    <div 
+                        style={contentStyle}
+                        className={cx('dialog-content', contentClassName)}
+                    >
+                        {children}
+                    </div>
+                    <div 
+                        style={actionsContainerStyle}
+                        className={cx('dialog-action-container', actionsContainerClassName)}
+                    >
                         {actions || 
                             [
-                                <span key={0} className="btn-flat btn-primary" onClick={onCancel}>取消</span>,
-                                <span key={1} className="btn-flat btn-primary" onClick={onOK}>确认</span>
+                                <span 
+                                    key={0} 
+                                    className="btn-flat btn-primary" 
+                                    onClick={onCancel}
+                                >
+                                    取消
+                                </span>,
+                                <span 
+                                    key={1} 
+                                    className="btn-flat btn-primary" 
+                                    onClick={onOK}
+                                >
+                                    确认
+                                </span>
                             ]
                         }
                     </div>

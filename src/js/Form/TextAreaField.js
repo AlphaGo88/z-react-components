@@ -2,7 +2,7 @@
 // ---------------------------
 
 const React = require('react');
-const classNames = require('classnames');
+const cx = require('classnames');
 const Formsy = require('formsy-react');
 
 const TextAreaField = React.createClass({
@@ -18,7 +18,6 @@ const TextAreaField = React.createClass({
     },
 
     render() {
-
         const { 
             validationError, 
             validationErrors, 
@@ -33,25 +32,15 @@ const TextAreaField = React.createClass({
         const errorMessage = this.getErrorMessage();
 
         return (
-            <div className={classNames(
-                'form-group', {
-                    [`${className}`]: className
-                }
-            )}>
+            <div className={cx('form-group', className)}>
                 <label 
-                    className={classNames(
-                        'form-label', {
-                            [`${labelClassName}`]: labelClassName
-                        }
-                    )}
+                    className={cx('form-label', labelClassName)}
                 >
                     {title}
                 </label> 
                 <textarea 
                     {...otherProps}
-                    className={classNames({
-                        'form-control': true,
-                        [`${controlClassName}`]: controlClassName,
+                    className={cx('form-control', controlClassName, {
                         'required': this.showRequired(),
                         'error': this.showError()
                     })}

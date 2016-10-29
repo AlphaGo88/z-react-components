@@ -2,7 +2,7 @@
 // ---------------------------
 
 const React = require('react');
-const classNames = require('classnames');
+const cx = require('classnames');
 
 const RadioGroup = React.createClass({
 
@@ -59,8 +59,6 @@ const RadioGroup = React.createClass({
 
     getDefaultProps() {
         return {
-            className: '',
-            itemClassName: '',
             align: 'x',
             items: [],
             value: '',
@@ -88,8 +86,7 @@ const RadioGroup = React.createClass({
         return (
             <ul 
                 style={style}
-                className={classNames({
-                    [`radio-group ${className}`]: true,
+                className={cx('radio-group', className, {
                     'horizonal': align === 'x'
                 })}
             >
@@ -97,11 +94,10 @@ const RadioGroup = React.createClass({
                     <li 
                         key={i}
                         style={itemStyle}
-                        className={`${itemClassName}`}
+                        className={itemClassName}
                     >
                         <label 
-                            key={i} 
-                            className={classNames('radio', {
+                            className={cx('radio', {
                                 'disabled': item.disabled || this.props.disabled
                             })}
                         >
@@ -115,8 +111,7 @@ const RadioGroup = React.createClass({
                             <span>{item.text}</span>
                         </label>
                     </li>
-                ))
-            }
+                ))}
             </ul>
         );
     }
