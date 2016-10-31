@@ -8,6 +8,7 @@ module.exports = {
         form: './src/form',
         page: './src/page',
         radio: './src/radio',
+        checkbox: './src/checkbox',
         select: './src/select',
         tabs: './src/tabs',
     },

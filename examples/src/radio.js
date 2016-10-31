@@ -1,13 +1,6 @@
 
-const { RadioGroup, CheckboxGroup } = Z;
-
-let App = React.createClass({
-
-    getInitialState: function() {
-        return { 
-            emp: '',
-            hobby: [],
-            emps: [{
+const { RadioGroup } = Z;
+const emp = [{
                 value: 'emp1',
                 text: 'Jack'
             }, {
@@ -19,17 +12,13 @@ let App = React.createClass({
             }, {
                 value: 'emp4',
                 text: 'Michael'
-            }],
-            hobbies: [{
-                value: 'b',
-                text: '篮球'
-            }, {
-                value: 'f',
-                text: '足球'
-            }, {
-                value: 's',
-                text: '游泳'
-            }]
+            }];
+
+let App = React.createClass({
+
+    getInitialState: function() {
+        return { 
+            emp: ''
         };
     },
 
@@ -40,15 +29,8 @@ let App = React.createClass({
         console.log(value)
     },
 
-    handleHobbyChange(value) {
-        this.setState({
-            hobby: value
-        })
-        console.log(value)
-    },
-
     render() {
-        const { emps, emp, hobby, hobbies } = this.state;
+        const { emp } = this.state;
 
         return (
             <div>
@@ -56,13 +38,10 @@ let App = React.createClass({
                     <RadioGroup value={emp} items={emps} onChange={this.handleEmpChange}/>
                 </section>
                 <section>
-                    <CheckboxGroup value={hobby} items={hobbies} onChange={this.handleHobbyChange}/>
+                    <RadioGroup align="x" value={emp} items={emps}/>
                 </section>
                 <section>
-                    <RadioGroup align="y" value={emp} items={emps} onChange={this.handleEmpChange}/>
-                </section>
-                <section>
-                    <CheckboxGroup align="y" value={hobby} items={hobbies} onChange={this.handleHobbyChange}/>
+                    <RadioGroup items={emps} diabled={true}/>
                 </section>
             </div>
         )

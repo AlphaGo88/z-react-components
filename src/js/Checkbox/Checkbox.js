@@ -54,10 +54,12 @@ const Checkbox = React.createClass({
         };
     },
 
-    getInitialState() {
-        return {
-            checked: this.props.checked || this.props.defaultChecked
-        };
+    componentWillMount() {
+        if (typeof(this.props.checked) === 'undefined') {
+            this.setState({
+                checked: this.props.defaultChecked
+            });
+        }
     },
 
     handleChange(event) {
@@ -77,36 +79,27 @@ const Checkbox = React.createClass({
             className,
             style,
             label,
-            disabled,
-            defaultChecked,
-            onCheck 
+            disabled
         } = this.props;
 
-        let inputProps = {
-            type: "checkbox",
-            disabled: disabled,
-            onChange: this.handleChange
-        };
-
-        let isChecked;
-
-        if (typeof(this.props.checked) !== undefined) {
-            isChecked = this.props.checked;
-            inputProps.checked = isChecked;
-        } else {
-            isChecked = this.state.checked;
-            inputProps.defaultChecked = defaultChecked;
-        }
+        const isChecked = typeof(this.props.checked) === 'undefined' ?
+            this.state.checked
+            :
+            this.props.checked;
 
         return (
             <div style={style} className={className}>
                 <label 
                     className={cx('checkbox', {
-                        'disabled': disabled,
-                        'checked': isChecked
+                        'disabled': disabled
                     })}
                 >
-                    <input {...inputProps}/>
+                    <input 
+                        type="checkbox"
+                        disabled={disabled}
+                        checked={isChecked}
+                        onChange={this.handleChange}
+                    />
                     <span>{label}</span>
                 </label>
             </div>

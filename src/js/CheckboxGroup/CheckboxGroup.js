@@ -48,8 +48,15 @@ const CheckboxGroup = React.createClass({
 
         /**
          * The selected values.
+         * The component is controlled with this prop.
+         * This prop overrides `defaultValue`.
          */
         value: React.PropTypes.array,
+
+        /**
+         * The defaultly selected values.
+         */
+        defaultValue: React.PropTypes.array,
 
         /**
          * Fires when the selected values change.
@@ -62,20 +69,33 @@ const CheckboxGroup = React.createClass({
         return {
             align: 'x',
             disabled: false,
-            items: [],
-            value: [],
             onChange: () => {}
         };
     },
 
-    handleChange(value, checked) {
-        let newValue = [];
-        if (checked) {
-            newValue = this.props.value.concat(value);
-        } else {
-            newValue = this.props.value.filter(it => it !== value);
+    componentWillMount() {
+        if (!this.props.value) {
+            this.setState({
+                value: this.props.defaultValue || []
+            });
         }
-        this.props.onChange(newValue);
+    },
+
+    handleChange(value, checked) {
+        if (!this.props.disabled) {
+            const oldValue = this.props.value || this.state.value;
+            const newValue = checked ? 
+                oldValue.concat(value) 
+                :
+                oldValue.filter(it => it !== value);
+
+            if (!this.props.value) {
+                this.setState({
+                    value: newValue
+                });
+            }
+            this.props.onChange(newValue);
+        }
     },
 
     render() {
@@ -86,8 +106,9 @@ const CheckboxGroup = React.createClass({
             itemStyle,
             align,
             items,
-            value 
         } = this.props;
+
+        const selectedValues = this.props.value || this.state.value;
 
         return (
             <ul 
@@ -104,7 +125,7 @@ const CheckboxGroup = React.createClass({
                     >
                         <Checkbox
                             label={item.text}
-                            disabled={item.disabled}
+                            checked={selectedValues.indexOf(item.value) > -1}
                             onCheck={(checked) => this.handleChange(item.value, checked)}
                         />
                     </li>

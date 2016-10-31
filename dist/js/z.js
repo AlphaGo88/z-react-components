@@ -52,16 +52,16 @@ var Z =
 	    author: 'zhao xin <83268606@qq.com>',
 
 	    Button: __webpack_require__(1),
-	    Dialog: __webpack_require__(3),
+	    Dialog: __webpack_require__(5),
 	    Message: __webpack_require__(8),
 	    Pagination: __webpack_require__(10),
 	    DatePicker: __webpack_require__(12),
 	    Select: __webpack_require__(15),
-	    Checkbox: __webpack_require__(41),
-	    RadioGroup: __webpack_require__(17),
-	    CheckboxGroup: __webpack_require__(19),
-	    Tabs: __webpack_require__(21),
-	    Formsy: __webpack_require__(24)
+	    Checkbox: __webpack_require__(17),
+	    RadioGroup: __webpack_require__(19),
+	    CheckboxGroup: __webpack_require__(21),
+	    Tabs: __webpack_require__(23),
+	    Formsy: __webpack_require__(26)
 	};
 
 /***/ },
@@ -85,8 +85,8 @@ var Z =
 	// Button
 	// ------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
 
 	var tabPressed = false;
 
@@ -297,13 +297,73 @@ var Z =
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	module.exports = React;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = {}.hasOwnProperty;
+
+		function classNames () {
+			var classes = [];
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg;
+
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+
+			return classes.join(' ');
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var React = __webpack_require__(4);
-	var ReactDOM = __webpack_require__(5);
-	var Dialog = __webpack_require__(6);
+	var React = __webpack_require__(3);
+	var ReactDOM = __webpack_require__(6);
+	var Dialog = __webpack_require__(7);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -327,19 +387,13 @@ var Z =
 	});
 
 /***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-	module.exports = React;
-
-/***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = ReactDOM;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -347,8 +401,8 @@ var Z =
 	// Dialog
 	// ------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
 	var Button = __webpack_require__(1);
 
 	var Dialog = React.createClass({
@@ -513,60 +567,6 @@ var Z =
 	module.exports = Dialog;
 
 /***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	  Copyright (c) 2016 Jed Watson.
-	  Licensed under the MIT License (MIT), see
-	  http://jedwatson.github.io/classnames
-	*/
-	/* global define */
-
-	(function () {
-		'use strict';
-
-		var hasOwn = {}.hasOwnProperty;
-
-		function classNames () {
-			var classes = [];
-
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-				if (!arg) continue;
-
-				var argType = typeof arg;
-
-				if (argType === 'string' || argType === 'number') {
-					classes.push(arg);
-				} else if (Array.isArray(arg)) {
-					classes.push(classNames.apply(null, arg));
-				} else if (argType === 'object') {
-					for (var key in arg) {
-						if (hasOwn.call(arg, key) && arg[key]) {
-							classes.push(key);
-						}
-					}
-				}
-			}
-
-			return classes.join(' ');
-		}
-
-		if (typeof module !== 'undefined' && module.exports) {
-			module.exports = classNames;
-		} else if (true) {
-			// register as 'classnames', consistent with npm package name
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return classNames;
-			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {
-			window.classNames = classNames;
-		}
-	}());
-
-
-/***/ },
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -661,8 +661,8 @@ var Z =
 	// Pagination
 	// ------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
 
 	var Pagination = React.createClass({
 	    displayName: 'Pagination',
@@ -830,8 +830,8 @@ var Z =
 	// DatePicker
 	// ------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
 	var ClickAwayListener = __webpack_require__(14);
 
 	// Whether the year is a leap year
@@ -1693,7 +1693,7 @@ var Z =
 	// ClickAwayListener
 	// ------------------------
 
-	var React = __webpack_require__(4);
+	var React = __webpack_require__(3);
 
 	var isDescendant = function isDescendant(el, target) {
 	    if (target !== null) {
@@ -1757,8 +1757,8 @@ var Z =
 	// Select
 	// ------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
 	var ClickAwayListener = __webpack_require__(14);
 
 	var Select = React.createClass({
@@ -2105,11 +2105,138 @@ var Z =
 
 	'use strict';
 
+	// Checkbox
+	// ---------------------------
+
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+
+	var Checkbox = React.createClass({
+	    displayName: 'Checkbox',
+
+
+	    propTypes: {
+	        /**
+	         * The class name of the root element.
+	         */
+	        className: React.PropTypes.string,
+
+	        /**
+	         * The inline styles of the root element.
+	         */
+	        style: React.PropTypes.object,
+
+	        /**
+	         * The checkbox's label.
+	         */
+	        label: React.PropTypes.string,
+
+	        /**
+	         * Whether the component is disabled.
+	         */
+	        disabled: React.PropTypes.bool,
+
+	        /**
+	         * Checkbox is checked if true.
+	         * The compnent is controlled if this prop is set.
+	         * This prop will override `defaultChecked`.
+	         */
+	        checked: React.PropTypes.bool,
+
+	        /**
+	         * Checkbox is defaultly checked if true.
+	         */
+	        defaultChecked: React.PropTypes.bool,
+
+	        /**
+	         * Fires when the checkbox is checked or unchecked.
+	         * @param {bool} checked
+	         */
+	        onCheck: React.PropTypes.func
+	    },
+
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            disabled: false,
+	            defaultChecked: false,
+	            onCheck: function onCheck() {}
+	        };
+	    },
+	    componentWillMount: function componentWillMount() {
+	        if (typeof this.props.checked === 'undefined') {
+	            this.setState({
+	                checked: this.props.defaultChecked
+	            });
+	        }
+	    },
+	    handleChange: function handleChange(event) {
+	        if (!this.props.disabled) {
+	            var checked = event.currentTarget.checked;
+	            if (typeof this.props.checked === 'undefined') {
+	                this.setState({
+	                    checked: checked
+	                });
+	            }
+	            this.props.onCheck(checked);
+	        }
+	    },
+	    render: function render() {
+	        var _props = this.props,
+	            className = _props.className,
+	            style = _props.style,
+	            label = _props.label,
+	            disabled = _props.disabled;
+
+
+	        var isChecked = typeof this.props.checked === 'undefined' ? this.state.checked : this.props.checked;
+
+	        return React.createElement(
+	            'div',
+	            { style: style, className: className },
+	            React.createElement(
+	                'label',
+	                {
+	                    className: cx('checkbox', {
+	                        'disabled': disabled
+	                    })
+	                },
+	                React.createElement('input', {
+	                    type: 'checkbox',
+	                    disabled: disabled,
+	                    checked: isChecked,
+	                    onChange: this.handleChange
+	                }),
+	                React.createElement(
+	                    'span',
+	                    null,
+	                    label
+	                )
+	            )
+	        );
+	    }
+	});
+
+	module.exports = Checkbox;
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(20);
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	// RadioGroup
 	// ---------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
 
 	var RadioGroup = React.createClass({
 	    displayName: 'RadioGroup',
@@ -2239,15 +2366,15 @@ var Z =
 	module.exports = RadioGroup;
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(20);
+	module.exports = __webpack_require__(22);
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2255,9 +2382,9 @@ var Z =
 	// CheckboxGroup
 	// ---------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
-	var Checkbox = __webpack_require__(41);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+	var Checkbox = __webpack_require__(17);
 
 	var CheckboxGroup = React.createClass({
 	    displayName: 'CheckboxGroup',
@@ -2304,8 +2431,15 @@ var Z =
 
 	        /**
 	         * The selected values.
+	         * The component is controlled with this prop.
+	         * This prop overrides `defaultValue`.
 	         */
 	        value: React.PropTypes.array,
+
+	        /**
+	         * The defaultly selected values.
+	         */
+	        defaultValue: React.PropTypes.array,
 
 	        /**
 	         * Fires when the selected values change.
@@ -2318,21 +2452,30 @@ var Z =
 	        return {
 	            align: 'x',
 	            disabled: false,
-	            items: [],
-	            value: [],
 	            onChange: function onChange() {}
 	        };
 	    },
-	    handleChange: function handleChange(value, checked) {
-	        var newValue = [];
-	        if (checked) {
-	            newValue = this.props.value.concat(value);
-	        } else {
-	            newValue = this.props.value.filter(function (it) {
-	                return it !== value;
+	    componentWillMount: function componentWillMount() {
+	        if (!this.props.value) {
+	            this.setState({
+	                value: this.props.defaultValue || []
 	            });
 	        }
-	        this.props.onChange(newValue);
+	    },
+	    handleChange: function handleChange(value, checked) {
+	        if (!this.props.disabled) {
+	            var oldValue = this.props.value || this.state.value;
+	            var newValue = checked ? oldValue.concat(value) : oldValue.filter(function (it) {
+	                return it !== value;
+	            });
+
+	            if (!this.props.value) {
+	                this.setState({
+	                    value: newValue
+	                });
+	            }
+	            this.props.onChange(newValue);
+	        }
 	    },
 	    render: function render() {
 	        var _this = this;
@@ -2343,9 +2486,10 @@ var Z =
 	            style = _props.style,
 	            itemStyle = _props.itemStyle,
 	            align = _props.align,
-	            items = _props.items,
-	            value = _props.value;
+	            items = _props.items;
 
+
+	        var selectedValues = this.props.value || this.state.value;
 
 	        return React.createElement(
 	            'ul',
@@ -2365,7 +2509,7 @@ var Z =
 	                    },
 	                    React.createElement(Checkbox, {
 	                        label: item.text,
-	                        disabled: item.disabled,
+	                        checked: selectedValues.indexOf(item.value) > -1,
 	                        onCheck: function onCheck(checked) {
 	                            return _this.handleChange(item.value, checked);
 	                        }
@@ -2379,15 +2523,15 @@ var Z =
 	module.exports = CheckboxGroup;
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(22);
+	module.exports = __webpack_require__(24);
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2395,9 +2539,9 @@ var Z =
 	// Tabs
 	// ------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
-	var Tab = __webpack_require__(23);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+	var Tab = __webpack_require__(25);
 
 	var Tabs = React.createClass({
 	    displayName: 'Tabs',
@@ -2512,7 +2656,7 @@ var Z =
 	module.exports = Tabs;
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2520,7 +2664,7 @@ var Z =
 	// Tab
 	// ------------------------
 
-	var React = __webpack_require__(4);
+	var React = __webpack_require__(3);
 
 	var Tab = React.createClass({
 	    displayName: 'Tab',
@@ -2551,15 +2695,15 @@ var Z =
 	module.exports = Tab;
 
 /***/ },
-/* 24 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(25);
+	module.exports = __webpack_require__(27);
 
 /***/ },
-/* 25 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2567,22 +2711,22 @@ var Z =
 	// Form
 	// ------------------------
 
-	var Formsy = __webpack_require__(26);
+	var Formsy = __webpack_require__(28);
 
-	Formsy.HiddenField = __webpack_require__(33);
-	Formsy.TextField = __webpack_require__(34);
-	Formsy.InputField = __webpack_require__(35);
-	Formsy.SelectField = __webpack_require__(36);
-	Formsy.DateField = __webpack_require__(37);
-	Formsy.RadioGroupField = __webpack_require__(38);
-	Formsy.CheckboxField = __webpack_require__(43);
-	Formsy.CheckboxGroupField = __webpack_require__(39);
-	Formsy.TextAreaField = __webpack_require__(40);
+	Formsy.HiddenField = __webpack_require__(35);
+	Formsy.TextField = __webpack_require__(36);
+	Formsy.InputField = __webpack_require__(37);
+	Formsy.SelectField = __webpack_require__(38);
+	Formsy.DateField = __webpack_require__(39);
+	Formsy.RadioGroupField = __webpack_require__(40);
+	Formsy.CheckboxField = __webpack_require__(41);
+	Formsy.CheckboxGroupField = __webpack_require__(42);
+	Formsy.TextAreaField = __webpack_require__(43);
 
 	module.exports = Formsy;
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -2593,14 +2737,14 @@ var Z =
 
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
-	var React = global.React || __webpack_require__(4);
+	var React = global.React || __webpack_require__(3);
 	var Formsy = {};
-	var validationRules = __webpack_require__(27);
-	var formDataToObject = __webpack_require__(28);
-	var utils = __webpack_require__(29);
-	var Mixin = __webpack_require__(30);
-	var HOC = __webpack_require__(31);
-	var Decorator = __webpack_require__(32);
+	var validationRules = __webpack_require__(29);
+	var formDataToObject = __webpack_require__(30);
+	var utils = __webpack_require__(31);
+	var Mixin = __webpack_require__(32);
+	var HOC = __webpack_require__(33);
+	var Decorator = __webpack_require__(34);
 	var options = {};
 	var emptyArray = [];
 
@@ -3048,7 +3192,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 27 */
+/* 29 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3133,7 +3277,7 @@ var Z =
 	module.exports = validations;
 
 /***/ },
-/* 28 */
+/* 30 */
 /***/ function(module, exports) {
 
 	function toObj(source) {
@@ -3184,7 +3328,7 @@ var Z =
 	}
 
 /***/ },
-/* 29 */
+/* 31 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3246,13 +3390,13 @@ var Z =
 	};
 
 /***/ },
-/* 30 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
-	var utils = __webpack_require__(29);
-	var React = global.React || __webpack_require__(4);
+	var utils = __webpack_require__(31);
+	var React = global.React || __webpack_require__(3);
 
 	var convertValidationsToObject = function convertValidationsToObject(validations) {
 
@@ -3426,15 +3570,15 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 31 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = global.React || __webpack_require__(4);
-	var Mixin = __webpack_require__(30);
+	var React = global.React || __webpack_require__(3);
+	var Mixin = __webpack_require__(32);
 	module.exports = function (Component) {
 	  return React.createClass({
 	    displayName: 'Formsy(' + getDisplayName(Component) + ')',
@@ -3467,15 +3611,15 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 32 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = global.React || __webpack_require__(4);
-	var Mixin = __webpack_require__(30);
+	var React = global.React || __webpack_require__(3);
+	var Mixin = __webpack_require__(32);
 	module.exports = function () {
 	  return function (Component) {
 	    return React.createClass({
@@ -3505,7 +3649,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 33 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3513,8 +3657,8 @@ var Z =
 	// Hidden Field
 	// ---------------------------
 
-	var React = __webpack_require__(4);
-	var Formsy = __webpack_require__(26);
+	var React = __webpack_require__(3);
+	var Formsy = __webpack_require__(28);
 
 	var HiddenField = React.createClass({
 	    displayName: 'HiddenField',
@@ -3537,7 +3681,7 @@ var Z =
 	module.exports = HiddenField;
 
 /***/ },
-/* 34 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3545,9 +3689,9 @@ var Z =
 	// Text Field
 	// ---------------------------
 
-	var React = __webpack_require__(4);
-	var Formsy = __webpack_require__(26);
-	var cx = __webpack_require__(7);
+	var React = __webpack_require__(3);
+	var Formsy = __webpack_require__(28);
+	var cx = __webpack_require__(4);
 
 	var TextField = React.createClass({
 	    displayName: 'TextField',
@@ -3587,7 +3731,7 @@ var Z =
 	module.exports = TextField;
 
 /***/ },
-/* 35 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3599,9 +3743,9 @@ var Z =
 	// Input Field
 	// ---------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
-	var Formsy = __webpack_require__(26);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+	var Formsy = __webpack_require__(28);
 
 	var InputField = React.createClass({
 	    displayName: 'InputField',
@@ -3675,7 +3819,7 @@ var Z =
 	module.exports = InputField;
 
 /***/ },
-/* 36 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3687,10 +3831,10 @@ var Z =
 	// Select Field
 	// ---------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
 	var Select = __webpack_require__(15);
-	var Formsy = __webpack_require__(26);
+	var Formsy = __webpack_require__(28);
 
 	var SelectField = React.createClass({
 	    displayName: 'SelectField',
@@ -3767,7 +3911,7 @@ var Z =
 	module.exports = SelectField;
 
 /***/ },
-/* 37 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3779,10 +3923,10 @@ var Z =
 	// Datepicker Field
 	// ---------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
 	var DatePicker = __webpack_require__(12);
-	var Formsy = __webpack_require__(26);
+	var Formsy = __webpack_require__(28);
 
 	var DateField = React.createClass({
 	    displayName: 'DateField',
@@ -3840,7 +3984,7 @@ var Z =
 	module.exports = DateField;
 
 /***/ },
-/* 38 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3852,10 +3996,10 @@ var Z =
 	// RadioGroup Field
 	// ---------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
-	var Formsy = __webpack_require__(26);
-	var RadioGroup = __webpack_require__(17);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+	var Formsy = __webpack_require__(28);
+	var RadioGroup = __webpack_require__(19);
 
 	var RadioGroupField = React.createClass({
 	    displayName: 'RadioGroupField',
@@ -3902,7 +4046,63 @@ var Z =
 	module.exports = RadioGroupField;
 
 /***/ },
-/* 39 */
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	// Checkbox Field
+	// ---------------------------
+
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+	var Formsy = __webpack_require__(28);
+	var Checkbox = __webpack_require__(17);
+
+	var CheckboxField = React.createClass({
+	    displayName: 'CheckboxField',
+
+
+	    mixins: [Formsy.Mixin],
+
+	    componentWillMount: function componentWillMount() {
+	        this.setValue(this.props.defaultValue || false);
+	    },
+	    changeValue: function changeValue(checked) {
+	        this.setValue(checked);
+	        this.props.onChange && this.props.onChange(checked);
+	    },
+	    render: function render() {
+	        var _props = this.props,
+	            validationError = _props.validationError,
+	            validationErrors = _props.validationErrors,
+	            validations = _props.validations,
+	            title = _props.title,
+	            className = _props.className,
+	            controlClassName = _props.controlClassName,
+	            otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'controlClassName']);
+
+	        return React.createElement(
+	            'div',
+	            { className: cx('form-group', className) },
+	            React.createElement(Checkbox, _extends({}, otherProps, {
+	                className: cx('form-control', controlClassName),
+	                label: title,
+	                checked: this.getValue(),
+	                onCheck: this.changeValue
+	            }))
+	        );
+	    }
+	});
+
+	module.exports = CheckboxField;
+
+/***/ },
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3914,10 +4114,10 @@ var Z =
 	// CheckboxGroup Field
 	// ---------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
-	var Formsy = __webpack_require__(26);
-	var CheckboxGroup = __webpack_require__(19);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+	var Formsy = __webpack_require__(28);
+	var CheckboxGroup = __webpack_require__(21);
 
 	var CheckboxGroupField = React.createClass({
 	    displayName: 'CheckboxGroupField',
@@ -3965,7 +4165,7 @@ var Z =
 	module.exports = CheckboxGroupField;
 
 /***/ },
-/* 40 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3977,9 +4177,9 @@ var Z =
 	// TextArea Field
 	// ---------------------------
 
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
-	var Formsy = __webpack_require__(26);
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+	var Formsy = __webpack_require__(28);
 
 	var TextAreaField = React.createClass({
 	    displayName: 'TextAreaField',
@@ -4036,201 +4236,6 @@ var Z =
 	});
 
 	module.exports = TextAreaField;
-
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	module.exports = __webpack_require__(42);
-
-/***/ },
-/* 42 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-	// Checkbox
-	// ---------------------------
-
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
-
-	var Checkbox = React.createClass({
-	    displayName: 'Checkbox',
-
-
-	    propTypes: {
-	        /**
-	         * The class name of the root element.
-	         */
-	        className: React.PropTypes.string,
-
-	        /**
-	         * The inline styles of the root element.
-	         */
-	        style: React.PropTypes.object,
-
-	        /**
-	         * The checkbox's label.
-	         */
-	        label: React.PropTypes.string,
-
-	        /**
-	         * Whether the component is disabled.
-	         */
-	        disabled: React.PropTypes.bool,
-
-	        /**
-	         * Checkbox is checked if true.
-	         * The compnent is controlled if this prop is set.
-	         * This prop will override `defaultChecked`.
-	         */
-	        checked: React.PropTypes.bool,
-
-	        /**
-	         * Checkbox is defaultly checked if true.
-	         */
-	        defaultChecked: React.PropTypes.bool,
-
-	        /**
-	         * Fires when the checkbox is checked or unchecked.
-	         * @param {bool} checked
-	         */
-	        onCheck: React.PropTypes.func
-	    },
-
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            disabled: false,
-	            defaultChecked: false,
-	            onCheck: function onCheck() {}
-	        };
-	    },
-	    getInitialState: function getInitialState() {
-	        return {
-	            checked: this.props.checked || this.props.defaultChecked
-	        };
-	    },
-	    handleChange: function handleChange(event) {
-	        if (!this.props.disabled) {
-	            var checked = event.currentTarget.checked;
-	            if (typeof this.props.checked === 'undefined') {
-	                this.setState({
-	                    checked: checked
-	                });
-	            }
-	            this.props.onCheck(checked);
-	        }
-	    },
-	    render: function render() {
-	        var _props = this.props,
-	            className = _props.className,
-	            style = _props.style,
-	            label = _props.label,
-	            disabled = _props.disabled,
-	            defaultChecked = _props.defaultChecked,
-	            onCheck = _props.onCheck;
-
-
-	        var inputProps = {
-	            type: "checkbox",
-	            disabled: disabled,
-	            onChange: this.handleChange
-	        };
-
-	        var isChecked = void 0;
-
-	        if (_typeof(this.props.checked) !== undefined) {
-	            isChecked = this.props.checked;
-	            inputProps.checked = isChecked;
-	        } else {
-	            isChecked = this.state.checked;
-	            inputProps.defaultChecked = defaultChecked;
-	        }
-
-	        return React.createElement(
-	            'div',
-	            { style: style, className: className },
-	            React.createElement(
-	                'label',
-	                {
-	                    className: cx('checkbox', {
-	                        'disabled': disabled,
-	                        'checked': isChecked
-	                    })
-	                },
-	                React.createElement('input', inputProps),
-	                React.createElement(
-	                    'span',
-	                    null,
-	                    label
-	                )
-	            )
-	        );
-	    }
-	});
-
-	module.exports = Checkbox;
-
-/***/ },
-/* 43 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	// Checkbox Field
-	// ---------------------------
-
-	var React = __webpack_require__(4);
-	var cx = __webpack_require__(7);
-	var Formsy = __webpack_require__(26);
-	var Checkbox = __webpack_require__(41);
-
-	var CheckboxField = React.createClass({
-	    displayName: 'CheckboxField',
-
-
-	    mixins: [Formsy.Mixin],
-
-	    componentWillMount: function componentWillMount() {
-	        this.setValue(this.props.defaultValue || false);
-	    },
-	    changeValue: function changeValue(checked) {
-	        this.setValue(checked);
-	        this.props.onChange && this.props.onChange(checked);
-	    },
-	    render: function render() {
-	        var _props = this.props,
-	            validationError = _props.validationError,
-	            validationErrors = _props.validationErrors,
-	            validations = _props.validations,
-	            title = _props.title,
-	            className = _props.className,
-	            controlClassName = _props.controlClassName,
-	            otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'controlClassName']);
-
-	        return React.createElement(
-	            'div',
-	            { className: cx('form-group', className) },
-	            React.createElement(Checkbox, _extends({}, otherProps, {
-	                className: cx('form-control', controlClassName),
-	                label: title,
-	                checked: this.getValue(),
-	                onCheck: this.changeValue
-	            }))
-	        );
-	    }
-	});
-
-	module.exports = CheckboxField;
 
 /***/ }
 /******/ ]);

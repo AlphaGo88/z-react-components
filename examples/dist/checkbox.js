@@ -47,59 +47,53 @@
 	'use strict';
 
 	var _Z = Z,
-	    RadioGroup = _Z.RadioGroup;
+	    Checkbox = _Z.Checkbox,
+	    CheckboxGroup = _Z.CheckboxGroup;
 
-	var emp = [{
-	    value: 'emp1',
-	    text: 'Jack'
+	var fruits = [{
+	    value: '1',
+	    text: 'apple'
 	}, {
-	    value: 'emp2',
-	    text: 'Steve'
+	    value: '2',
+	    text: 'banana'
 	}, {
-	    value: 'emp3',
-	    text: 'Jim'
-	}, {
-	    value: 'emp4',
-	    text: 'Michael'
+	    value: '3',
+	    text: 'orange'
 	}];
 
 	var App = React.createClass({
 	    displayName: 'App',
-
-
-	    getInitialState: function getInitialState() {
-	        return {
-	            emp: ''
-	        };
-	    },
-
-	    handleEmpChange: function handleEmpChange(value) {
-	        this.setState({
-	            emp: value
-	        });
-	        console.log(value);
+	    handleChange: function handleChange(value) {
+	        alert(JSON.stringify(value));
 	    },
 	    render: function render() {
-	        var emp = this.state.emp;
-
-
 	        return React.createElement(
 	            'div',
 	            null,
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(RadioGroup, { value: emp, items: emps, onChange: this.handleEmpChange })
+	                React.createElement(Checkbox, { label: 'Normal checkbox' })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(RadioGroup, { align: 'x', value: emp, items: emps })
+	                React.createElement(Checkbox, { label: 'Disabled checkbox', disabled: true })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(RadioGroup, { items: emps, diabled: true })
+	                React.createElement(Checkbox, { label: 'checked checkbox', defaultChecked: true })
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(CheckboxGroup, { items: fruits, onChange: this.handleChange })
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(CheckboxGroup, { align: 'y', items: fruits })
 	            )
 	        );
 	    }
