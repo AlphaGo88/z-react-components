@@ -47,24 +47,11 @@
 	"use strict";
 
 	var _Z = Z,
-	    DatePicker = _Z.DatePicker;
+	    Button = _Z.Button;
 
 
 	var App = React.createClass({
 	    displayName: "App",
-
-
-	    getInitialState: function getInitialState() {
-	        return {
-	            date: ''
-	        };
-	    },
-
-	    handleChange: function handleChange(dateStr, dateObj) {
-	        this.setState({
-	            date: dateStr
-	        });
-	    },
 	    render: function render() {
 
 	        return React.createElement(
@@ -73,41 +60,77 @@
 	            React.createElement(
 	                "section",
 	                null,
-	                React.createElement(DatePicker, { value: this.state.date, onChange: this.handleChange }),
-	                "\xA0\xA0\xA0",
-	                React.createElement("input", { value: this.state.date })
+	                React.createElement(
+	                    Button,
+	                    { size: "small", primary: true },
+	                    "small"
+	                ),
+	                "\xA0\xA0",
+	                React.createElement(
+	                    Button,
+	                    { size: "medium", primary: true },
+	                    "medium"
+	                ),
+	                "\xA0\xA0",
+	                React.createElement(
+	                    Button,
+	                    { size: "large", primary: true },
+	                    "large"
+	                )
 	            ),
 	            React.createElement(
 	                "section",
 	                null,
-	                React.createElement(DatePicker, {
-	                    defaultValue: "2014-08-05",
-	                    maxValue: "2016-09-20",
-	                    minValue: "2010-03-14"
-	                })
+	                React.createElement(
+	                    Button,
+	                    null,
+	                    "default"
+	                ),
+	                "\xA0\xA0",
+	                React.createElement(
+	                    Button,
+	                    { primary: true, focus: true },
+	                    "primary"
+	                ),
+	                "\xA0\xA0",
+	                React.createElement(
+	                    Button,
+	                    { disabled: true },
+	                    "disabled"
+	                ),
+	                "\xA0\xA0"
 	            ),
 	            React.createElement(
 	                "section",
 	                null,
-	                React.createElement(DatePicker, {
-	                    selectTime: true
-	                })
+	                React.createElement(
+	                    Button,
+	                    { type: "flat", focus: true },
+	                    "default"
+	                ),
+	                "\xA0\xA0",
+	                React.createElement(
+	                    Button,
+	                    { type: "flat", primary: true },
+	                    "primary"
+	                ),
+	                "\xA0\xA0",
+	                React.createElement(
+	                    Button,
+	                    { type: "flat", disabled: true },
+	                    "disabled"
+	                ),
+	                "\xA0\xA0"
 	            ),
 	            React.createElement(
 	                "section",
 	                null,
-	                React.createElement(DatePicker, {
-	                    disabled: true
-	                })
-	            ),
-	            React.createElement(
-	                "section",
-	                null,
-	                React.createElement(DatePicker, {
-	                    disableDate: function disableDate(date) {
-	                        return data.getDay() === 4;
-	                    }
-	                })
+	                React.createElement(
+	                    Button,
+	                    { type: "flat", link: "http://www.baidu.com" },
+	                    "\u767E\u5EA6"
+	                ),
+	                "\xA0\xA0"
 	            )
 	        );
 	    }

@@ -46,9 +46,9 @@
 
 	'use strict';
 
-	var _Z = Z;
-	var Message = _Z.Message;
-	var Dialog = _Z.Dialog;
+	var _Z = Z,
+	    Message = _Z.Message,
+	    Dialog = _Z.Dialog;
 
 
 	var App = React.createClass({
@@ -87,9 +87,9 @@
 	        this.setState({ dlgOpen1: false });
 	    },
 	    render: function render() {
-	        var _state = this.state;
-	        var dlgOpen = _state.dlgOpen;
-	        var dlgOpen1 = _state.dlgOpen1;
+	        var _state = this.state,
+	            dlgOpen = _state.dlgOpen,
+	            dlgOpen1 = _state.dlgOpen1;
 
 
 	        return React.createElement(

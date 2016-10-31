@@ -3,6 +3,7 @@
 
 const React = require('react');
 const cx = require('classnames');
+const Checkbox = require('../Checkbox');
 
 const CheckboxGroup = React.createClass({
 
@@ -29,8 +30,8 @@ const CheckboxGroup = React.createClass({
 
         /**
          * How the items align.
-         * x: align horizonal.
-         * y: align vertical.
+         * x: align horizonally.
+         * y: align vertically.
          */
         align: React.PropTypes.string,
 
@@ -40,13 +41,13 @@ const CheckboxGroup = React.createClass({
         disabled: React.PropTypes.bool,
 
         /**
-         * The items of the `CheckboxGroup`, 
+         * The items of the component, 
          * each with a `value` prop and a `text` prop.
          */
         items: React.PropTypes.array,
 
         /**
-         * A list of selected values.
+         * The selected values.
          */
         value: React.PropTypes.array,
 
@@ -60,22 +61,20 @@ const CheckboxGroup = React.createClass({
     getDefaultProps() {
         return {
             align: 'x',
+            disabled: false,
             items: [],
             value: [],
-            onChange() {}
+            onChange: () => {}
         };
     },
 
-    handleChange(event, value) {
-        const checked = event.currentTarget.checked;
+    handleChange(value, checked) {
         let newValue = [];
-
         if (checked) {
             newValue = this.props.value.concat(value);
         } else {
             newValue = this.props.value.filter(it => it !== value);
         }
-
         this.props.onChange(newValue);
     },
 
@@ -103,20 +102,11 @@ const CheckboxGroup = React.createClass({
                         style={itemStyle}
                         className={itemClassName}
                     >
-                        <label 
-                            className={cx('checkbox', {
-                                'disabled': item.disabled || this.props.disabled
-                            })}
-                        >
-                            <input
-                                type="checkbox"
-                                disabled={item.disabled || this.props.disabled}
-                                value={item.value}
-                                checked={value.indexOf(item.value) > -1}
-                                onChange={(e) => this.handleChange(e, item.value)}
-                            />
-                            <span>{item.text}</span>
-                        </label>
+                        <Checkbox
+                            label={item.text}
+                            disabled={item.disabled}
+                            onCheck={(checked) => this.handleChange(item.value, checked)}
+                        />
                     </li>
                 ))}
             </ul>

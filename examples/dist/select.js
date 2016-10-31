@@ -46,8 +46,8 @@
 
 	'use strict';
 
-	var _Z = Z;
-	var Select = _Z.Select;
+	var _Z = Z,
+	    Select = _Z.Select;
 
 
 	var App = React.createClass({
@@ -120,11 +120,11 @@
 	        });
 	    },
 	    render: function render() {
-	        var _state = this.state;
-	        var emps = _state.emps;
-	        var emp = _state.emp;
-	        var fruits = _state.fruits;
-	        var fruit = _state.fruit;
+	        var _state = this.state,
+	            emps = _state.emps,
+	            emp = _state.emp,
+	            fruits = _state.fruits,
+	            fruit = _state.fruit;
 
 
 	        return React.createElement(

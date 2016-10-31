@@ -46,9 +46,9 @@
 
 	'use strict';
 
-	var _Z = Z;
-	var RadioGroup = _Z.RadioGroup;
-	var CheckboxGroup = _Z.CheckboxGroup;
+	var _Z = Z,
+	    RadioGroup = _Z.RadioGroup,
+	    CheckboxGroup = _Z.CheckboxGroup;
 
 
 	var App = React.createClass({
@@ -98,11 +98,11 @@
 	        console.log(value);
 	    },
 	    render: function render() {
-	        var _state = this.state;
-	        var emps = _state.emps;
-	        var emp = _state.emp;
-	        var hobby = _state.hobby;
-	        var hobbies = _state.hobbies;
+	        var _state = this.state,
+	            emps = _state.emps,
+	            emp = _state.emp,
+	            hobby = _state.hobby,
+	            hobbies = _state.hobbies;
 
 
 	        return React.createElement(

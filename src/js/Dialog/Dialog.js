@@ -3,6 +3,7 @@
 
 const React = require('react');
 const cx = require('classnames');
+const Button = require('../Button');
 
 const Dialog = React.createClass({
 
@@ -110,48 +111,50 @@ const Dialog = React.createClass({
                     'show': isOpen 
                 })}
             >
-                <div 
-                    style={style}
-                    className={cx('dialog', className)} 
-                >
-                    {title && 
-                        <h3 
-                            style={titleStyle}
-                            className={cx('dialog-title', titleClassName)}
-                        >
-                            {title}
-                        </h3>
-                    }
-                    <div 
-                        style={contentStyle}
-                        className={cx('dialog-content', contentClassName)}
-                    >
-                        {children}
-                    </div>
-                    <div 
-                        style={actionsContainerStyle}
-                        className={cx('dialog-action-container', actionsContainerClassName)}
-                    >
-                        {actions || 
-                            [
-                                <span 
-                                    key={0} 
-                                    className="btn-flat btn-primary" 
-                                    onClick={onCancel}
-                                >
-                                    取消
-                                </span>,
-                                <span 
-                                    key={1} 
-                                    className="btn-flat btn-primary" 
-                                    onClick={onOK}
-                                >
-                                    确认
-                                </span>
-                            ]
+                {isOpen &&
+                    <div style={style} className={cx('dialog', className)}>
+                        {title && 
+                            <h3 
+                                style={titleStyle}
+                                className={cx('dialog-title', titleClassName)}
+                            >
+                                {title}
+                            </h3>
                         }
+                        <div 
+                            style={contentStyle}
+                            className={cx('dialog-content', contentClassName)}
+                        >
+                            {children}
+                        </div>
+                        <div 
+                            style={actionsContainerStyle}
+                            className={cx('dialog-action-container', actionsContainerClassName)}
+                        >
+                            {actions || 
+                                [
+                                    <Button 
+                                        key={0}
+                                        type="flat" 
+                                        primary={true}
+                                        onClick={onCancel}
+                                    >
+                                        取消
+                                    </Button>,
+                                    <Button 
+                                        key={1}
+                                        type="flat" 
+                                        primary={true}
+                                        focus={true}
+                                        onClick={onOK}
+                                    >
+                                        确认
+                                    </Button>
+                                ]
+                            }
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         );
     }

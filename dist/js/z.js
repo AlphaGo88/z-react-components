@@ -51,15 +51,17 @@ var Z =
 	    version: '1.0.0',
 	    author: 'zhao xin <83268606@qq.com>',
 
-	    Dialog: __webpack_require__(1),
-	    Message: __webpack_require__(6),
-	    Pagination: __webpack_require__(8),
-	    DatePicker: __webpack_require__(10),
-	    Select: __webpack_require__(13),
-	    RadioGroup: __webpack_require__(15),
-	    CheckboxGroup: __webpack_require__(17),
-	    Tabs: __webpack_require__(19),
-	    Formsy: __webpack_require__(22)
+	    Button: __webpack_require__(1),
+	    Dialog: __webpack_require__(3),
+	    Message: __webpack_require__(8),
+	    Pagination: __webpack_require__(10),
+	    DatePicker: __webpack_require__(12),
+	    Select: __webpack_require__(15),
+	    Checkbox: __webpack_require__(41),
+	    RadioGroup: __webpack_require__(17),
+	    CheckboxGroup: __webpack_require__(19),
+	    Tabs: __webpack_require__(21),
+	    Formsy: __webpack_require__(24)
 	};
 
 /***/ },
@@ -68,9 +70,240 @@ var Z =
 
 	'use strict';
 
-	var React = __webpack_require__(2);
-	var ReactDOM = __webpack_require__(3);
-	var Dialog = __webpack_require__(4);
+	module.exports = __webpack_require__(2);
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	// Button
+	// ------------------------
+
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+
+	var tabPressed = false;
+
+	function handleTabPress(event) {
+	    tabPressed = event.which === 9;
+	}
+
+	var Button = React.createClass({
+	    displayName: 'Button',
+
+
+	    propTypes: {
+	        /**
+	         * The css class name of the root element.
+	         */
+	        className: React.PropTypes.string,
+
+	        /**
+	         * The inline styles of the root element.
+	         */
+	        style: React.PropTypes.object,
+
+	        /**
+	         * The type of the button.
+	         */
+	        type: React.PropTypes.oneOf(['float', 'flat', 'outline']),
+
+	        /**
+	         * The button's size.
+	         */
+	        size: React.PropTypes.oneOf(['small', 'medium', 'large', 'larger']),
+
+	        /**
+	         * If true, colors the button with the theme's primary color.
+	         */
+	        primary: React.PropTypes.bool,
+
+	        /**
+	         * If true, colors the button with the theme's secondary color.
+	         */
+	        secondary: React.PropTypes.bool,
+
+	        /**
+	         * If true, the button will take up the full width of its container.
+	         */
+	        fullWidth: React.PropTypes.bool,
+
+	        /**
+	         * Link to a url.
+	         */
+	        link: React.PropTypes.string,
+
+	        /**
+	         * Whether the button has focus style.
+	         */
+	        focus: React.PropTypes.bool,
+
+	        /**
+	         * Remove the focus status of the button.
+	         */
+	        removeFocus: React.PropTypes.bool,
+
+	        /**
+	         * Whether the button is disabled.
+	         */
+	        disabled: React.PropTypes.bool,
+
+	        /**
+	         * Fires when the button is blurred.
+	         */
+	        onBlur: React.PropTypes.func,
+
+	        /**
+	         * Fires when clicking the button.
+	         */
+	        onClick: React.PropTypes.func
+	    },
+
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            type: 'float',
+	            size: 'medium',
+	            primary: false,
+	            secondary: false,
+	            fullWidth: false,
+	            disabled: false,
+	            focus: false,
+	            removeFocus: false,
+	            onFocus: function onFocus() {},
+	            onBlur: function onBlur() {},
+	            onClick: function onClick() {}
+	        };
+	    },
+	    getInitialState: function getInitialState() {
+	        return {
+	            focused: !this.props.disabled && this.props.focus
+	        };
+	    },
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	        if ((nextProps.disabled || nextProps.removeFocus) && this.state.focused) {
+	            this.setState({ focused: false });
+	        }
+	    },
+	    componentDidMount: function componentDidMount() {
+	        if (!this.props.disabled && this.props.focus) {
+	            ReactDOM.findDOMNode(this).focus();
+	        }
+	        // Listen to tab pressing so that we know when it's a keyboard focus. 
+	        window.addEventListener('keydown', handleTabPress, false);
+	    },
+	    componentWillUnmount: function componentWillUnmount() {
+	        clearTimeout(this.focusTimeout);
+	        window.removeEventListener('keydown', handleTabPress, false);
+	    },
+	    cancelFocusTimeout: function cancelFocusTimeout() {
+	        if (this.focusTimeout) {
+	            clearTimeout(this.focusTimeout);
+	            this.focusTimeout = null;
+	        }
+	    },
+	    handleKeyDown: function handleKeyDown(event) {
+	        if (!this.props.disabled && !this.props.removeFocus) {
+	            if (event.which === 13) {
+	                this.handleClick(event);
+	            }
+	        }
+	    },
+	    handleFocus: function handleFocus(event) {
+	        var _this = this;
+
+	        if (event) event.persist();
+	        if (!this.props.disabled && !this.props.removeFocus) {
+	            // setTimeout is needed because the focus event fires first
+	            // Wait so that we can capture if this was a keyboard focus
+	            this.focusTimeout = setTimeout(function () {
+	                if (tabPressed) {
+	                    _this.setState({ focused: true });
+	                }
+	            }, 150);
+	            this.props.onFocus(event);
+	        }
+	    },
+	    handleBlur: function handleBlur(event) {
+	        this.cancelFocusTimeout();
+	        this.setState({ focused: false });
+	        this.props.onBlur(event);
+	    },
+	    handleClick: function handleClick(event) {
+	        if (!this.props.disabled) {
+	            tabPressed = false;
+	            this.props.onClick(event);
+	        }
+	    },
+	    render: function render() {
+	        var _cx;
+
+	        var _props = this.props,
+	            className = _props.className,
+	            style = _props.style,
+	            type = _props.type,
+	            size = _props.size,
+	            primary = _props.primary,
+	            secondary = _props.secondary,
+	            fullWidth = _props.fullWidth,
+	            link = _props.link,
+	            disabled = _props.disabled,
+	            children = _props.children;
+	        var focused = this.state.focused;
+
+
+	        var colorStyle = void 0;
+	        if (disabled) {
+	            colorStyle = 'disabled';
+	        } else {
+	            colorStyle = primary ? 'primary' : secondary ? 'secondary' : 'default';
+	        }
+
+	        var renderProps = {
+	            className: cx(className, (_cx = {}, _defineProperty(_cx, 'btn-' + type, true), _defineProperty(_cx, 'btn-' + size, true), _defineProperty(_cx, 'btn-' + colorStyle, true), _defineProperty(_cx, 'btn-focus', focused), _defineProperty(_cx, 'btn-block', fullWidth), _cx)),
+	            style: style,
+	            disabled: disabled,
+	            tabIndex: "0",
+	            onKeyDown: this.handleKeyDown,
+	            onFocus: this.handleFocus,
+	            onBlur: this.handleBlur,
+	            onClick: this.handleClick
+	        };
+
+	        var _children = [React.createElement('div', { key: 0, className: 'ripple' }), React.createElement(
+	            'div',
+	            { key: 1, className: 'button-label' },
+	            children
+	        )];
+
+	        return link ? React.createElement(
+	            'a',
+	            _extends({ href: disabled ? undefined : link }, renderProps),
+	            _children
+	        ) : React.createElement(
+	            'button',
+	            renderProps,
+	            _children
+	        );
+	    }
+	});
+
+	module.exports = Button;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(4);
+	var ReactDOM = __webpack_require__(5);
+	var Dialog = __webpack_require__(6);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -94,19 +327,19 @@ var Z =
 	});
 
 /***/ },
-/* 2 */
+/* 4 */
 /***/ function(module, exports) {
 
 	module.exports = React;
 
 /***/ },
-/* 3 */
+/* 5 */
 /***/ function(module, exports) {
 
 	module.exports = ReactDOM;
 
 /***/ },
-/* 4 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -114,8 +347,9 @@ var Z =
 	// Dialog
 	// ------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var Button = __webpack_require__(1);
 
 	var Dialog = React.createClass({
 	    displayName: 'Dialog',
@@ -201,21 +435,21 @@ var Z =
 	        };
 	    },
 	    render: function render() {
-	        var _props = this.props;
-	        var className = _props.className;
-	        var titleClassName = _props.titleClassName;
-	        var contentClassName = _props.contentClassName;
-	        var actionsContainerClassName = _props.actionsContainerClassName;
-	        var style = _props.style;
-	        var titleStyle = _props.titleStyle;
-	        var contentStyle = _props.contentStyle;
-	        var actionsContainerStyle = _props.actionsContainerStyle;
-	        var title = _props.title;
-	        var children = _props.children;
-	        var actions = _props.actions;
-	        var isOpen = _props.isOpen;
-	        var onOK = _props.onOK;
-	        var onCancel = _props.onCancel;
+	        var _props = this.props,
+	            className = _props.className,
+	            titleClassName = _props.titleClassName,
+	            contentClassName = _props.contentClassName,
+	            actionsContainerClassName = _props.actionsContainerClassName,
+	            style = _props.style,
+	            titleStyle = _props.titleStyle,
+	            contentStyle = _props.contentStyle,
+	            actionsContainerStyle = _props.actionsContainerStyle,
+	            title = _props.title,
+	            children = _props.children,
+	            actions = _props.actions,
+	            isOpen = _props.isOpen,
+	            onOK = _props.onOK,
+	            onCancel = _props.onCancel;
 
 
 	        return React.createElement(
@@ -225,12 +459,9 @@ var Z =
 	                    'show': isOpen
 	                })
 	            },
-	            React.createElement(
+	            isOpen && React.createElement(
 	                'div',
-	                {
-	                    style: style,
-	                    className: cx('dialog', className)
-	                },
+	                { style: style, className: cx('dialog', className) },
 	                title && React.createElement(
 	                    'h3',
 	                    {
@@ -254,18 +485,21 @@ var Z =
 	                        className: cx('dialog-action-container', actionsContainerClassName)
 	                    },
 	                    actions || [React.createElement(
-	                        'span',
+	                        Button,
 	                        {
 	                            key: 0,
-	                            className: 'btn-flat btn-primary',
+	                            type: 'flat',
+	                            primary: true,
 	                            onClick: onCancel
 	                        },
 	                        '\u53D6\u6D88'
 	                    ), React.createElement(
-	                        'span',
+	                        Button,
 	                        {
 	                            key: 1,
-	                            className: 'btn-flat btn-primary',
+	                            type: 'flat',
+	                            primary: true,
+	                            focus: true,
 	                            onClick: onOK
 	                        },
 	                        '\u786E\u8BA4'
@@ -279,7 +513,7 @@ var Z =
 	module.exports = Dialog;
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -333,15 +567,15 @@ var Z =
 
 
 /***/ },
-/* 6 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(7);
+	module.exports = __webpack_require__(9);
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -411,15 +645,15 @@ var Z =
 	};
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(9);
+	module.exports = __webpack_require__(11);
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -427,8 +661,8 @@ var Z =
 	// Pagination
 	// ------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
 
 	var Pagination = React.createClass({
 	    displayName: 'Pagination',
@@ -492,16 +726,16 @@ var Z =
 	        };
 	    },
 	    render: function render() {
-	        var _props = this.props;
-	        var className = _props.className;
-	        var style = _props.style;
-	        var pageClassName = _props.pageClassName;
-	        var pageStyle = _props.pageStyle;
-	        var recordCount = _props.recordCount;
-	        var pageDisplay = _props.pageDisplay;
-	        var pageSize = _props.pageSize;
-	        var current = _props.current;
-	        var onChange = _props.onChange;
+	        var _props = this.props,
+	            className = _props.className,
+	            style = _props.style,
+	            pageClassName = _props.pageClassName,
+	            pageStyle = _props.pageStyle,
+	            recordCount = _props.recordCount,
+	            pageDisplay = _props.pageDisplay,
+	            pageSize = _props.pageSize,
+	            current = _props.current,
+	            onChange = _props.onChange;
 
 
 	        if (recordCount === 0) return null;
@@ -578,15 +812,15 @@ var Z =
 	module.exports = Pagination;
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(11);
+	module.exports = __webpack_require__(13);
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -596,9 +830,9 @@ var Z =
 	// DatePicker
 	// ------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
-	var ClickAwayListener = __webpack_require__(12);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var ClickAwayListener = __webpack_require__(14);
 
 	// Whether the year is a leap year
 	var isLeapYear = function isLeapYear(year) {
@@ -739,12 +973,12 @@ var Z =
 	        };
 	    },
 	    getInitialState: function getInitialState() {
-	        var _props = this.props;
-	        var defaultValue = _props.defaultValue;
-	        var value = _props.value;
-	        var maxValue = _props.maxValue;
-	        var minValue = _props.minValue;
-	        var disableDates = _props.disableDates;
+	        var _props = this.props,
+	            defaultValue = _props.defaultValue,
+	            value = _props.value,
+	            maxValue = _props.maxValue,
+	            minValue = _props.minValue,
+	            disableDates = _props.disableDates;
 
 	        var today = new Date();
 	        var selectedDate = today; // defaultly selected date(may not be synchronized to the component's value).
@@ -889,9 +1123,9 @@ var Z =
 	        if (this.props.selectTime) {
 	            if (date !== this.state.date) this.setState({ date: date });
 	        } else {
-	            var _state = this.state;
-	            var year = _state.year;
-	            var month = _state.month;
+	            var _state = this.state,
+	                year = _state.year,
+	                month = _state.month;
 
 	            var dateStr = getDateStr(year, month, date);
 	            var dateObj = new Date(year, month, date);
@@ -941,13 +1175,13 @@ var Z =
 	    ok: function ok() {
 	        // Update if any date is selected.
 	        // Otherwise cancel.
-	        var _state2 = this.state;
-	        var year = _state2.year;
-	        var month = _state2.month;
-	        var date = _state2.date;
-	        var hours = _state2.hours;
-	        var minutes = _state2.minutes;
-	        var seconds = _state2.seconds;
+	        var _state2 = this.state,
+	            year = _state2.year,
+	            month = _state2.month,
+	            date = _state2.date,
+	            hours = _state2.hours,
+	            minutes = _state2.minutes,
+	            seconds = _state2.seconds;
 
 	        if (date) {
 	            var dateStr = getDateTimeStr(year, month, date, hours, minutes, seconds);
@@ -963,10 +1197,10 @@ var Z =
 	        }
 	    },
 	    isDateDisabled: function isDateDisabled(year, month, date) {
-	        var _props2 = this.props;
-	        var maxValue = _props2.maxValue;
-	        var minValue = _props2.minValue;
-	        var disableDates = _props2.disableDates;
+	        var _props2 = this.props,
+	            maxValue = _props2.maxValue,
+	            minValue = _props2.minValue,
+	            disableDates = _props2.disableDates;
 
 	        var _maxValue = maxValue ? new Date(maxValue).valueOf() : 0;
 	        var _minValue = minValue ? new Date(minValue).valueOf() : 0;
@@ -1026,10 +1260,10 @@ var Z =
 	    pressKeyToDate: function pressKeyToDate(offset) {
 	        if (offset > 31 || offset < -31) return;
 
-	        var _state3 = this.state;
-	        var year = _state3.year;
-	        var month = _state3.month;
-	        var date = _state3.date;
+	        var _state3 = this.state,
+	            year = _state3.year,
+	            month = _state3.month,
+	            date = _state3.date;
 
 	        var dateObj = new Date(new Date(year, month, date).valueOf() + offset * 24 * 3600000);
 	        var newYear = dateObj.getFullYear();
@@ -1047,27 +1281,27 @@ var Z =
 	        }
 	    },
 	    renderTrigger: function renderTrigger() {
-	        var _props3 = this.props;
-	        var inputClassName = _props3.inputClassName;
-	        var inputStyle = _props3.inputStyle;
-	        var placeholder = _props3.placeholder;
-	        var selectTime = _props3.selectTime;
-	        var disabled = _props3.disabled;
-	        var _state4 = this.state;
-	        var curDate = _state4.curDate;
-	        var isOpen = _state4.isOpen;
+	        var _props3 = this.props,
+	            inputClassName = _props3.inputClassName,
+	            inputStyle = _props3.inputStyle,
+	            placeholder = _props3.placeholder,
+	            selectTime = _props3.selectTime,
+	            disabled = _props3.disabled;
+	        var _state4 = this.state,
+	            curDate = _state4.curDate,
+	            isOpen = _state4.isOpen;
 
 	        var dateStr = ''; // The date string displayed.
 
 	        // get date string base on current date object.
 	        if (curDate) {
 	            var dateProps = getDateProps(curDate);
-	            var year = dateProps.year;
-	            var month = dateProps.month;
-	            var date = dateProps.date;
-	            var hours = dateProps.hours;
-	            var minutes = dateProps.minutes;
-	            var seconds = dateProps.seconds;
+	            var year = dateProps.year,
+	                month = dateProps.month,
+	                date = dateProps.date,
+	                hours = dateProps.hours,
+	                minutes = dateProps.minutes,
+	                seconds = dateProps.seconds;
 
 	            dateStr = selectTime ? getDateTimeStr(year, month, date, hours, minutes, seconds) : getDateStr(year, month, date);
 	        }
@@ -1095,16 +1329,16 @@ var Z =
 	    renderPanelHead: function renderPanelHead() {
 	        var _this = this;
 
-	        var _props4 = this.props;
-	        var maxValue = _props4.maxValue;
-	        var minValue = _props4.minValue;
-	        var _state5 = this.state;
-	        var year = _state5.year;
-	        var month = _state5.month;
-	        var date = _state5.date;
-	        var hours = _state5.hours;
-	        var minutes = _state5.minutes;
-	        var seconds = _state5.seconds;
+	        var _props4 = this.props,
+	            maxValue = _props4.maxValue,
+	            minValue = _props4.minValue;
+	        var _state5 = this.state,
+	            year = _state5.year,
+	            month = _state5.month,
+	            date = _state5.date,
+	            hours = _state5.hours,
+	            minutes = _state5.minutes,
+	            seconds = _state5.seconds;
 
 	        var minDate = minValue && new Date(minValue) || '';
 	        var maxDate = maxValue && new Date(maxValue) || '';
@@ -1170,17 +1404,17 @@ var Z =
 	    renderPanelBody: function renderPanelBody() {
 	        var _this2 = this;
 
-	        var _props5 = this.props;
-	        var selectTime = _props5.selectTime;
-	        var maxValue = _props5.maxValue;
-	        var minValue = _props5.minValue;
-	        var disableDates = _props5.disableDates;
-	        var value = _props5.value;
-	        var _state6 = this.state;
-	        var view = _state6.view;
-	        var year = _state6.year;
-	        var month = _state6.month;
-	        var date = _state6.date;
+	        var _props5 = this.props,
+	            selectTime = _props5.selectTime,
+	            maxValue = _props5.maxValue,
+	            minValue = _props5.minValue,
+	            disableDates = _props5.disableDates,
+	            value = _props5.value;
+	        var _state6 = this.state,
+	            view = _state6.view,
+	            year = _state6.year,
+	            month = _state6.month,
+	            date = _state6.date;
 
 	        /* Generates dates Start */
 
@@ -1406,11 +1640,11 @@ var Z =
 	        );
 	    },
 	    render: function render() {
-	        var _props6 = this.props;
-	        var className = _props6.className;
-	        var dropdownClassName = _props6.dropdownClassName;
-	        var style = _props6.style;
-	        var dropdownStyle = _props6.dropdownStyle;
+	        var _props6 = this.props,
+	            className = _props6.className,
+	            dropdownClassName = _props6.dropdownClassName,
+	            style = _props6.style,
+	            dropdownStyle = _props6.dropdownStyle;
 	        var isOpen = this.state.isOpen;
 
 
@@ -1451,7 +1685,7 @@ var Z =
 	module.exports = DatePicker;
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1459,7 +1693,7 @@ var Z =
 	// ClickAwayListener
 	// ------------------------
 
-	var React = __webpack_require__(2);
+	var React = __webpack_require__(4);
 
 	var isDescendant = function isDescendant(el, target) {
 	    if (target !== null) {
@@ -1507,15 +1741,15 @@ var Z =
 	module.exports = ClickAwayListener;
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(14);
+	module.exports = __webpack_require__(16);
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1523,9 +1757,9 @@ var Z =
 	// Select
 	// ------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
-	var ClickAwayListener = __webpack_require__(12);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var ClickAwayListener = __webpack_require__(14);
 
 	var Select = React.createClass({
 	    displayName: 'Select',
@@ -1637,10 +1871,10 @@ var Z =
 	    handleKeyDown: function handleKeyDown(event) {
 	        var _this = this;
 
-	        var _props = this.props;
-	        var multi = _props.multi;
-	        var options = _props.options;
-	        var onChange = _props.onChange;
+	        var _props = this.props,
+	            multi = _props.multi,
+	            options = _props.options,
+	            onChange = _props.onChange;
 	        var hoverIndex = this.state.hoverIndex;
 
 	        (function () {
@@ -1698,21 +1932,21 @@ var Z =
 	    render: function render() {
 	        var _this2 = this;
 
-	        var _props2 = this.props;
-	        var className = _props2.className;
-	        var selectClassName = _props2.selectClassName;
-	        var dropdownClassName = _props2.dropdownClassName;
-	        var style = _props2.style;
-	        var selectStyle = _props2.selectStyle;
-	        var dropdownStyle = _props2.dropdownStyle;
-	        var placeholder = _props2.placeholder;
-	        var multi = _props2.multi;
-	        var disabled = _props2.disabled;
-	        var options = _props2.options;
-	        var value = _props2.value;
-	        var _state = this.state;
-	        var isOpen = _state.isOpen;
-	        var hoverIndex = _state.hoverIndex;
+	        var _props2 = this.props,
+	            className = _props2.className,
+	            selectClassName = _props2.selectClassName,
+	            dropdownClassName = _props2.dropdownClassName,
+	            style = _props2.style,
+	            selectStyle = _props2.selectStyle,
+	            dropdownStyle = _props2.dropdownStyle,
+	            placeholder = _props2.placeholder,
+	            multi = _props2.multi,
+	            disabled = _props2.disabled,
+	            options = _props2.options,
+	            value = _props2.value;
+	        var _state = this.state,
+	            isOpen = _state.isOpen,
+	            hoverIndex = _state.hoverIndex;
 
 
 	        var displayText = '';
@@ -1858,15 +2092,15 @@ var Z =
 	module.exports = Select;
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(16);
+	module.exports = __webpack_require__(18);
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1874,8 +2108,8 @@ var Z =
 	// RadioGroup
 	// ---------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
 
 	var RadioGroup = React.createClass({
 	    displayName: 'RadioGroup',
@@ -1948,14 +2182,14 @@ var Z =
 	    render: function render() {
 	        var _this = this;
 
-	        var _props = this.props;
-	        var className = _props.className;
-	        var itemClassName = _props.itemClassName;
-	        var style = _props.style;
-	        var itemStyle = _props.itemStyle;
-	        var align = _props.align;
-	        var items = _props.items;
-	        var value = _props.value;
+	        var _props = this.props,
+	            className = _props.className,
+	            itemClassName = _props.itemClassName,
+	            style = _props.style,
+	            itemStyle = _props.itemStyle,
+	            align = _props.align,
+	            items = _props.items,
+	            value = _props.value;
 
 
 	        return React.createElement(
@@ -2005,15 +2239,15 @@ var Z =
 	module.exports = RadioGroup;
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(18);
+	module.exports = __webpack_require__(20);
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2021,8 +2255,9 @@ var Z =
 	// CheckboxGroup
 	// ---------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var Checkbox = __webpack_require__(41);
 
 	var CheckboxGroup = React.createClass({
 	    displayName: 'CheckboxGroup',
@@ -2051,8 +2286,8 @@ var Z =
 
 	        /**
 	         * How the items align.
-	         * x: align horizonal.
-	         * y: align vertical.
+	         * x: align horizonally.
+	         * y: align vertically.
 	         */
 	        align: React.PropTypes.string,
 
@@ -2062,13 +2297,13 @@ var Z =
 	        disabled: React.PropTypes.bool,
 
 	        /**
-	         * The items of the `CheckboxGroup`, 
+	         * The items of the component, 
 	         * each with a `value` prop and a `text` prop.
 	         */
 	        items: React.PropTypes.array,
 
 	        /**
-	         * A list of selected values.
+	         * The selected values.
 	         */
 	        value: React.PropTypes.array,
 
@@ -2082,15 +2317,14 @@ var Z =
 	    getDefaultProps: function getDefaultProps() {
 	        return {
 	            align: 'x',
+	            disabled: false,
 	            items: [],
 	            value: [],
 	            onChange: function onChange() {}
 	        };
 	    },
-	    handleChange: function handleChange(event, value) {
-	        var checked = event.currentTarget.checked;
+	    handleChange: function handleChange(value, checked) {
 	        var newValue = [];
-
 	        if (checked) {
 	            newValue = this.props.value.concat(value);
 	        } else {
@@ -2098,20 +2332,19 @@ var Z =
 	                return it !== value;
 	            });
 	        }
-
 	        this.props.onChange(newValue);
 	    },
 	    render: function render() {
 	        var _this = this;
 
-	        var _props = this.props;
-	        var className = _props.className;
-	        var itemClassName = _props.itemClassName;
-	        var style = _props.style;
-	        var itemStyle = _props.itemStyle;
-	        var align = _props.align;
-	        var items = _props.items;
-	        var value = _props.value;
+	        var _props = this.props,
+	            className = _props.className,
+	            itemClassName = _props.itemClassName,
+	            style = _props.style,
+	            itemStyle = _props.itemStyle,
+	            align = _props.align,
+	            items = _props.items,
+	            value = _props.value;
 
 
 	        return React.createElement(
@@ -2130,28 +2363,13 @@ var Z =
 	                        style: itemStyle,
 	                        className: itemClassName
 	                    },
-	                    React.createElement(
-	                        'label',
-	                        {
-	                            className: cx('checkbox', {
-	                                'disabled': item.disabled || _this.props.disabled
-	                            })
-	                        },
-	                        React.createElement('input', {
-	                            type: 'checkbox',
-	                            disabled: item.disabled || _this.props.disabled,
-	                            value: item.value,
-	                            checked: value.indexOf(item.value) > -1,
-	                            onChange: function onChange(e) {
-	                                return _this.handleChange(e, item.value);
-	                            }
-	                        }),
-	                        React.createElement(
-	                            'span',
-	                            null,
-	                            item.text
-	                        )
-	                    )
+	                    React.createElement(Checkbox, {
+	                        label: item.text,
+	                        disabled: item.disabled,
+	                        onCheck: function onCheck(checked) {
+	                            return _this.handleChange(item.value, checked);
+	                        }
+	                    })
 	                );
 	            })
 	        );
@@ -2161,15 +2379,15 @@ var Z =
 	module.exports = CheckboxGroup;
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(20);
+	module.exports = __webpack_require__(22);
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2177,9 +2395,9 @@ var Z =
 	// Tabs
 	// ------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
-	var Tab = __webpack_require__(21);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var Tab = __webpack_require__(23);
 
 	var Tabs = React.createClass({
 	    displayName: 'Tabs',
@@ -2238,13 +2456,13 @@ var Z =
 	    render: function render() {
 	        var _this = this;
 
-	        var _props = this.props;
-	        var className = _props.className;
-	        var tabClassName = _props.tabClassName;
-	        var style = _props.style;
-	        var tabStyle = _props.tabStyle;
-	        var activeIndex = _props.activeIndex;
-	        var children = _props.children;
+	        var _props = this.props,
+	            className = _props.className,
+	            tabClassName = _props.tabClassName,
+	            style = _props.style,
+	            tabStyle = _props.tabStyle,
+	            activeIndex = _props.activeIndex,
+	            children = _props.children;
 
 
 	        return React.createElement(
@@ -2294,7 +2512,7 @@ var Z =
 	module.exports = Tabs;
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2302,7 +2520,7 @@ var Z =
 	// Tab
 	// ------------------------
 
-	var React = __webpack_require__(2);
+	var React = __webpack_require__(4);
 
 	var Tab = React.createClass({
 	    displayName: 'Tab',
@@ -2333,15 +2551,15 @@ var Z =
 	module.exports = Tab;
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(23);
+	module.exports = __webpack_require__(25);
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2349,21 +2567,22 @@ var Z =
 	// Form
 	// ------------------------
 
-	var Formsy = __webpack_require__(24);
+	var Formsy = __webpack_require__(26);
 
-	Formsy.HiddenField = __webpack_require__(31);
-	Formsy.TextField = __webpack_require__(32);
-	Formsy.InputField = __webpack_require__(33);
-	Formsy.SelectField = __webpack_require__(34);
-	Formsy.DateField = __webpack_require__(35);
-	Formsy.RadioGroupField = __webpack_require__(36);
-	Formsy.CheckboxGroupField = __webpack_require__(37);
-	Formsy.TextAreaField = __webpack_require__(38);
+	Formsy.HiddenField = __webpack_require__(33);
+	Formsy.TextField = __webpack_require__(34);
+	Formsy.InputField = __webpack_require__(35);
+	Formsy.SelectField = __webpack_require__(36);
+	Formsy.DateField = __webpack_require__(37);
+	Formsy.RadioGroupField = __webpack_require__(38);
+	Formsy.CheckboxField = __webpack_require__(43);
+	Formsy.CheckboxGroupField = __webpack_require__(39);
+	Formsy.TextAreaField = __webpack_require__(40);
 
 	module.exports = Formsy;
 
 /***/ },
-/* 24 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -2374,14 +2593,14 @@ var Z =
 
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
-	var React = global.React || __webpack_require__(2);
+	var React = global.React || __webpack_require__(4);
 	var Formsy = {};
-	var validationRules = __webpack_require__(25);
-	var formDataToObject = __webpack_require__(26);
-	var utils = __webpack_require__(27);
-	var Mixin = __webpack_require__(28);
-	var HOC = __webpack_require__(29);
-	var Decorator = __webpack_require__(30);
+	var validationRules = __webpack_require__(27);
+	var formDataToObject = __webpack_require__(28);
+	var utils = __webpack_require__(29);
+	var Mixin = __webpack_require__(30);
+	var HOC = __webpack_require__(31);
+	var Decorator = __webpack_require__(32);
 	var options = {};
 	var emptyArray = [];
 
@@ -2829,7 +3048,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 25 */
+/* 27 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2914,7 +3133,7 @@ var Z =
 	module.exports = validations;
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports) {
 
 	function toObj(source) {
@@ -2965,7 +3184,7 @@ var Z =
 	}
 
 /***/ },
-/* 27 */
+/* 29 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3027,13 +3246,13 @@ var Z =
 	};
 
 /***/ },
-/* 28 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
-	var utils = __webpack_require__(27);
-	var React = global.React || __webpack_require__(2);
+	var utils = __webpack_require__(29);
+	var React = global.React || __webpack_require__(4);
 
 	var convertValidationsToObject = function convertValidationsToObject(validations) {
 
@@ -3207,15 +3426,15 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 29 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = global.React || __webpack_require__(2);
-	var Mixin = __webpack_require__(28);
+	var React = global.React || __webpack_require__(4);
+	var Mixin = __webpack_require__(30);
 	module.exports = function (Component) {
 	  return React.createClass({
 	    displayName: 'Formsy(' + getDisplayName(Component) + ')',
@@ -3248,15 +3467,15 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 30 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = global.React || __webpack_require__(2);
-	var Mixin = __webpack_require__(28);
+	var React = global.React || __webpack_require__(4);
+	var Mixin = __webpack_require__(30);
 	module.exports = function () {
 	  return function (Component) {
 	    return React.createClass({
@@ -3286,7 +3505,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 31 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3294,8 +3513,8 @@ var Z =
 	// Hidden Field
 	// ---------------------------
 
-	var React = __webpack_require__(2);
-	var Formsy = __webpack_require__(24);
+	var React = __webpack_require__(4);
+	var Formsy = __webpack_require__(26);
 
 	var HiddenField = React.createClass({
 	    displayName: 'HiddenField',
@@ -3318,7 +3537,7 @@ var Z =
 	module.exports = HiddenField;
 
 /***/ },
-/* 32 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3326,9 +3545,9 @@ var Z =
 	// Text Field
 	// ---------------------------
 
-	var React = __webpack_require__(2);
-	var Formsy = __webpack_require__(24);
-	var cx = __webpack_require__(5);
+	var React = __webpack_require__(4);
+	var Formsy = __webpack_require__(26);
+	var cx = __webpack_require__(7);
 
 	var TextField = React.createClass({
 	    displayName: 'TextField',
@@ -3340,10 +3559,10 @@ var Z =
 	        this.setValue(this.props.value || '');
 	    },
 	    render: function render() {
-	        var _props = this.props;
-	        var className = _props.className;
-	        var labelClassName = _props.labelClassName;
-	        var title = _props.title;
+	        var _props = this.props,
+	            className = _props.className,
+	            labelClassName = _props.labelClassName,
+	            title = _props.title;
 
 
 	        return React.createElement(
@@ -3368,7 +3587,7 @@ var Z =
 	module.exports = TextField;
 
 /***/ },
-/* 33 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3380,9 +3599,9 @@ var Z =
 	// Input Field
 	// ---------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
-	var Formsy = __webpack_require__(24);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var Formsy = __webpack_require__(26);
 
 	var InputField = React.createClass({
 	    displayName: 'InputField',
@@ -3409,18 +3628,17 @@ var Z =
 
 	        // An error message is returned ONLY if the component is invalid
 	        // or the server has returned an error message
-	        var _props = this.props;
-	        var validationError = _props.validationError;
-	        var validationErrors = _props.validationErrors;
-	        var validations = _props.validations;
-	        var type = _props.type;
-	        var title = _props.title;
-	        var name = _props.name;
-	        var className = _props.className;
-	        var labelClassName = _props.labelClassName;
-	        var controlClassName = _props.controlClassName;
-
-	        var otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'type', 'title', 'name', 'className', 'labelClassName', 'controlClassName']);
+	        var _props = this.props,
+	            validationError = _props.validationError,
+	            validationErrors = _props.validationErrors,
+	            validations = _props.validations,
+	            type = _props.type,
+	            title = _props.title,
+	            name = _props.name,
+	            className = _props.className,
+	            labelClassName = _props.labelClassName,
+	            controlClassName = _props.controlClassName,
+	            otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'type', 'title', 'name', 'className', 'labelClassName', 'controlClassName']);
 
 	        var errorMessage = this.getErrorMessage();
 
@@ -3457,7 +3675,7 @@ var Z =
 	module.exports = InputField;
 
 /***/ },
-/* 34 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3469,10 +3687,10 @@ var Z =
 	// Select Field
 	// ---------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
-	var Select = __webpack_require__(13);
-	var Formsy = __webpack_require__(24);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var Select = __webpack_require__(15);
+	var Formsy = __webpack_require__(26);
 
 	var SelectField = React.createClass({
 	    displayName: 'SelectField',
@@ -3481,9 +3699,9 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentWillMount: function componentWillMount() {
-	        var _props = this.props;
-	        var multi = _props.multi;
-	        var defaultValue = _props.defaultValue;
+	        var _props = this.props,
+	            multi = _props.multi,
+	            defaultValue = _props.defaultValue;
 
 
 	        if (multi) {
@@ -3497,17 +3715,16 @@ var Z =
 	        this.props.onChange && this.props.onChange(value);
 	    },
 	    render: function render() {
-	        var _props2 = this.props;
-	        var validationError = _props2.validationError;
-	        var validationErrors = _props2.validationErrors;
-	        var validations = _props2.validations;
-	        var title = _props2.title;
-	        var className = _props2.className;
-	        var labelClassName = _props2.labelClassName;
-	        var controlClassName = _props2.controlClassName;
-	        var multi = _props2.multi;
-
-	        var otherProps = _objectWithoutProperties(_props2, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'labelClassName', 'controlClassName', 'multi']);
+	        var _props2 = this.props,
+	            validationError = _props2.validationError,
+	            validationErrors = _props2.validationErrors,
+	            validations = _props2.validations,
+	            title = _props2.title,
+	            className = _props2.className,
+	            labelClassName = _props2.labelClassName,
+	            controlClassName = _props2.controlClassName,
+	            multi = _props2.multi,
+	            otherProps = _objectWithoutProperties(_props2, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'labelClassName', 'controlClassName', 'multi']);
 
 	        var errorMessage = this.getErrorMessage();
 
@@ -3550,7 +3767,7 @@ var Z =
 	module.exports = SelectField;
 
 /***/ },
-/* 35 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3562,10 +3779,10 @@ var Z =
 	// Datepicker Field
 	// ---------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
-	var DatePicker = __webpack_require__(10);
-	var Formsy = __webpack_require__(24);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var DatePicker = __webpack_require__(12);
+	var Formsy = __webpack_require__(26);
 
 	var DateField = React.createClass({
 	    displayName: 'DateField',
@@ -3582,16 +3799,15 @@ var Z =
 	        this.props.onChange && this.props.onChange(dateStr, dateObj);
 	    },
 	    render: function render() {
-	        var _props = this.props;
-	        var validationError = _props.validationError;
-	        var validationErrors = _props.validationErrors;
-	        var validations = _props.validations;
-	        var title = _props.title;
-	        var className = _props.className;
-	        var labelClassName = _props.labelClassName;
-	        var controlClassName = _props.controlClassName;
-
-	        var otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'labelClassName', 'controlClassName']);
+	        var _props = this.props,
+	            validationError = _props.validationError,
+	            validationErrors = _props.validationErrors,
+	            validations = _props.validations,
+	            title = _props.title,
+	            className = _props.className,
+	            labelClassName = _props.labelClassName,
+	            controlClassName = _props.controlClassName,
+	            otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'labelClassName', 'controlClassName']);
 
 	        var errorMessage = this.getErrorMessage();
 
@@ -3624,7 +3840,7 @@ var Z =
 	module.exports = DateField;
 
 /***/ },
-/* 36 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3636,10 +3852,10 @@ var Z =
 	// RadioGroup Field
 	// ---------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
-	var Formsy = __webpack_require__(24);
-	var RadioGroup = __webpack_require__(15);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var Formsy = __webpack_require__(26);
+	var RadioGroup = __webpack_require__(17);
 
 	var RadioGroupField = React.createClass({
 	    displayName: 'RadioGroupField',
@@ -3654,16 +3870,15 @@ var Z =
 	        this.props.onChange && this.props.onChange(value);
 	    },
 	    render: function render() {
-	        var _props = this.props;
-	        var validationError = _props.validationError;
-	        var validationErrors = _props.validationErrors;
-	        var validations = _props.validations;
-	        var title = _props.title;
-	        var className = _props.className;
-	        var labelClassName = _props.labelClassName;
-	        var controlClassName = _props.controlClassName;
-
-	        var otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'labelClassName', 'controlClassName']);
+	        var _props = this.props,
+	            validationError = _props.validationError,
+	            validationErrors = _props.validationErrors,
+	            validations = _props.validations,
+	            title = _props.title,
+	            className = _props.className,
+	            labelClassName = _props.labelClassName,
+	            controlClassName = _props.controlClassName,
+	            otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'labelClassName', 'controlClassName']);
 
 	        return React.createElement(
 	            'div',
@@ -3687,7 +3902,7 @@ var Z =
 	module.exports = RadioGroupField;
 
 /***/ },
-/* 37 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3699,10 +3914,10 @@ var Z =
 	// CheckboxGroup Field
 	// ---------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
-	var Formsy = __webpack_require__(24);
-	var CheckboxGroup = __webpack_require__(17);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var Formsy = __webpack_require__(26);
+	var CheckboxGroup = __webpack_require__(19);
 
 	var CheckboxGroupField = React.createClass({
 	    displayName: 'CheckboxGroupField',
@@ -3718,16 +3933,15 @@ var Z =
 	        this.props.onChange && this.props.onChange(value);
 	    },
 	    render: function render() {
-	        var _props = this.props;
-	        var validationError = _props.validationError;
-	        var validationErrors = _props.validationErrors;
-	        var validations = _props.validations;
-	        var title = _props.title;
-	        var className = _props.className;
-	        var labelClassName = _props.labelClassName;
-	        var controlClassName = _props.controlClassName;
-
-	        var otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'labelClassName', 'controlClassName']);
+	        var _props = this.props,
+	            validationError = _props.validationError,
+	            validationErrors = _props.validationErrors,
+	            validations = _props.validations,
+	            title = _props.title,
+	            className = _props.className,
+	            labelClassName = _props.labelClassName,
+	            controlClassName = _props.controlClassName,
+	            otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'labelClassName', 'controlClassName']);
 
 	        return React.createElement(
 	            'div',
@@ -3751,7 +3965,7 @@ var Z =
 	module.exports = CheckboxGroupField;
 
 /***/ },
-/* 38 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3763,9 +3977,9 @@ var Z =
 	// TextArea Field
 	// ---------------------------
 
-	var React = __webpack_require__(2);
-	var cx = __webpack_require__(5);
-	var Formsy = __webpack_require__(24);
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var Formsy = __webpack_require__(26);
 
 	var TextAreaField = React.createClass({
 	    displayName: 'TextAreaField',
@@ -3780,17 +3994,16 @@ var Z =
 	        this.setValue(event.target.value);
 	    },
 	    render: function render() {
-	        var _props = this.props;
-	        var validationError = _props.validationError;
-	        var validationErrors = _props.validationErrors;
-	        var validations = _props.validations;
-	        var title = _props.title;
-	        var name = _props.name;
-	        var className = _props.className;
-	        var labelClassName = _props.labelClassName;
-	        var controlClassName = _props.controlClassName;
-
-	        var otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'name', 'className', 'labelClassName', 'controlClassName']);
+	        var _props = this.props,
+	            validationError = _props.validationError,
+	            validationErrors = _props.validationErrors,
+	            validations = _props.validations,
+	            title = _props.title,
+	            name = _props.name,
+	            className = _props.className,
+	            labelClassName = _props.labelClassName,
+	            controlClassName = _props.controlClassName,
+	            otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'name', 'className', 'labelClassName', 'controlClassName']);
 
 	        var errorMessage = this.getErrorMessage();
 
@@ -3823,6 +4036,201 @@ var Z =
 	});
 
 	module.exports = TextAreaField;
+
+/***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(42);
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	// Checkbox
+	// ---------------------------
+
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+
+	var Checkbox = React.createClass({
+	    displayName: 'Checkbox',
+
+
+	    propTypes: {
+	        /**
+	         * The class name of the root element.
+	         */
+	        className: React.PropTypes.string,
+
+	        /**
+	         * The inline styles of the root element.
+	         */
+	        style: React.PropTypes.object,
+
+	        /**
+	         * The checkbox's label.
+	         */
+	        label: React.PropTypes.string,
+
+	        /**
+	         * Whether the component is disabled.
+	         */
+	        disabled: React.PropTypes.bool,
+
+	        /**
+	         * Checkbox is checked if true.
+	         * The compnent is controlled if this prop is set.
+	         * This prop will override `defaultChecked`.
+	         */
+	        checked: React.PropTypes.bool,
+
+	        /**
+	         * Checkbox is defaultly checked if true.
+	         */
+	        defaultChecked: React.PropTypes.bool,
+
+	        /**
+	         * Fires when the checkbox is checked or unchecked.
+	         * @param {bool} checked
+	         */
+	        onCheck: React.PropTypes.func
+	    },
+
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            disabled: false,
+	            defaultChecked: false,
+	            onCheck: function onCheck() {}
+	        };
+	    },
+	    getInitialState: function getInitialState() {
+	        return {
+	            checked: this.props.checked || this.props.defaultChecked
+	        };
+	    },
+	    handleChange: function handleChange(event) {
+	        if (!this.props.disabled) {
+	            var checked = event.currentTarget.checked;
+	            if (typeof this.props.checked === 'undefined') {
+	                this.setState({
+	                    checked: checked
+	                });
+	            }
+	            this.props.onCheck(checked);
+	        }
+	    },
+	    render: function render() {
+	        var _props = this.props,
+	            className = _props.className,
+	            style = _props.style,
+	            label = _props.label,
+	            disabled = _props.disabled,
+	            defaultChecked = _props.defaultChecked,
+	            onCheck = _props.onCheck;
+
+
+	        var inputProps = {
+	            type: "checkbox",
+	            disabled: disabled,
+	            onChange: this.handleChange
+	        };
+
+	        var isChecked = void 0;
+
+	        if (_typeof(this.props.checked) !== undefined) {
+	            isChecked = this.props.checked;
+	            inputProps.checked = isChecked;
+	        } else {
+	            isChecked = this.state.checked;
+	            inputProps.defaultChecked = defaultChecked;
+	        }
+
+	        return React.createElement(
+	            'div',
+	            { style: style, className: className },
+	            React.createElement(
+	                'label',
+	                {
+	                    className: cx('checkbox', {
+	                        'disabled': disabled,
+	                        'checked': isChecked
+	                    })
+	                },
+	                React.createElement('input', inputProps),
+	                React.createElement(
+	                    'span',
+	                    null,
+	                    label
+	                )
+	            )
+	        );
+	    }
+	});
+
+	module.exports = Checkbox;
+
+/***/ },
+/* 43 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	// Checkbox Field
+	// ---------------------------
+
+	var React = __webpack_require__(4);
+	var cx = __webpack_require__(7);
+	var Formsy = __webpack_require__(26);
+	var Checkbox = __webpack_require__(41);
+
+	var CheckboxField = React.createClass({
+	    displayName: 'CheckboxField',
+
+
+	    mixins: [Formsy.Mixin],
+
+	    componentWillMount: function componentWillMount() {
+	        this.setValue(this.props.defaultValue || false);
+	    },
+	    changeValue: function changeValue(checked) {
+	        this.setValue(checked);
+	        this.props.onChange && this.props.onChange(checked);
+	    },
+	    render: function render() {
+	        var _props = this.props,
+	            validationError = _props.validationError,
+	            validationErrors = _props.validationErrors,
+	            validations = _props.validations,
+	            title = _props.title,
+	            className = _props.className,
+	            controlClassName = _props.controlClassName,
+	            otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'controlClassName']);
+
+	        return React.createElement(
+	            'div',
+	            { className: cx('form-group', className) },
+	            React.createElement(Checkbox, _extends({}, otherProps, {
+	                className: cx('form-control', controlClassName),
+	                label: title,
+	                checked: this.getValue(),
+	                onCheck: this.changeValue
+	            }))
+	        );
+	    }
+	});
+
+	module.exports = CheckboxField;
 
 /***/ }
 /******/ ]);

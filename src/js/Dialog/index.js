@@ -24,7 +24,7 @@ module.exports = React.createClass({
     },
 
     componentWillUnmount() {
-        document.body.removeChild(this.layer)
+        document.body.removeChild(this.layer);
     },
 
     render() {

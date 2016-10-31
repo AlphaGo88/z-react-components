@@ -46,8 +46,8 @@
 
 	'use strict';
 
-	var _Z = Z;
-	var Pagination = _Z.Pagination;
+	var _Z = Z,
+	    Pagination = _Z.Pagination;
 
 
 	var App = React.createClass({

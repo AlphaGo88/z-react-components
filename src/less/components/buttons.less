@@ -2,253 +2,159 @@
 // Buttons
 // --------------------------------------------------
 
-
-@button-line-height: 1.42857143;
-@button-flat-hover-bg: #e2e2e2;
-
+@default-button-hover-bg: #e2e2e2;
 
 // Mixins
-
-.button-size(@height; @padding-horizontal; @font-size) {
+.button-size(@height; @padding-horizontal) {
     height: @height;
-    padding: (@height - 2 - @font-size * @button-line-height) / 2 @padding-horizontal;
-    font-size: @font-size;
+    line-height: @height;
+    padding: 0 @padding-horizontal;
 }
 
-.button-flat(@color) {
-    &, 
-    &:hover {
-        color: @color;
-    }
-}
-
-.button-float(@background; @border-color; @text-color) {
+.button-float(@background) {
     background-color: @background;
-    border-color: @border-color;
-    color: @text-color;
+    color: #fff;
 
-    > .badge {
-        background-color: @text-color;
-        color: @background;
-    }
-
-    &:focus, 
-    &:hover, 
-    &:active {
+    &:hover,
+    .ripple {
         background-color: lighten(@background, 8%);
-        border-color: lighten(@border-color, 8%);
-        color: @text-color;
-    }
-}
-
-.button-outline(@color) {
-    background-color: #fff;
-    border-color: @color;
-    color: @color;
-
-    > .badge {
-        background-color: @color;
-        color: #fff;
-    }
-
-    &:focus, 
-    &:hover, 
-    &:active, 
-    &.active {
-        background-color: @color;
-        border-color: @color;
-        color: #fff;
-
-        > .badge {
-            background-color: #fff;
-            color: @color;
-        }
     }
 }
 
 
+.btn-small {
+    .button-size(30px; 14px);
+}
 
-.btn-float, .btn-flat, .btn-outline {
+.btn-medium {
+    .button-size(36px; 20px);
+}
+
+.btn-large {
+    .button-size(44px; 26px);
+}
+
+.btn-float, .btn-flat {
+    position: relative;
     display: inline-block;
-    .button-size(36px; 22px; @font-size-base);
-    line-height: @button-line-height;
     text-align: center;
-    white-space: nowrap;
-    cursor: pointer;
-    border: 1px solid transparent;
+    border: 0;
     border-radius: 2px;
-    letter-spacing: .5px;
-    transition-duration: .3s;
+    outline: none;
+    text-decoration: none;
+    cursor: pointer;
+    overflow: hidden;
+    transition-duration: .4s;
     .user-select(none);
 
-    &, 
-    &:focus, 
-    &:hover, 
-    &:active {
-        outline: 0;
+    &:hover {
         text-decoration: none;
     }
-
-    // icon
-    > i, 
-    > .badge {
-        margin: 0 6px;
+    &:focus {
+        outline: none;
     }
-
-    // badge
-    > .badge {
-        display: inline-block;
-        padding: 3px 7px;
-        text-align: center;
-        font-size: @font-size-small;
-        font-weight: 700;
-        line-height: 1;
-        border-radius: 10px;
+    &[disabled],
+    &.btn-disabled {
+        color: @text-color-lighter !important;
+        cursor: @cursor-disabled !important;
+    }
+    .button-label {
+        position: relative;
+        z-index: 1;
+    }
+    .ripple {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+    }
+    &.btn-focus .ripple {
+        height: 300%;
+        top: -100%;
+        opacity: 1;
+        border-radius: 50%;
+        animation: focus-ripple 1.4s ease-in-out infinite;
+    }
+    &.btn-block.btn-focus .ripple {
+        height: 560%;
+        top: -230%;
     }
 }
 
 .btn-float {
     box-shadow: @box-shadow-base;
+
+    &[disabled],
+    &.btn-disabled {
+        background-color: @default-button-hover-bg !important;
+    }
+}
+
+.btn-float.btn-default {
+    background-color: #fefefe;
+    color: @text-color-base;
+
+    &:hover,
+    .ripple {
+        background-color: @default-button-hover-bg;
+    }
+}
+
+.btn-float.btn-primary {
+    .button-float(@primary-color);
 }
 
 .btn-flat {
     background-color: transparent;
 
-    &:focus, 
-    &:hover, 
-    &:active {
-        border-color: @button-flat-hover-bg;
-        background-color: @button-flat-hover-bg;
+    // .ripple {
+    //     border-radius: 2px;
+    //     background-color: @default-button-hover-bg;
+    //     transform: scaleX(0.2);
+    //     opacity: 0;
+    //     transition: transform 400ms, opacity 400ms;
+    // }
+    // &:hover .ripple {
+    //     transform: scaleX(1);
+    //     opacity: 1;
+    // }
+    &:hover,
+    &.btn-focus {
+        background-color: @default-button-hover-bg;
     }
-}
-
-.btn-no-bg {
-    background-color: transparent;
-    border-color: #fff;
-    color: #fff;
-
-    &:focus, 
-    &:hover, 
-    &:active {
-        background-color: #fff;
-        border-color: #fff;
-        color: @text-color-base;
+    &.btn-focus .ripple {
+        background-color: darken(@default-button-hover-bg, 10%);
     }
-}
-
-.btn-small {
-    .button-size(28px; 18px; @font-size-small);
-}
-
-.btn-large {
-    .button-size(44px; 26px; @font-size-base);
-}
-
-.btn-larger {
-    .button-size(52px; 30px; @font-size-big);
-}
-
-.btn-float.btn-default {
-    background-color: @default-color;
-    border-color: #ccc;
-    color: @text-color-base;
-
-    &:focus, 
-    &:hover, 
-    &:active {
-        background-color: lighten(@default-color, 4%);
+    &[disabled]:hover,
+    &.btn-disabled:hover {
+        background-color: transparent;
     }
-}
-
-.btn-float.btn-primary {
-    .button-float(@primary-color; @primary-color; #fff);
-}
-
-.btn-float.btn-success {
-    .button-float(@color-success; @color-success; #fff);
-}
-
-.btn-float.btn-info {
-    .button-float(@color-info; @color-info; #fff);
-}
-
-.btn-float.btn-warning {
-    .button-float(@color-warning; @color-warning; #fff);
-}
-
-.btn-float.btn-danger {
-    .button-float(@color-danger; @color-danger; #fff);
 }
 
 .btn-flat.btn-default {
-    .button-flat(@text-color-base);
+    color: @text-color-base;
 }
 
 .btn-flat.btn-primary {
-    .button-flat(@primary-color);
-}
-
-.btn-flat.btn-success {
-    .button-flat(@color-success);
-}
-
-.btn-flat.btn-info {
-    .button-flat(@color-info);
-}
-
-.btn-flat.btn-warning {
-    .button-flat(@color-warning);
-}
-
-.btn-flat.btn-danger {
-    .button-flat(@color-danger);
-}
-
-.btn-outline.btn-primary {
-    .button-outline(@primary-color);
-}
-
-.btn-outline.btn-success {
-    .button-outline(@color-success);
-}
-
-.btn-outline.btn-info {
-    .button-outline(@color-info);
-}
-
-.btn-outline.btn-warning {
-    .button-outline(@color-warning);
-}
-
-.btn-outline.btn-danger {
-    .button-outline(@color-danger);
-}
-
-// disabled buttons
-button[disabled],
-.btn-disabled {
-    cursor: @cursor-disabled !important;
-    color: @text-color-lighter !important;
-}
-
-button[disabled].btn-float,
-.btn-float.btn-disabled {
-    background-color: @default-color !important;
-    border-color: #ccc !important;
-}
-
-button[disabled].btn-flat:hover,
-.btn-flat.btn-disabled:hover {
-    background-color: transparent;
-    border-color: transparent !important;
-}
-
-button[disabled].btn-outline,
-.btn-outline.btn-disabled {
-    border-color: #ccc !important;
+    color: @primary-color;
 }
 
 // block button
 .btn-block {
     display: block;
+    width: 100%;
+}
+
+@keyframes focus-ripple {
+    0% {
+        transform: scale(0.75, 0.75);
+    }
+    50% {
+        transform: scale(0.9, 0.9);
+    }
+    100% {
+        transform: scale(0.75, 0.75);
+    }
 }

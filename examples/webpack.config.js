@@ -2,6 +2,7 @@ var webpack = require('webpack');
 
 module.exports = {
     entry: {
+        button: './src/button',
         datepicker: './src/datepicker',
         dialog: './src/dialog',
         form: './src/form',
