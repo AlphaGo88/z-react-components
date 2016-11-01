@@ -11,7 +11,9 @@ const CheckboxGroupField = React.createClass({
     mixins: [Formsy.Mixin],
 
     componentWillMount() {
-        this.setValue(this.props.defaultValue || []);
+        if (this.props.defaultValue) {
+            this.setValue(this.props.defaultValue);
+        }
     },
 
     changeValue(value) {
@@ -34,16 +36,14 @@ const CheckboxGroupField = React.createClass({
         return (
             <div className={cx('form-group', className)}>
                 {title && 
-                    <label 
-                        className={cx('form-label', labelClassName)}
-                    >
+                    <label className={cx('form-label', labelClassName)}>
                         {title}
                     </label>
                 }
                 <CheckboxGroup
                     {...otherProps}
                     className={cx('form-control', controlClassName)}
-                    value={this.getValue()}
+                    value={this.getValue() || []}
                     onChange={this.changeValue}
                 />
             </div>

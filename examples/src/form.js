@@ -1,5 +1,5 @@
 
-const { Formsy } = Z;
+const { Button, Formsy } = Z;
 const TextField = Formsy.TextField;
 const Input = Formsy.InputField;
 const Select = Formsy.SelectField;
@@ -87,7 +87,7 @@ const MyAppForm = React.createClass({
                 <CheckboxGroup className="col-6" name="checkbox" items={fruits} required/>
                 <TextArea className="col-6" name="ta"/>
                 <div className="form-group col-12">
-                    <button className="btn-float btn-primary" disabled={!this.state.canSubmit}>Submit</button>
+                    <Button primary={true} disabled={!this.state.canSubmit}>Submit</Button>
                 </div>
               </Formsy.Form>
             </div>

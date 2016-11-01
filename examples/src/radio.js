@@ -1,6 +1,6 @@
 
 const { RadioGroup } = Z;
-const emp = [{
+const emps = [{
                 value: 'emp1',
                 text: 'Jack'
             }, {
@@ -16,32 +16,27 @@ const emp = [{
 
 let App = React.createClass({
 
-    getInitialState: function() {
-        return { 
-            emp: ''
-        };
-    },
-
     handleEmpChange(value) {
-        this.setState({
-            emp: value
-        })
-        console.log(value)
+        alert(value);
     },
 
     render() {
-        const { emp } = this.state;
-
         return (
             <div>
                 <section>
-                    <RadioGroup value={emp} items={emps} onChange={this.handleEmpChange}/>
+                    <RadioGroup items={emps} onChange={this.handleEmpChange}/>
                 </section>
                 <section>
-                    <RadioGroup align="x" value={emp} items={emps}/>
+                    <RadioGroup items={emps} defaultValue="emp1"/>
                 </section>
                 <section>
-                    <RadioGroup items={emps} diabled={true}/>
+                    <RadioGroup items={emps} disabled={true}/>
+                </section>
+                <section>
+                    <RadioGroup items={emps} itemStyle={{width: 140}}/>
+                </section>
+                <section>
+                    <RadioGroup align="y" items={emps}/>
                 </section>
             </div>
         )

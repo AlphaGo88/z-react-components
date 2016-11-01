@@ -108,7 +108,7 @@ const Dialog = React.createClass({
         return (
             <div 
                 className={cx('z-dialog-mask', { 
-                    'show': isOpen 
+                    'offscreen': !isOpen 
                 })}
             >
                 {isOpen &&

@@ -10,7 +10,9 @@ const TextAreaField = React.createClass({
     mixins: [Formsy.Mixin],
 
     componentWillMount() {
-        this.setValue(this.props.defaultValue || '');
+        if (this.props.defaultValue) {
+            this.setValue(this.props.defaultValue);
+        }
     },
 
     changeValue(event) {
@@ -33,9 +35,7 @@ const TextAreaField = React.createClass({
 
         return (
             <div className={cx('form-group', className)}>
-                <label 
-                    className={cx('form-label', labelClassName)}
-                >
+                <label className={cx('form-label', labelClassName)}>
                     {title}
                 </label> 
                 <textarea 
@@ -45,7 +45,7 @@ const TextAreaField = React.createClass({
                         'error': this.showError()
                     })}
                     name={name}
-                    value={this.getValue()}
+                    value={this.getValue() || ''}
                     onChange={this.changeValue}
                 />
                 <span className='validation-error'>

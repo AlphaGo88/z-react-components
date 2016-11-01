@@ -12,7 +12,9 @@ const DateField = React.createClass({
     mixins: [Formsy.Mixin],
 
     componentWillMount() {
-        this.setValue(this.props.defaultValue || '');
+        if (this.props.defaultValue) {
+            this.setValue(this.props.defaultValue);
+        }
     },
 
     changeValue(dateStr, dateObj) {
@@ -45,7 +47,7 @@ const DateField = React.createClass({
                         'required': this.showRequired(),
                         'error': this.showError()
                     })}
-                    value={this.getValue()}
+                    value={this.getValue() || ''}
                     onChange={this.changeValue}
                 />
                 <span className="validation-error">

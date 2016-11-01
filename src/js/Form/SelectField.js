@@ -11,12 +11,8 @@ const SelectField = React.createClass({
     mixins: [Formsy.Mixin],
 
     componentWillMount() {
-        const { multi, defaultValue } = this.props;
-
-        if (multi) {
-            this.setValue(defaultValue || []);
-        } else {
-            this.setValue(defaultValue || '');
+        if (this.props.defaultValue) {
+            this.setValue(this.props.defaultValue);
         }
     },
 
@@ -49,9 +45,7 @@ const SelectField = React.createClass({
 
         return (
             <div className={cx('form-group', className)}>
-                <label 
-                    className={cx('form-label', labelClassName)}
-                >
+                <label className={cx('form-label', labelClassName)}>
                     {title}
                 </label>
                 <Select 

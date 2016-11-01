@@ -11,7 +11,9 @@ const InputField = React.createClass({
     mixins: [Formsy.Mixin],
 
     componentWillMount() {
-        this.setValue(this.props.defaultValue || '');
+        if (this.props.defaultValue) {
+            this.setValue(this.props.defaultValue);
+        }
     },
 
     // setValue() will set the value of the component,
@@ -58,7 +60,7 @@ const InputField = React.createClass({
                     })}
                     type={type || 'text'}
                     name={name}
-                    value={this.getValue()}
+                    value={this.getValue() || ''}
                     onChange={this.changeValue}
                 />
                 <span className='validation-error'>

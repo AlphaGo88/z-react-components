@@ -99,42 +99,37 @@
 	                'section',
 	                null,
 	                React.createElement(
-	                    'span',
-	                    { className: 'btn-float btn-primary', onClick: this.msg1 },
+	                    'a',
+	                    { style: { marginRight: 10 }, onClick: this.msg1 },
 	                    '\u5F39\u51FA\u6D88\u606F1'
 	                ),
-	                '\xA0\xA0\xA0',
 	                React.createElement(
-	                    'span',
-	                    { className: 'btn-float btn-primary', onClick: this.msg2 },
+	                    'a',
+	                    { style: { marginRight: 10 }, onClick: this.msg2 },
 	                    '\u5F39\u51FA\u6D88\u606F2'
 	                ),
-	                '\xA0\xA0\xA0',
 	                React.createElement(
-	                    'span',
-	                    { className: 'btn-float btn-primary', onClick: this.msg3 },
+	                    'a',
+	                    { style: { marginRight: 10 }, onClick: this.msg3 },
 	                    '\u5F39\u51FA\u6D88\u606F3'
 	                ),
-	                '\xA0\xA0\xA0',
 	                React.createElement(
-	                    'span',
-	                    { className: 'btn-float btn-primary', onClick: this.msg4 },
+	                    'a',
+	                    { style: { marginRight: 10 }, onClick: this.msg4 },
 	                    '\u5F39\u51FA\u6D88\u606F4'
-	                ),
-	                '\xA0\xA0\xA0'
+	                )
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
 	                React.createElement(
-	                    'span',
-	                    { className: 'btn-float btn-primary', onClick: this.openDialog },
+	                    'a',
+	                    { style: { marginRight: 10 }, onClick: this.openDialog },
 	                    '\u663E\u793A\u5BF9\u8BDD\u6846'
 	                ),
-	                '\xA0\xA0\xA0',
 	                React.createElement(
-	                    'span',
-	                    { className: 'btn-float btn-primary', onClick: this.openDialog1 },
+	                    'a',
+	                    { style: { marginRight: 10 }, onClick: this.openDialog1 },
 	                    '\u663E\u793A\u5BF9\u8BDD\u68461'
 	                )
 	            ),

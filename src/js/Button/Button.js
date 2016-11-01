@@ -210,7 +210,7 @@ const Button = React.createClass({
         ];
 
         return (link ?
-            <a href={disabled ? undefined : link } {...renderProps}>
+            <a href={disabled ? undefined : link} {...renderProps}>
                 {_children}
             </a> 
             :

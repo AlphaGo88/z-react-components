@@ -687,7 +687,7 @@ a:visited {
   top: -100%;
   opacity: 1;
   border-radius: 50%;
-  animation: focus-ripple 1.4s ease-in-out infinite;
+  animation: z-focus-ripple 1.4s ease-in-out infinite;
 }
 .btn-float.btn-block.btn-focus .ripple,
 .btn-flat.btn-block.btn-focus .ripple {
@@ -741,7 +741,7 @@ a:visited {
   display: block;
   width: 100%;
 }
-@keyframes focus-ripple {
+@keyframes z-focus-ripple {
   0% {
     transform: scale(0.75, 0.75);
   }
@@ -1094,33 +1094,27 @@ textarea {
   height: 100%;
   width: 100%;
   top: 0px;
-  left: -10000px;
-  opacity: 0;
+  left: 0px;
+  opacity: 1;
   will-change: opacity;
   transform: translateZ(0px);
   transition: opacity 400ms;
   z-index: 1000;
   background-color: rgba(0, 0, 0, 0.541176);
 }
-.z-dialog-mask.show {
-  left: 0;
-  opacity: 1;
-}
-.z-dialog-mask.show > .dialog {
-  opacity: 1;
-  transform: translateY(0px);
+.z-dialog-mask.offscreen {
+  left: -10000px;
+  opacity: 0;
 }
 .z-dialog-mask > .dialog {
   position: relative;
   top: 16%;
   width: 66%;
   margin: 0 auto;
-  opacity: 0;
-  transform: translateY(50px);
   border-radius: 2px;
   background-color: #fff;
-  transition: opacity 400ms, transform 400ms;
   box-shadow: rgba(0, 0, 0, 0.247059) 0px 14px 45px, rgba(0, 0, 0, 0.219608) 0px 10px 18px;
+  animation: z-dlg-enter 400ms;
 }
 .z-dialog-mask > .dialog > .dialog-title {
   padding: 15px 22px 0;
@@ -1138,6 +1132,16 @@ textarea {
 .z-dialog-mask > .dialog > .dialog-action-container > .btn-outline {
   margin-left: 5px;
   font-weight: 600;
+}
+@keyframes z-dlg-enter {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
 }
 #z-msg-layer {
   position: fixed;

@@ -49,7 +49,7 @@
 	var _Z = Z,
 	    RadioGroup = _Z.RadioGroup;
 
-	var emp = [{
+	var emps = [{
 	    value: 'emp1',
 	    text: 'Jack'
 	}, {
@@ -65,41 +65,37 @@
 
 	var App = React.createClass({
 	    displayName: 'App',
-
-
-	    getInitialState: function getInitialState() {
-	        return {
-	            emp: ''
-	        };
-	    },
-
 	    handleEmpChange: function handleEmpChange(value) {
-	        this.setState({
-	            emp: value
-	        });
-	        console.log(value);
+	        alert(value);
 	    },
 	    render: function render() {
-	        var emp = this.state.emp;
-
-
 	        return React.createElement(
 	            'div',
 	            null,
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(RadioGroup, { value: emp, items: emps, onChange: this.handleEmpChange })
+	                React.createElement(RadioGroup, { items: emps, onChange: this.handleEmpChange })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(RadioGroup, { align: 'x', value: emp, items: emps })
+	                React.createElement(RadioGroup, { items: emps, defaultValue: 'emp1' })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(RadioGroup, { items: emps, diabled: true })
+	                React.createElement(RadioGroup, { items: emps, disabled: true })
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(RadioGroup, { items: emps, itemStyle: { width: 140 } })
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(RadioGroup, { align: 'y', items: emps })
 	            )
 	        );
 	    }

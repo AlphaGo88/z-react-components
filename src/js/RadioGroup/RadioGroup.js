@@ -47,8 +47,21 @@ const RadioGroup = React.createClass({
 
         /**
          * The selected value.
+         * The component is controlled with this prop.
+         * This prop overrides `defaultValue`.
          */
-        value: React.PropTypes.string,
+        value: React.PropTypes.oneOfType([
+            React.PropTypes.string,
+            React.PropTypes.number
+        ]),
+
+        /**
+         * The defaultly selected value.
+         */
+        defaultValue: React.PropTypes.oneOfType([
+            React.PropTypes.string,
+            React.PropTypes.number
+        ]),
 
         /**
          * Fires when the selected value changes.
@@ -60,14 +73,24 @@ const RadioGroup = React.createClass({
     getDefaultProps() {
         return {
             align: 'x',
-            items: [],
-            value: '',
-            onChange() {}
+            disabled: false,
+            onChange: () => {}
         };
     },
 
-    handleChange(event, value) {
-        if (this.props.value !== value) {
+    componentWillMount() {
+        if (!this.props.value) {
+            this.setState({
+                value: this.props.defaultValue || ''
+            });
+        }
+    },
+
+    handleChange(value) {
+        if (!this.props.disabled) {
+            if (!this.props.value) {
+                this.setState({ value });
+            }
             this.props.onChange(value);
         }
     },
@@ -79,9 +102,10 @@ const RadioGroup = React.createClass({
             style,
             itemStyle,
             align,
-            items,
-            value 
+            items
         } = this.props;
+
+        const selectedValue = this.props.value || this.state.value;
 
         return (
             <ul 
@@ -105,8 +129,8 @@ const RadioGroup = React.createClass({
                                 type="radio"
                                 value={item.value}
                                 disabled={item.disabled || this.props.disabled}
-                                checked={value === item.value}
-                                onChange={(e) => this.handleChange(e, item.value)}
+                                checked={item.value === selectedValue}
+                                onChange={(e) => this.handleChange(item.value)}
                             />
                             <span>{item.text}</span>
                         </label>

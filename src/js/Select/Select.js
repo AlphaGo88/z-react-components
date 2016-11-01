@@ -56,6 +56,8 @@ const Select = React.createClass({
         /**
          * The selected value.
          * When `multi` is true, it's an array of selected values.
+         * This makes the component controllable and 
+         * will override `defaultValue`.
          */
         value: React.PropTypes.oneOfType([
             React.PropTypes.string,
@@ -83,7 +85,7 @@ const Select = React.createClass({
     getInitialState() {
         return { 
             isOpen: false,
-            hoverIndex: 0
+            hoverIndex: -1
         };
     },
 
@@ -95,12 +97,22 @@ const Select = React.createClass({
         if (!this.props.disabled) this.setState({ isOpen: !this.state.isOpen });
     },
 
+    handleMouseLeave() {
+        this.setState({ hoverIndex: -1 });
+    },
+
     handleOptionHover(index) {
         this.setState({ hoverIndex: index });
     },
 
-    handleMouseLeave() {
-        this.setState({ hoverIndex: -1 });
+    handleOptionClick(item, selected) {
+        if (!item.disabled) {
+            if (this.props.multi && selected) {
+                this.deSelectOption(item.value);
+            } else {
+                this.selectOption(item.value);
+            }
+        }
     },
 
     selectOption(optionValue) {
@@ -288,7 +300,8 @@ const Select = React.createClass({
                     >
                         <ul onMouseLeave={this.handleMouseLeave}>
                             {options.map((item, i) => {
-                                const selected = multi ? (this._value.indexOf(item.value) > -1) : (this._value === item.value);
+                                const selected = multi ? (this._value.indexOf(item.value) > -1) 
+                                    : (this._value === item.value);
                                 return (
                                     <li 
                                         key={i}
@@ -298,10 +311,7 @@ const Select = React.createClass({
                                             'hover': i === hoverIndex
                                         })}
                                         onMouseOver={e => this.handleOptionHover(i)}
-                                        onClick={e => {
-                                            if (item.disabled) return;
-                                            (multi && selected) ? this.deSelectOption(item.value) : this.selectOption(item.value)
-                                        }}
+                                        onClick={e => this.handleOptionClick(item, selected)}
                                     >
                                         {item.text}
                                     </li>

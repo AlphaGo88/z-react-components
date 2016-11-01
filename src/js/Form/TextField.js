@@ -22,9 +22,7 @@ const TextField = React.createClass({
 
         return (
             <div className={cx('form-group', className)}>
-                <label 
-                    className={cx('form-label', labelClassName)} 
-                >
+                <label className={cx('form-label', labelClassName)}>
                     {title}
                 </label>
                 <span className="form-text">

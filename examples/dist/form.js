@@ -47,6 +47,7 @@
 	'use strict';
 
 	var _Z = Z,
+	    Button = _Z.Button,
 	    Formsy = _Z.Formsy;
 
 	var TextField = Formsy.TextField;
@@ -151,8 +152,8 @@
 	                    'div',
 	                    { className: 'form-group col-12' },
 	                    React.createElement(
-	                        'button',
-	                        { className: 'btn-float btn-primary', disabled: !this.state.canSubmit },
+	                        Button,
+	                        { primary: true, disabled: !this.state.canSubmit },
 	                        'Submit'
 	                    )
 	                )

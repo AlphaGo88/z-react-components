@@ -510,7 +510,7 @@ var Z =
 	            'div',
 	            {
 	                className: cx('z-dialog-mask', {
-	                    'show': isOpen
+	                    'offscreen': !isOpen
 	                })
 	            },
 	            isOpen && React.createElement(
@@ -1814,6 +1814,8 @@ var Z =
 	        /**
 	         * The selected value.
 	         * When `multi` is true, it's an array of selected values.
+	         * This makes the component controllable and 
+	         * will override `defaultValue`.
 	         */
 	        value: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number, React.PropTypes.array]),
 
@@ -1836,7 +1838,7 @@ var Z =
 	    getInitialState: function getInitialState() {
 	        return {
 	            isOpen: false,
-	            hoverIndex: 0
+	            hoverIndex: -1
 	        };
 	    },
 	    handleClickAway: function handleClickAway() {
@@ -1845,11 +1847,20 @@ var Z =
 	    handleTriggerClick: function handleTriggerClick(event) {
 	        if (!this.props.disabled) this.setState({ isOpen: !this.state.isOpen });
 	    },
+	    handleMouseLeave: function handleMouseLeave() {
+	        this.setState({ hoverIndex: -1 });
+	    },
 	    handleOptionHover: function handleOptionHover(index) {
 	        this.setState({ hoverIndex: index });
 	    },
-	    handleMouseLeave: function handleMouseLeave() {
-	        this.setState({ hoverIndex: -1 });
+	    handleOptionClick: function handleOptionClick(item, selected) {
+	        if (!item.disabled) {
+	            if (this.props.multi && selected) {
+	                this.deSelectOption(item.value);
+	            } else {
+	                this.selectOption(item.value);
+	            }
+	        }
 	    },
 	    selectOption: function selectOption(optionValue) {
 	        if (this.props.multi) {
@@ -2075,8 +2086,7 @@ var Z =
 	                                        return _this2.handleOptionHover(i);
 	                                    },
 	                                    onClick: function onClick(e) {
-	                                        if (item.disabled) return;
-	                                        multi && selected ? _this2.deSelectOption(item.value) : _this2.selectOption(item.value);
+	                                        return _this2.handleOptionClick(item, selected);
 	                                    }
 	                                },
 	                                item.text
@@ -2163,7 +2173,7 @@ var Z =
 	        };
 	    },
 	    componentWillMount: function componentWillMount() {
-	        if (typeof this.props.checked === 'undefined') {
+	        if (typeof this.props.checked !== 'boolean') {
 	            this.setState({
 	                checked: this.props.defaultChecked
 	            });
@@ -2172,10 +2182,9 @@ var Z =
 	    handleChange: function handleChange(event) {
 	        if (!this.props.disabled) {
 	            var checked = event.currentTarget.checked;
-	            if (typeof this.props.checked === 'undefined') {
-	                this.setState({
-	                    checked: checked
-	                });
+
+	            if (typeof this.props.checked !== 'boolean') {
+	                this.setState({ checked: checked });
 	            }
 	            this.props.onCheck(checked);
 	        }
@@ -2188,7 +2197,7 @@ var Z =
 	            disabled = _props.disabled;
 
 
-	        var isChecked = typeof this.props.checked === 'undefined' ? this.state.checked : this.props.checked;
+	        var isChecked = typeof this.props.checked === 'boolean' ? this.props.checked : this.state.checked;
 
 	        return React.createElement(
 	            'div',
@@ -2283,8 +2292,15 @@ var Z =
 
 	        /**
 	         * The selected value.
+	         * The component is controlled with this prop.
+	         * This prop overrides `defaultValue`.
 	         */
-	        value: React.PropTypes.string,
+	        value: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]),
+
+	        /**
+	         * The defaultly selected value.
+	         */
+	        defaultValue: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]),
 
 	        /**
 	         * Fires when the selected value changes.
@@ -2296,13 +2312,22 @@ var Z =
 	    getDefaultProps: function getDefaultProps() {
 	        return {
 	            align: 'x',
-	            items: [],
-	            value: '',
+	            disabled: false,
 	            onChange: function onChange() {}
 	        };
 	    },
-	    handleChange: function handleChange(event, value) {
-	        if (this.props.value !== value) {
+	    componentWillMount: function componentWillMount() {
+	        if (!this.props.value) {
+	            this.setState({
+	                value: this.props.defaultValue || ''
+	            });
+	        }
+	    },
+	    handleChange: function handleChange(value) {
+	        if (!this.props.disabled) {
+	            if (!this.props.value) {
+	                this.setState({ value: value });
+	            }
 	            this.props.onChange(value);
 	        }
 	    },
@@ -2315,9 +2340,10 @@ var Z =
 	            style = _props.style,
 	            itemStyle = _props.itemStyle,
 	            align = _props.align,
-	            items = _props.items,
-	            value = _props.value;
+	            items = _props.items;
 
+
+	        var selectedValue = this.props.value || this.state.value;
 
 	        return React.createElement(
 	            'ul',
@@ -2346,9 +2372,9 @@ var Z =
 	                            type: 'radio',
 	                            value: item.value,
 	                            disabled: item.disabled || _this.props.disabled,
-	                            checked: value === item.value,
+	                            checked: item.value === selectedValue,
 	                            onChange: function onChange(e) {
-	                                return _this.handleChange(e, item.value);
+	                                return _this.handleChange(item.value);
 	                            }
 	                        }),
 	                        React.createElement(
@@ -2470,9 +2496,7 @@ var Z =
 	            });
 
 	            if (!this.props.value) {
-	                this.setState({
-	                    value: newValue
-	                });
+	                this.setState({ value: newValue });
 	            }
 	            this.props.onChange(newValue);
 	        }
@@ -3714,9 +3738,7 @@ var Z =
 	            { className: cx('form-group', className) },
 	            React.createElement(
 	                'label',
-	                {
-	                    className: cx('form-label', labelClassName)
-	                },
+	                { className: cx('form-label', labelClassName) },
 	                title
 	            ),
 	            React.createElement(
@@ -3755,7 +3777,9 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentWillMount: function componentWillMount() {
-	        this.setValue(this.props.defaultValue || '');
+	        if (this.props.defaultValue) {
+	            this.setValue(this.props.defaultValue);
+	        }
 	    },
 
 
@@ -3804,7 +3828,7 @@ var Z =
 	                }),
 	                type: type || 'text',
 	                name: name,
-	                value: this.getValue(),
+	                value: this.getValue() || '',
 	                onChange: this.changeValue
 	            })),
 	            React.createElement(
@@ -3843,15 +3867,8 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentWillMount: function componentWillMount() {
-	        var _props = this.props,
-	            multi = _props.multi,
-	            defaultValue = _props.defaultValue;
-
-
-	        if (multi) {
-	            this.setValue(defaultValue || []);
-	        } else {
-	            this.setValue(defaultValue || '');
+	        if (this.props.defaultValue) {
+	            this.setValue(this.props.defaultValue);
 	        }
 	    },
 	    changeValue: function changeValue(value) {
@@ -3859,16 +3876,16 @@ var Z =
 	        this.props.onChange && this.props.onChange(value);
 	    },
 	    render: function render() {
-	        var _props2 = this.props,
-	            validationError = _props2.validationError,
-	            validationErrors = _props2.validationErrors,
-	            validations = _props2.validations,
-	            title = _props2.title,
-	            className = _props2.className,
-	            labelClassName = _props2.labelClassName,
-	            controlClassName = _props2.controlClassName,
-	            multi = _props2.multi,
-	            otherProps = _objectWithoutProperties(_props2, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'labelClassName', 'controlClassName', 'multi']);
+	        var _props = this.props,
+	            validationError = _props.validationError,
+	            validationErrors = _props.validationErrors,
+	            validations = _props.validations,
+	            title = _props.title,
+	            className = _props.className,
+	            labelClassName = _props.labelClassName,
+	            controlClassName = _props.controlClassName,
+	            multi = _props.multi,
+	            otherProps = _objectWithoutProperties(_props, ['validationError', 'validationErrors', 'validations', 'title', 'className', 'labelClassName', 'controlClassName', 'multi']);
 
 	        var errorMessage = this.getErrorMessage();
 
@@ -3884,9 +3901,7 @@ var Z =
 	            { className: cx('form-group', className) },
 	            React.createElement(
 	                'label',
-	                {
-	                    className: cx('form-label', labelClassName)
-	                },
+	                { className: cx('form-label', labelClassName) },
 	                title
 	            ),
 	            React.createElement(Select, _extends({}, otherProps, {
@@ -3936,7 +3951,9 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentWillMount: function componentWillMount() {
-	        this.setValue(this.props.defaultValue || '');
+	        if (this.props.defaultValue) {
+	            this.setValue(this.props.defaultValue);
+	        }
 	    },
 	    changeValue: function changeValue(dateStr, dateObj) {
 	        this.setValue(dateStr);
@@ -3969,7 +3986,7 @@ var Z =
 	                    'required': this.showRequired(),
 	                    'error': this.showError()
 	                }),
-	                value: this.getValue(),
+	                value: this.getValue() || '',
 	                onChange: this.changeValue
 	            })),
 	            React.createElement(
@@ -4007,7 +4024,9 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentWillMount: function componentWillMount() {
-	        this.setValue(this.props.defaultValue || '');
+	        if (this.props.defaultValue) {
+	            this.setValue(this.props.defaultValue);
+	        }
 	    },
 	    changeValue: function changeValue(value) {
 	        this.setValue(value);
@@ -4029,14 +4048,12 @@ var Z =
 	            { className: cx('form-group', className) },
 	            title && React.createElement(
 	                'label',
-	                {
-	                    className: cx('form-label', labelClassName)
-	                },
+	                { className: cx('form-label', labelClassName) },
 	                title
 	            ),
 	            React.createElement(RadioGroup, _extends({}, otherProps, {
 	                className: cx('form-control', controlClassName),
-	                value: this.getValue(),
+	                value: this.getValue() || '',
 	                onChange: this.changeValue
 	            }))
 	        );
@@ -4070,11 +4087,13 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentWillMount: function componentWillMount() {
-	        this.setValue(this.props.defaultValue || false);
+	        if (typeof this.props.defaultValue === 'boolean') {
+	            this.setValue(this.props.defaultValue);
+	        }
 	    },
 	    changeValue: function changeValue(checked) {
 	        this.setValue(checked);
-	        this.props.onChange && this.props.onChange(checked);
+	        this.props.onCheck && this.props.onCheck(checked);
 	    },
 	    render: function render() {
 	        var _props = this.props,
@@ -4092,7 +4111,7 @@ var Z =
 	            React.createElement(Checkbox, _extends({}, otherProps, {
 	                className: cx('form-control', controlClassName),
 	                label: title,
-	                checked: this.getValue(),
+	                checked: !!this.getValue(),
 	                onCheck: this.changeValue
 	            }))
 	        );
@@ -4126,7 +4145,9 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentWillMount: function componentWillMount() {
-	        this.setValue(this.props.defaultValue || []);
+	        if (this.props.defaultValue) {
+	            this.setValue(this.props.defaultValue);
+	        }
 	    },
 	    changeValue: function changeValue(value) {
 	        this.setValue(value);
@@ -4148,14 +4169,12 @@ var Z =
 	            { className: cx('form-group', className) },
 	            title && React.createElement(
 	                'label',
-	                {
-	                    className: cx('form-label', labelClassName)
-	                },
+	                { className: cx('form-label', labelClassName) },
 	                title
 	            ),
 	            React.createElement(CheckboxGroup, _extends({}, otherProps, {
 	                className: cx('form-control', controlClassName),
-	                value: this.getValue(),
+	                value: this.getValue() || [],
 	                onChange: this.changeValue
 	            }))
 	        );
@@ -4188,7 +4207,9 @@ var Z =
 	    mixins: [Formsy.Mixin],
 
 	    componentWillMount: function componentWillMount() {
-	        this.setValue(this.props.defaultValue || '');
+	        if (this.props.defaultValue) {
+	            this.setValue(this.props.defaultValue);
+	        }
 	    },
 	    changeValue: function changeValue(event) {
 	        this.setValue(event.target.value);
@@ -4212,9 +4233,7 @@ var Z =
 	            { className: cx('form-group', className) },
 	            React.createElement(
 	                'label',
-	                {
-	                    className: cx('form-label', labelClassName)
-	                },
+	                { className: cx('form-label', labelClassName) },
 	                title
 	            ),
 	            React.createElement('textarea', _extends({}, otherProps, {
@@ -4223,7 +4242,7 @@ var Z =
 	                    'error': this.showError()
 	                }),
 	                name: name,
-	                value: this.getValue(),
+	                value: this.getValue() || '',
 	                onChange: this.changeValue
 	            })),
 	            React.createElement(
