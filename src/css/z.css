@@ -646,7 +646,6 @@ a:visited {
   text-decoration: none;
   cursor: pointer;
   overflow: hidden;
-  transition-duration: .4s;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -696,6 +695,7 @@ a:visited {
 }
 .btn-float {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  transition-duration: .3s;
 }
 .btn-float[disabled],
 .btn-float.btn-disabled {
@@ -1379,16 +1379,16 @@ table th[class*="col-"] {
 .select-trigger-multi.error {
   border-color: #d9534f;
 }
-.select-trigger-single > .placeholder,
-.select-trigger-multi > .placeholder {
+.select-trigger-single .placeholder,
+.select-trigger-multi .placeholder {
   color: #999;
 }
 .select-trigger-single {
   padding: 0 20px 0 10px;
   line-height: 34px;
 }
-.select-trigger-single > .caret-up,
-.select-trigger-single > .caret-down {
+.select-trigger-single .caret-up,
+.select-trigger-single .caret-down {
   position: absolute;
   top: 0;
   right: 0;
@@ -1396,8 +1396,8 @@ table th[class*="col-"] {
   width: 20px;
   cursor: pointer;
 }
-.select-trigger-single.disabled > .caret-up,
-.select-trigger-single.disabled > .caret-down {
+.select-trigger-single.disabled .caret-up,
+.select-trigger-single.disabled .caret-down {
   cursor: not-allowed;
 }
 .select-trigger-single b {
@@ -1411,21 +1411,21 @@ table th[class*="col-"] {
   height: 0;
   border-style: solid;
 }
-.select-trigger-single > .caret-up > b {
+.select-trigger-single.disabled b {
+  border-color: #999 transparent transparent;
+}
+.select-trigger-single .caret-up > b {
   border-color: transparent transparent #666;
   border-width: 0 4px 6px;
 }
-.select-trigger-single > .caret-down > b {
+.select-trigger-single .caret-down > b {
   border-color: #666 transparent transparent;
   border-width: 6px 4px 0;
-}
-.select-trigger-single.disabled b {
-  border-color: #999 transparent transparent;
 }
 .select-trigger-multi {
   padding: 0 4px 0 8px;
 }
-.select-trigger-multi > .placeholder {
+.select-trigger-multi .placeholder {
   display: inline-block;
   height: 34px;
   line-height: 34px;

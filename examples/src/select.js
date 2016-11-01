@@ -76,25 +76,20 @@ let App = React.createClass({
         return (
             <div>
                 <section>
-                    <Select 
-                        multi={true} 
-                        options={emps} 
-                        value={emp} 
-                        onChange={this.changeEmp}
-                    />
+                    <h5>Select</h5>
+                    <Select options={fruits} value={fruit} onChange={this.changeFruit}/>
                 </section>
                 <section>
-                    <Select 
-                        options={fruits} 
-                        value={fruit}
-                        onChange={this.changeFruit}
-                    />
+                    <h5>Select with default Value</h5>
+                    <Select options={fruits} defaultValue={2}/>
                 </section>
                 <section>
-                    <Select 
-                        options={fruits} 
-                        disabled
-                    />
+                    <h5>Disabled</h5>
+                    <Select options={fruits} disabled/>
+                </section>
+                <section>
+                    <h5>Multi Select</h5>
+                    <Select multi={true} options={emps} style={{width: 300}}/>
                 </section>
             </div>
         )

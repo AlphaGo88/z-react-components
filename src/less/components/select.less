@@ -27,7 +27,7 @@
     &.error {
         border-color: @color-danger;
     }
-    > .placeholder {
+    .placeholder {
         color: @text-color-lighter;
     }
 }
@@ -36,8 +36,8 @@
     padding: 0 20px 0 @input-padding-horizonal;
     line-height: @input-height - 2;
 
-    > .caret-up,
-    > .caret-down {
+    .caret-up,
+    .caret-down {
         position: absolute;
         top: 0;
         right: 0;
@@ -45,8 +45,8 @@
         width: 20px;
         cursor: pointer;
     }
-    &.disabled > .caret-up,
-    &.disabled > .caret-down {
+    &.disabled .caret-up,
+    &.disabled .caret-down {
         cursor: @cursor-disabled;
     }
     b {
@@ -60,23 +60,23 @@
         height: 0;
         border-style: solid;
     }
-    > .caret-up > b {
+    &.disabled b {
+        border-color: @text-color-lighter transparent transparent;
+    }
+    .caret-up > b {
         border-color: transparent transparent @text-color-light;
         border-width: 0 4px 6px;
     }
-    > .caret-down > b {
+    .caret-down > b {
         border-color: @text-color-light transparent transparent;
         border-width: 6px 4px 0;
-    }
-    &.disabled b {
-        border-color: @text-color-lighter transparent transparent;
     }
 }
 
 .select-trigger-multi {
     padding: 0 4px 0 8px;
 
-    > .placeholder {
+    .placeholder {
         display: inline-block;
         height: @input-height - 2;
         line-height: @input-height - 2;

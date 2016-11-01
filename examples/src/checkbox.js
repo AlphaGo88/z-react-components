@@ -20,13 +20,19 @@ let App = React.createClass({
         return (
             <div>
                 <section>
-                    <Checkbox label="Normal checkbox"/>
+                    <Checkbox label="checkbox"/>
                 </section>
                 <section>
                     <Checkbox label="Disabled checkbox" disabled={true}/>
                 </section>
                 <section>
-                    <Checkbox label="checked checkbox" defaultChecked={true}/>
+                    <Checkbox label="Disabled checkbox" disabled={true} defaultChecked={true}/>
+                </section>
+                <section>
+                    <Checkbox label="default checked checkbox" defaultChecked={true}/>
+                </section>
+                <section>
+                    <Checkbox label="controlled checkbox" checked={true}/>
                 </section>
                 <section>
                     <CheckboxGroup items={fruits} onChange={this.handleChange}/>

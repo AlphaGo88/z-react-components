@@ -61,6 +61,11 @@
 	                "section",
 	                null,
 	                React.createElement(
+	                    "h4",
+	                    null,
+	                    "Button Size"
+	                ),
+	                React.createElement(
 	                    Button,
 	                    { size: "small", primary: true },
 	                    "small"
@@ -81,6 +86,11 @@
 	            React.createElement(
 	                "section",
 	                null,
+	                React.createElement(
+	                    "h4",
+	                    null,
+	                    "Float Button"
+	                ),
 	                React.createElement(
 	                    Button,
 	                    null,
@@ -104,6 +114,11 @@
 	                "section",
 	                null,
 	                React.createElement(
+	                    "h4",
+	                    null,
+	                    "Flat Button"
+	                ),
+	                React.createElement(
 	                    Button,
 	                    { type: "flat", focus: true },
 	                    "default"
@@ -126,9 +141,14 @@
 	                "section",
 	                null,
 	                React.createElement(
+	                    "h4",
+	                    null,
+	                    "Link Button"
+	                ),
+	                React.createElement(
 	                    Button,
-	                    { type: "flat", link: "http://www.baidu.com" },
-	                    "\u767E\u5EA6"
+	                    { type: "flat", link: "https://github.com/" },
+	                    "Github"
 	                ),
 	                "\xA0\xA0"
 	            )

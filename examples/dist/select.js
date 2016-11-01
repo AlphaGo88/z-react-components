@@ -133,29 +133,42 @@
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(Select, {
-	                    multi: true,
-	                    options: emps,
-	                    value: emp,
-	                    onChange: this.changeEmp
-	                })
+	                React.createElement(
+	                    'h5',
+	                    null,
+	                    'Select'
+	                ),
+	                React.createElement(Select, { options: fruits, value: fruit, onChange: this.changeFruit })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(Select, {
-	                    options: fruits,
-	                    value: fruit,
-	                    onChange: this.changeFruit
-	                })
+	                React.createElement(
+	                    'h5',
+	                    null,
+	                    'Select with default Value'
+	                ),
+	                React.createElement(Select, { options: fruits, defaultValue: 2 })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(Select, {
-	                    options: fruits,
-	                    disabled: true
-	                })
+	                React.createElement(
+	                    'h5',
+	                    null,
+	                    'Disabled'
+	                ),
+	                React.createElement(Select, { options: fruits, disabled: true })
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(
+	                    'h5',
+	                    null,
+	                    'Multi Select'
+	                ),
+	                React.createElement(Select, { multi: true, options: emps, style: { width: 300 } })
 	            )
 	        );
 	    }

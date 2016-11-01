@@ -1820,6 +1820,11 @@ var Z =
 	        value: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number, React.PropTypes.array]),
 
 	        /**
+	         * The default selected value.
+	         */
+	        defaultValue: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number, React.PropTypes.array]),
+
+	        /**
 	         * Fires when the selected value change.
 	         * @param {string} `value`
 	         */
@@ -1836,16 +1841,37 @@ var Z =
 	        };
 	    },
 	    getInitialState: function getInitialState() {
-	        return {
+	        var state = {
 	            isOpen: false,
 	            hoverIndex: -1
 	        };
+
+	        if (!this.isControlled()) {
+	            if (typeof this.props.defaultValue !== 'undefined') {
+	                state.value = this.props.defaultValue;
+	            } else {
+	                state.value = this.props.multi ? [] : '';
+	            }
+	        }
+	        return state;
+	    },
+	    isControlled: function isControlled() {
+	        return typeof this.props.value !== 'undefined';
+	    },
+	    getValue: function getValue() {
+	        return this.isControlled() ? this.props.value : this.state.value;
 	    },
 	    handleClickAway: function handleClickAway() {
-	        this.state.isOpen && this.setState({ isOpen: false });
+	        if (this.state.isOpen) {
+	            this.setState({ isOpen: false });
+	        }
 	    },
 	    handleTriggerClick: function handleTriggerClick(event) {
-	        if (!this.props.disabled) this.setState({ isOpen: !this.state.isOpen });
+	        if (!this.props.disabled) {
+	            this.setState({
+	                isOpen: !this.state.isOpen
+	            });
+	        }
 	    },
 	    handleMouseLeave: function handleMouseLeave() {
 	        this.setState({ hoverIndex: -1 });
@@ -1858,25 +1884,39 @@ var Z =
 	            if (this.props.multi && selected) {
 	                this.deSelectOption(item.value);
 	            } else {
-	                this.selectOption(item.value);
+	                this.selectOption(item.value, selected);
 	            }
 	        }
 	    },
-	    selectOption: function selectOption(optionValue) {
+	    selectOption: function selectOption(optionValue, selected) {
 	        if (this.props.multi) {
-	            this.props.onChange(this._value.concat([optionValue]));
+	            var value = this.getValue().concat([optionValue]);
+
+	            if (!this.isControlled()) {
+	                this.setState({ value: value });
+	            }
+	            this.props.onChange(value);
 	        } else {
-	            this.setState({
-	                isOpen: false
-	            });
-	            if (optionValue !== this._value) {
+	            var newState = { isOpen: false };
+
+	            if (selected) {
+	                this.setState(newState);
+	            } else {
+	                if (!this.isControlled()) {
+	                    newState.value = optionValue;
+	                }
+	                this.setState(newState);
 	                this.props.onChange(optionValue);
 	            }
 	        }
 	    },
 	    deSelectOption: function deSelectOption(optionValue) {
-	        var value = this._value.slice();
+	        var value = this.getValue().slice();
+
 	        value.splice(value.indexOf(optionValue), 1);
+	        if (!this.isControlled()) {
+	            this.setState({ value: value });
+	        }
 	        this.props.onChange(value);
 	    },
 	    handleKeyDown: function handleKeyDown(event) {
@@ -1898,27 +1938,24 @@ var Z =
 
 	                case 13:
 	                    // Enter
-	                    var selectedValue = options[hoverIndex].value;
+	                    // select or deselect the option.
+	                    var optionValue = options[hoverIndex].value;
+	                    var value = _this.getValue();
 
 	                    if (options[hoverIndex].disabled) {
 	                        break;
 	                    }
 	                    if (multi) {
-	                        var match = _this._value.filter(function (it) {
-	                            return it === selectedValue;
+	                        var match = value.filter(function (it) {
+	                            return it === optionValue;
 	                        });
 	                        if (match.length > 0) {
-	                            _this.deSelectOption(selectedValue);
+	                            _this.deSelectOption(optionValue);
 	                        } else {
-	                            onChange(_this._value.concat([selectedValue]));
+	                            _this.selectOption(optionValue);
 	                        }
 	                    } else {
-	                        if (_this._value === selectedValue) {
-	                            _this.setState({ isOpen: false });
-	                        } else {
-	                            _this.setState({ isOpen: false });
-	                            onChange(selectedValue);
-	                        }
+	                        _this.selectOption(optionValue, value === optionValue);
 	                    }
 	                    break;
 
@@ -1945,61 +1982,18 @@ var Z =
 
 	        var _props2 = this.props,
 	            className = _props2.className,
-	            selectClassName = _props2.selectClassName,
 	            dropdownClassName = _props2.dropdownClassName,
 	            style = _props2.style,
-	            selectStyle = _props2.selectStyle,
 	            dropdownStyle = _props2.dropdownStyle,
-	            placeholder = _props2.placeholder,
 	            multi = _props2.multi,
 	            disabled = _props2.disabled,
-	            options = _props2.options,
-	            value = _props2.value;
+	            options = _props2.options;
 	        var _state = this.state,
 	            isOpen = _state.isOpen,
 	            hoverIndex = _state.hoverIndex;
 
-
-	        var displayText = '';
-	        var selectedItems = [];
-	        var k = void 0,
-	            idx = void 0;
-
-	        if (multi) {
-	            // get selected items when `multi` is true
-	            if (value && value.length > 0) {
-	                this._value = value;
-
-	                for (k = 0; k < options.length; k++) {
-	                    idx = this._value.indexOf(options[k].value);
-	                    if (idx > -1) {
-	                        selectedItems[idx] = options[k];
-	                    }
-	                }
-
-	                if (!selectedItems.length) {
-	                    console.warn('The `value` prop of `Select` does not match any of its options.');
-	                }
-	            } else {
-	                this._value = [];
-	            }
-	        } else {
-	            // when `multi` is false
-	            if (value || value === 0) {
-	                this._value = value;
-	                selectedItems = options.filter(function (item) {
-	                    return item.value === _this2._value;
-	                });
-
-	                if (selectedItems.length) {
-	                    displayText = selectedItems[0].text;
-	                } else {
-	                    console.warn('The `value` prop of `Select` does not match any of its options.');
-	                }
-	            } else {
-	                this._value = '';
-	            }
-	        }
+	        var value = this.getValue();
+	        var trigger = this.renderTigger();
 
 	        return React.createElement(
 	            ClickAwayListener,
@@ -2012,54 +2006,7 @@ var Z =
 	                    tabIndex: '0',
 	                    onKeyDown: this.handleKeyDown
 	                },
-	                React.createElement(
-	                    'div',
-	                    {
-	                        className: cx(selectClassName, {
-	                            'select-trigger-single': !multi,
-	                            'select-trigger-multi': multi,
-	                            'focus': isOpen,
-	                            'disabled': disabled
-	                        }),
-	                        style: selectStyle,
-	                        onClick: this.handleTriggerClick
-	                    },
-	                    multi && (selectedItems.length ? React.createElement(
-	                        'ul',
-	                        null,
-	                        selectedItems.map(function (item, i) {
-	                            return React.createElement(
-	                                'li',
-	                                {
-	                                    key: i,
-	                                    onClick: function onClick(e) {
-	                                        e.stopPropagation();
-	                                        _this2.deSelectOption(item.value);
-	                                    }
-	                                },
-	                                item.text,
-	                                React.createElement('i', { className: 'fa fa-close' })
-	                            );
-	                        })
-	                    ) : React.createElement(
-	                        'span',
-	                        { className: 'placeholder' },
-	                        placeholder
-	                    )),
-	                    multi || displayText || React.createElement(
-	                        'span',
-	                        { className: 'placeholder' },
-	                        placeholder
-	                    ),
-	                    multi || React.createElement(
-	                        'span',
-	                        { className: cx({
-	                                'caret-down': !isOpen,
-	                                'caret-up': isOpen
-	                            }) },
-	                        React.createElement('b', null)
-	                    )
-	                ),
+	                trigger,
 	                React.createElement(
 	                    'div',
 	                    {
@@ -2072,7 +2019,7 @@ var Z =
 	                        'ul',
 	                        { onMouseLeave: this.handleMouseLeave },
 	                        options.map(function (item, i) {
-	                            var selected = multi ? _this2._value.indexOf(item.value) > -1 : _this2._value === item.value;
+	                            var selected = multi ? value.indexOf(item.value) > -1 : value === item.value;
 	                            return React.createElement(
 	                                'li',
 	                                {
@@ -2095,6 +2042,111 @@ var Z =
 	                    )
 	                )
 	            )
+	        );
+	    },
+	    renderTigger: function renderTigger() {
+	        var _this3 = this;
+
+	        var _props3 = this.props,
+	            selectClassName = _props3.selectClassName,
+	            selectStyle = _props3.selectStyle,
+	            placeholder = _props3.placeholder,
+	            multi = _props3.multi,
+	            disabled = _props3.disabled,
+	            options = _props3.options;
+	        var isOpen = this.state.isOpen;
+
+	        var value = this.getValue();
+
+	        var displayText = '';
+	        var selectedItems = [];
+	        var content = void 0;
+
+	        if (multi) {
+	            // get selected items when `multi` is true
+	            if (value && value.length > 0) {
+	                var k = void 0,
+	                    idx = void 0;
+	                for (k = 0; k < options.length; k++) {
+	                    idx = value.indexOf(options[k].value);
+	                    if (idx > -1) {
+	                        selectedItems[idx] = options[k];
+	                    }
+	                }
+	                if (selectedItems.length < 1) {
+	                    console.warn('The `value` prop of `Select` does not match any of its options.');
+	                }
+	            }
+	        } else {
+	            // when `multi` is false
+	            if (value || value === 0) {
+	                var selectedItem = options.filter(function (item) {
+	                    return item.value === value;
+	                });
+	                if (selectedItem.length) {
+	                    displayText = selectedItem[0].text;
+	                } else {
+	                    console.warn('The `value` prop of `Select` does not match any of its options.');
+	                }
+	            }
+	        }
+
+	        if (multi) {
+	            content = selectedItems.length ? React.createElement(
+	                'ul',
+	                null,
+	                selectedItems.map(function (item, i) {
+	                    return React.createElement(
+	                        'li',
+	                        {
+	                            key: i,
+	                            onClick: function onClick(e) {
+	                                e.stopPropagation();
+	                                _this3.deSelectOption(item.value);
+	                            }
+	                        },
+	                        item.text,
+	                        React.createElement('i', { className: 'fa fa-close' })
+	                    );
+	                })
+	            ) : React.createElement(
+	                'span',
+	                { className: 'placeholder' },
+	                placeholder
+	            );
+	        } else {
+	            content = React.createElement(
+	                'div',
+	                null,
+	                displayText || React.createElement(
+	                    'span',
+	                    { className: 'placeholder' },
+	                    placeholder
+	                ),
+	                React.createElement(
+	                    'span',
+	                    { className: cx({
+	                            'caret-down': !isOpen,
+	                            'caret-up': isOpen
+	                        }) },
+	                    React.createElement('b', null)
+	                )
+	            );
+	        }
+
+	        return React.createElement(
+	            'div',
+	            {
+	                className: cx(selectClassName, {
+	                    'select-trigger-single': !multi,
+	                    'select-trigger-multi': multi,
+	                    'focus': isOpen,
+	                    'disabled': disabled
+	                }),
+	                style: selectStyle,
+	                onClick: this.handleTriggerClick
+	            },
+	            content
 	        );
 	    }
 	});

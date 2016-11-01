@@ -73,7 +73,7 @@
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(Checkbox, { label: 'Normal checkbox' })
+	                React.createElement(Checkbox, { label: 'checkbox' })
 	            ),
 	            React.createElement(
 	                'section',
@@ -83,7 +83,17 @@
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(Checkbox, { label: 'checked checkbox', defaultChecked: true })
+	                React.createElement(Checkbox, { label: 'Disabled checkbox', disabled: true, defaultChecked: true })
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(Checkbox, { label: 'default checked checkbox', defaultChecked: true })
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(Checkbox, { label: 'controlled checkbox', checked: true })
 	            ),
 	            React.createElement(
 	                'section',

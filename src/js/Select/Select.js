@@ -66,6 +66,15 @@ const Select = React.createClass({
         ]),
 
         /**
+         * The default selected value.
+         */
+        defaultValue: React.PropTypes.oneOfType([
+            React.PropTypes.string,
+            React.PropTypes.number,
+            React.PropTypes.array
+        ]),
+
+        /**
          * Fires when the selected value change.
          * @param {string} `value`
          */
@@ -83,18 +92,41 @@ const Select = React.createClass({
     },
 
     getInitialState() {
-        return { 
+        let state = {
             isOpen: false,
             hoverIndex: -1
         };
+
+        if (!this.isControlled()) {
+            if (typeof this.props.defaultValue !== 'undefined') {
+                state.value = this.props.defaultValue;
+            } else {
+                state.value = this.props.multi ? [] : '';
+            }
+        }
+        return state;
+    },
+
+    isControlled() {
+        return typeof this.props.value !== 'undefined';
+    },
+
+    getValue() {
+        return this.isControlled() ? this.props.value : this.state.value;
     },
 
     handleClickAway() {
-        this.state.isOpen && this.setState({ isOpen: false });
+        if (this.state.isOpen) {
+            this.setState({ isOpen: false });
+        }
     },
 
     handleTriggerClick(event) {
-        if (!this.props.disabled) this.setState({ isOpen: !this.state.isOpen });
+        if (!this.props.disabled) {
+            this.setState({ 
+                isOpen: !this.state.isOpen 
+            });
+        }
     },
 
     handleMouseLeave() {
@@ -110,27 +142,41 @@ const Select = React.createClass({
             if (this.props.multi && selected) {
                 this.deSelectOption(item.value);
             } else {
-                this.selectOption(item.value);
+                this.selectOption(item.value, selected);
             }
         }
     },
 
-    selectOption(optionValue) {
+    selectOption(optionValue, selected) {
         if (this.props.multi) {
-            this.props.onChange(this._value.concat([optionValue]));
+            const value = this.getValue().concat([optionValue]);
+
+            if (!this.isControlled()) {
+                this.setState({ value });
+            }
+            this.props.onChange(value);
         } else {
-            this.setState({
-                isOpen: false
-            });
-            if (optionValue !== this._value) {
+            let newState = { isOpen: false };
+
+            if (selected) {
+                this.setState(newState);
+            } else {
+                if (!this.isControlled()) {
+                    newState.value = optionValue;
+                }
+                this.setState(newState);
                 this.props.onChange(optionValue);
             }
         }
     },
 
     deSelectOption(optionValue) {
-        let value = this._value.slice();
+        let value = this.getValue().slice();
+
         value.splice(value.indexOf(optionValue), 1);
+        if (!this.isControlled()) {
+            this.setState({ value });
+        }
         this.props.onChange(value);
     },
 
@@ -146,25 +192,22 @@ const Select = React.createClass({
 
             case 13:
                 // Enter
-                const selectedValue = options[hoverIndex].value;
+                // select or deselect the option.
+                const optionValue = options[hoverIndex].value;
+                const value = this.getValue();
 
                 if (options[hoverIndex].disabled) {
                     break;
                 }
                 if (multi) {
-                    const match = this._value.filter(it => it === selectedValue);
+                    const match = value.filter(it => it === optionValue);
                     if (match.length > 0) {
-                        this.deSelectOption(selectedValue);
+                        this.deSelectOption(optionValue);
                     } else {
-                        onChange(this._value.concat([selectedValue]));
+                        this.selectOption(optionValue);
                     }
                 } else {
-                    if (this._value === selectedValue) {
-                        this.setState({ isOpen: false });
-                    } else {
-                        this.setState({ isOpen: false });
-                        onChange(selectedValue);
-                    }
+                    this.selectOption(optionValue, value === optionValue);
                 }
                 break;
 
@@ -189,58 +232,16 @@ const Select = React.createClass({
     render() {
         const { 
             className, 
-            selectClassName,
             dropdownClassName,
             style, 
-            selectStyle,
             dropdownStyle,
-            placeholder, 
             multi, 
             disabled, 
-            options, 
-            value
+            options
         } = this.props;
         const { isOpen, hoverIndex } = this.state;
-
-        let displayText = '';
-        let selectedItems = [];
-        let k, idx;
-
-        if (multi) {
-            // get selected items when `multi` is true
-            if (value && value.length > 0) {
-                this._value = value;
-
-                for (k = 0; k < options.length; k++) {
-                    idx = this._value.indexOf(options[k].value);
-                    if (idx > -1) {
-                        selectedItems[idx] = options[k];
-                    }
-                }
-
-                if (!selectedItems.length) {
-                    console.warn('The `value` prop of `Select` does not match any of its options.');
-                }
-            } else {
-                this._value = [];
-            }
-        } else {
-            // when `multi` is false
-            if (value || value === 0) {
-                this._value = value;
-                selectedItems = options.filter(item => 
-                    item.value === this._value
-                );
-                
-                if (selectedItems.length) {
-                    displayText = selectedItems[0].text;
-                } else {
-                    console.warn('The `value` prop of `Select` does not match any of its options.');
-                }
-            } else {
-                this._value = '';
-            }
-        }
+        const value = this.getValue();
+        const trigger = this.renderTigger();
 
         return (
             <ClickAwayListener onClickAway={this.handleClickAway}>
@@ -250,48 +251,7 @@ const Select = React.createClass({
                     tabIndex="0" 
                     onKeyDown={this.handleKeyDown}
                 >
-                    <div 
-                        className={cx(selectClassName, {
-                            'select-trigger-single': !multi,
-                            'select-trigger-multi': multi,
-                            'focus': isOpen,
-                            'disabled': disabled
-                        })}
-                        style={selectStyle}
-                        onClick={this.handleTriggerClick}
-                    >
-                        {multi &&
-                            (selectedItems.length ?
-                                <ul>
-                                    {selectedItems.map((item, i) => (
-                                        <li
-                                            key={i}
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                                this.deSelectOption(item.value);
-                                            }}
-                                        >
-                                            {item.text}
-                                            <i className="fa fa-close"/>
-                                        </li>
-                                    ))}
-                                </ul>
-                                :
-                                <span className="placeholder">{placeholder}</span>
-                            )
-                        }
-                        {multi || displayText ||
-                            <span className="placeholder">{placeholder}</span>
-                        }
-                        {multi ||
-                            <span className={cx({
-                                'caret-down': !isOpen,
-                                'caret-up': isOpen
-                            })}>
-                                <b></b>
-                            </span>
-                        }
-                    </div>
+                    {trigger}
                     <div 
                         className={cx('dropdown select-dropdown', dropdownClassName, {
                             'offscreen': !isOpen 
@@ -300,8 +260,9 @@ const Select = React.createClass({
                     >
                         <ul onMouseLeave={this.handleMouseLeave}>
                             {options.map((item, i) => {
-                                const selected = multi ? (this._value.indexOf(item.value) > -1) 
-                                    : (this._value === item.value);
+                                const selected = multi ? 
+                                    value.indexOf(item.value) > -1 : 
+                                    value === item.value;
                                 return (
                                     <li 
                                         key={i}
@@ -321,6 +282,101 @@ const Select = React.createClass({
                     </div>
                 </div>
             </ClickAwayListener>
+        );
+    },
+
+    renderTigger() {
+        const { 
+            selectClassName,
+            selectStyle,
+            placeholder, 
+            multi, 
+            disabled,
+            options
+        } = this.props;
+        const { isOpen } = this.state;
+        const value = this.getValue();
+
+        let displayText = '';
+        let selectedItems = [];
+        let content;
+
+        if (multi) {
+            // get selected items when `multi` is true
+            if (value && value.length > 0) {
+                let k, idx;
+                for (k = 0; k < options.length; k++) {
+                    idx = value.indexOf(options[k].value);
+                    if (idx > -1) {
+                        selectedItems[idx] = options[k];
+                    }
+                }
+                if (selectedItems.length < 1) {
+                    console.warn('The `value` prop of `Select` does not match any of its options.');
+                }
+            }
+        } else {
+            // when `multi` is false
+            if (value || value === 0) {
+                const selectedItem = options.filter(item => 
+                    item.value === value
+                );
+                if (selectedItem.length) {
+                    displayText = selectedItem[0].text;
+                } else {
+                    console.warn('The `value` prop of `Select` does not match any of its options.');
+                }
+            }
+        }
+
+        if (multi) {
+            content = (selectedItems.length ?
+                <ul>
+                    {selectedItems.map((item, i) => (
+                        <li
+                            key={i}
+                            onClick={e => {
+                                e.stopPropagation();
+                                this.deSelectOption(item.value);
+                            }}
+                        >
+                            {item.text}
+                            <i className="fa fa-close"/>
+                        </li>
+                    ))}
+                </ul>
+                :
+                <span className="placeholder">{placeholder}</span>
+            );
+        } else {
+            content = (
+                <div>
+                    {displayText ||
+                        <span className="placeholder">{placeholder}</span>
+                    }
+                    <span className={cx({
+                        'caret-down': !isOpen,
+                        'caret-up': isOpen
+                    })}>
+                        <b></b>
+                    </span>
+                </div>
+            );
+        }
+
+        return (
+            <div 
+                className={cx(selectClassName, {
+                    'select-trigger-single': !multi,
+                    'select-trigger-multi': multi,
+                    'focus': isOpen,
+                    'disabled': disabled
+                })}
+                style={selectStyle}
+                onClick={this.handleTriggerClick}
+            >
+                {content}
+            </div>
         );
     }
 });
