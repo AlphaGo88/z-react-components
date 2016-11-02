@@ -64,7 +64,7 @@ const RadioGroup = React.createClass({
         ]),
 
         /**
-         * Fires when the selected value changes.
+         * Callback when the selected value changes.
          * @param {string} `value`
          */
         onChange: React.PropTypes.func,

@@ -6,22 +6,22 @@ const cx = require('classnames');
 const ClickAwayListener = require('../internal/ClickAwayListener');
 
 // Whether the year is a leap year
-const isLeapYear = (year) => {
+function isLeapYear(year) {
     return (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
 }
 
 // How many days does a month have
-const getMonthDays = (year, month) => {
+function getMonthDays(year, month) {
     return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month] || (isLeapYear(year) ? 29 : 28);
 }
 
-const getDateStr = (year, month, date) => {
+function getDateStr(year, month, date) {
     const monthStr = month > 8 ? month + 1 : '0' + (month + 1);
     const dateStr = date > 9 ? date : '0' + date;
     return `${year}-${monthStr}-${dateStr}`;
 }
 
-const getDateTimeStr = (year, month, date, hours, minutes, seconds) => {
+function getDateTimeStr(year, month, date, hours, minutes, seconds) {
     const hoursStr = hours > 9 ? hours : '0' + hours;
     const minutesStr = minutes > 9 ? minutes : '0' + minutes;
     const secondsStr = seconds > 9 ? seconds : '0' + seconds;
@@ -29,7 +29,7 @@ const getDateTimeStr = (year, month, date, hours, minutes, seconds) => {
     return `${dateStr} ${hoursStr}:${minutesStr}:${secondsStr}`;
 }
 
-const getDateProps = (date) => {
+function getDateProps(date) {
     return {
         year: date.getFullYear(),
         month: date.getMonth(),

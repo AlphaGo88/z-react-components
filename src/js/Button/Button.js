@@ -69,12 +69,12 @@ const Button = React.createClass({
         disabled: React.PropTypes.bool,
 
         /**
-         * Fires when the button is blurred.
+         * Callback when the button is blurred.
          */
         onBlur: React.PropTypes.func,
 
         /**
-         * Fires when clicking the button.
+         * Callback when clicking the button.
          */
         onClick: React.PropTypes.func
     },
@@ -113,26 +113,18 @@ const Button = React.createClass({
             ReactDOM.findDOMNode(this).focus();
         }
         // Listen to tab pressing so that we know when it's a keyboard focus. 
-        window.addEventListener('keydown', handleTabPress, false);
+        document.addEventListener('keydown', handleTabPress, false);
     },
 
     componentWillUnmount() {
         clearTimeout(this.focusTimeout);
-        window.removeEventListener('keydown', handleTabPress, false);
+        document.removeEventListener('keydown', handleTabPress, false);
     },
 
     cancelFocusTimeout() {
         if (this.focusTimeout) {
             clearTimeout(this.focusTimeout);
             this.focusTimeout = null;
-        }
-    },
-
-    handleKeyDown(event) {
-        if (!this.props.disabled && !this.props.removeFocus) {
-            if (event.which === 13) {
-                this.handleClick(event);
-            }
         }
     },
 
@@ -196,7 +188,6 @@ const Button = React.createClass({
             style: style,
             disabled: disabled,
             tabIndex: "0",
-            onKeyDown: this.handleKeyDown,
             onFocus: this.handleFocus,
             onBlur: this.handleBlur,
             onClick: this.handleClick

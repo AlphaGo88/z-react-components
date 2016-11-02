@@ -155,12 +155,12 @@ var Z =
 	        disabled: React.PropTypes.bool,
 
 	        /**
-	         * Fires when the button is blurred.
+	         * Callback when the button is blurred.
 	         */
 	        onBlur: React.PropTypes.func,
 
 	        /**
-	         * Fires when clicking the button.
+	         * Callback when clicking the button.
 	         */
 	        onClick: React.PropTypes.func
 	    },
@@ -195,23 +195,16 @@ var Z =
 	            ReactDOM.findDOMNode(this).focus();
 	        }
 	        // Listen to tab pressing so that we know when it's a keyboard focus. 
-	        window.addEventListener('keydown', handleTabPress, false);
+	        document.addEventListener('keydown', handleTabPress, false);
 	    },
 	    componentWillUnmount: function componentWillUnmount() {
 	        clearTimeout(this.focusTimeout);
-	        window.removeEventListener('keydown', handleTabPress, false);
+	        document.removeEventListener('keydown', handleTabPress, false);
 	    },
 	    cancelFocusTimeout: function cancelFocusTimeout() {
 	        if (this.focusTimeout) {
 	            clearTimeout(this.focusTimeout);
 	            this.focusTimeout = null;
-	        }
-	    },
-	    handleKeyDown: function handleKeyDown(event) {
-	        if (!this.props.disabled && !this.props.removeFocus) {
-	            if (event.which === 13) {
-	                this.handleClick(event);
-	            }
 	        }
 	    },
 	    handleFocus: function handleFocus(event) {
@@ -269,7 +262,6 @@ var Z =
 	            style: style,
 	            disabled: disabled,
 	            tabIndex: "0",
-	            onKeyDown: this.handleKeyDown,
 	            onFocus: this.handleFocus,
 	            onBlur: this.handleBlur,
 	            onClick: this.handleClick
@@ -471,12 +463,13 @@ var Z =
 	        isOpen: React.PropTypes.bool,
 
 	        /**
-	         * Fires when the cancel button is clicked.
+	         * Callback when request to close the dialog.
 	         */
-	        onCancel: React.PropTypes.func,
+	        onRequestClose: React.PropTypes.func,
 
 	        /**
-	         * Fires when the ok button is clicked.
+	         * Callback when the ok button is clicked.
+	         * Won't work when `actions` is customed.
 	         */
 	        onOK: React.PropTypes.func
 	    },
@@ -484,9 +477,15 @@ var Z =
 	    getDefaultProps: function getDefaultProps() {
 	        return {
 	            isOpen: false,
-	            onOK: function onOK() {},
-	            onCancel: function onCancel() {}
+	            onRequestClose: function onRequestClose() {},
+	            onOK: function onOK() {}
 	        };
+	    },
+	    handleKeyDown: function handleKeyDown(event) {
+	        // ESC
+	        if (event.which === 27) {
+	            this.props.onRequestClose();
+	        }
 	    },
 	    render: function render() {
 	        var _props = this.props,
@@ -502,8 +501,8 @@ var Z =
 	            children = _props.children,
 	            actions = _props.actions,
 	            isOpen = _props.isOpen,
-	            onOK = _props.onOK,
-	            onCancel = _props.onCancel;
+	            onRequestClose = _props.onRequestClose,
+	            onOK = _props.onOK;
 
 
 	        return React.createElement(
@@ -515,12 +514,17 @@ var Z =
 	            },
 	            isOpen && React.createElement(
 	                'div',
-	                { style: style, className: cx('dialog', className) },
+	                {
+	                    tabIndex: '0',
+	                    style: style,
+	                    className: cx('z-dialog', className),
+	                    onKeyDown: this.handleKeyDown
+	                },
 	                title && React.createElement(
 	                    'h3',
 	                    {
 	                        style: titleStyle,
-	                        className: cx('dialog-title', titleClassName)
+	                        className: cx('z-dialog-title', titleClassName)
 	                    },
 	                    title
 	                ),
@@ -528,7 +532,7 @@ var Z =
 	                    'div',
 	                    {
 	                        style: contentStyle,
-	                        className: cx('dialog-content', contentClassName)
+	                        className: cx('z-dialog-content', contentClassName)
 	                    },
 	                    children
 	                ),
@@ -536,7 +540,7 @@ var Z =
 	                    'div',
 	                    {
 	                        style: actionsContainerStyle,
-	                        className: cx('dialog-action-container', actionsContainerClassName)
+	                        className: cx('z-dialog-action-container', actionsContainerClassName)
 	                    },
 	                    actions || [React.createElement(
 	                        Button,
@@ -544,7 +548,7 @@ var Z =
 	                            key: 0,
 	                            type: 'flat',
 	                            primary: true,
-	                            onClick: onCancel
+	                            onClick: onRequestClose
 	                        },
 	                        '\u53D6\u6D88'
 	                    ), React.createElement(
@@ -705,12 +709,19 @@ var Z =
 	        recordCount: React.PropTypes.number,
 
 	        /**
-	         * The current page.
+	         * The active page number.
+	         * The component is controlled with this prop.
+	         * This prop will override `defaultActivePage`.
 	         */
-	        current: React.PropTypes.number,
+	        activePage: React.PropTypes.number,
 
 	        /**
-	         * Fires when the current page changes.
+	         * The default active page number.
+	         */
+	        defaultActivePage: React.PropTypes.number,
+
+	        /**
+	         * Callback when the activePage page changes.
 	         * @param {number} pageNo
 	         */
 	        onChange: React.PropTypes.func
@@ -719,29 +730,45 @@ var Z =
 	    getDefaultProps: function getDefaultProps() {
 	        return {
 	            recordCount: 0,
-	            pageDisplay: 5,
+	            pageDisplay: 10,
 	            pageSize: 10,
-	            current: 1,
+	            defaultActivePage: 1,
 	            onChange: function onChange() {}
 	        };
 	    },
+	    componentWillMount: function componentWillMount() {
+	        if (!this.props.activePage) {
+	            this.setState({
+	                activePage: this.props.defaultActivePage
+	            });
+	        }
+	    },
+	    handlePageChange: function handlePageChange(page) {
+	        if (!this.props.activePage) {
+	            this.setState({
+	                activePage: page
+	            });
+	        }
+	        this.props.onChange(page);
+	    },
 	    render: function render() {
+	        var _this = this;
+
 	        var _props = this.props,
 	            className = _props.className,
-	            style = _props.style,
 	            pageClassName = _props.pageClassName,
+	            style = _props.style,
 	            pageStyle = _props.pageStyle,
 	            recordCount = _props.recordCount,
 	            pageDisplay = _props.pageDisplay,
-	            pageSize = _props.pageSize,
-	            current = _props.current,
-	            onChange = _props.onChange;
+	            pageSize = _props.pageSize;
 
 
 	        if (recordCount === 0) return null;
 
+	        var activePage = this.props.activePage || this.state.activePage;
 	        var pageCount = Math.ceil(recordCount / pageSize);
-	        var leftNo = Math.ceil(current / pageDisplay) * pageDisplay - pageDisplay + 1;
+	        var leftNo = Math.ceil(activePage / pageDisplay) * pageDisplay - pageDisplay + 1;
 	        var rightNo = Math.min(leftNo + pageDisplay - 1, pageCount);
 
 	        var pageNos = [];
@@ -759,18 +786,18 @@ var Z =
 	            },
 	            React.createElement('span', {
 	                className: cx('page-btn fa fa-angle-double-left', {
-	                    'disabled': current === 1
+	                    'disabled': activePage === 1
 	                }),
 	                onClick: function onClick(e) {
-	                    if (1 !== current) onChange(1);
+	                    if (1 !== activePage) _this.handlePageChange(1);
 	                }
 	            }),
 	            React.createElement('span', {
 	                className: cx('page-btn fa fa-angle-left', {
-	                    'disabled': current === 1
+	                    'disabled': activePage === 1
 	                }),
 	                onClick: function onClick(e) {
-	                    if (1 !== current) onChange(current - 1);
+	                    if (1 !== activePage) _this.handlePageChange(activePage - 1);
 	                }
 	            }),
 	            pageNos.map(function (pageNo) {
@@ -780,10 +807,10 @@ var Z =
 	                        key: pageNo,
 	                        style: pageStyle,
 	                        className: cx('page', pageClassName, {
-	                            'active': pageNo === current
+	                            'active': pageNo === activePage
 	                        }),
 	                        onClick: function onClick(e) {
-	                            if (pageNo !== current) onChange(pageNo);
+	                            if (pageNo !== activePage) _this.handlePageChange(pageNo);
 	                        }
 	                    },
 	                    pageNo
@@ -791,18 +818,18 @@ var Z =
 	            }),
 	            React.createElement('span', {
 	                className: cx('page-btn fa fa-angle-right', {
-	                    'disabled': current === pageCount
+	                    'disabled': activePage === pageCount
 	                }),
 	                onClick: function onClick(e) {
-	                    if (pageCount !== current) onChange(current + 1);
+	                    if (pageCount !== activePage) _this.handlePageChange(activePage + 1);
 	                }
 	            }),
 	            React.createElement('span', {
 	                className: cx('page-btn fa fa-angle-double-right', {
-	                    'disabled': current === pageCount
+	                    'disabled': activePage === pageCount
 	                }),
 	                onClick: function onClick(e) {
-	                    if (pageCount !== current) onChange(pageCount);
+	                    if (pageCount !== activePage) _this.handlePageChange(pageCount);
 	                }
 	            })
 	        );
@@ -835,30 +862,30 @@ var Z =
 	var ClickAwayListener = __webpack_require__(14);
 
 	// Whether the year is a leap year
-	var isLeapYear = function isLeapYear(year) {
+	function isLeapYear(year) {
 	    return year % 400 === 0 || year % 4 === 0 && year % 100 !== 0;
-	};
+	}
 
 	// How many days does a month have
-	var getMonthDays = function getMonthDays(year, month) {
+	function getMonthDays(year, month) {
 	    return [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month] || (isLeapYear(year) ? 29 : 28);
-	};
+	}
 
-	var getDateStr = function getDateStr(year, month, date) {
+	function getDateStr(year, month, date) {
 	    var monthStr = month > 8 ? month + 1 : '0' + (month + 1);
 	    var dateStr = date > 9 ? date : '0' + date;
 	    return year + '-' + monthStr + '-' + dateStr;
-	};
+	}
 
-	var getDateTimeStr = function getDateTimeStr(year, month, date, hours, minutes, seconds) {
+	function getDateTimeStr(year, month, date, hours, minutes, seconds) {
 	    var hoursStr = hours > 9 ? hours : '0' + hours;
 	    var minutesStr = minutes > 9 ? minutes : '0' + minutes;
 	    var secondsStr = seconds > 9 ? seconds : '0' + seconds;
 	    var dateStr = getDateStr(year, month, date);
 	    return dateStr + ' ' + hoursStr + ':' + minutesStr + ':' + secondsStr;
-	};
+	}
 
-	var getDateProps = function getDateProps(date) {
+	function getDateProps(date) {
 	    return {
 	        year: date.getFullYear(),
 	        month: date.getMonth(),
@@ -867,7 +894,7 @@ var Z =
 	        minutes: date.getMinutes(),
 	        seconds: date.getSeconds()
 	    };
-	};
+	}
 
 	var DatePicker = React.createClass({
 	    displayName: 'DatePicker',
@@ -1754,6 +1781,8 @@ var Z =
 
 	'use strict';
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 	// Select
 	// ------------------------
 
@@ -1825,7 +1854,7 @@ var Z =
 	        defaultValue: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number, React.PropTypes.array]),
 
 	        /**
-	         * Fires when the selected value change.
+	         * Callback when the selected value changes.
 	         * @param {string} `value`
 	         */
 	        onChange: React.PropTypes.func
@@ -1899,15 +1928,13 @@ var Z =
 	        } else {
 	            var newState = { isOpen: false };
 
-	            if (selected) {
-	                this.setState(newState);
-	            } else {
+	            if (!selected) {
 	                if (!this.isControlled()) {
 	                    newState.value = optionValue;
 	                }
-	                this.setState(newState);
 	                this.props.onChange(optionValue);
 	            }
+	            this.setState(newState);
 	        }
 	    },
 	    deSelectOption: function deSelectOption(optionValue) {
@@ -1920,62 +1947,77 @@ var Z =
 	        this.props.onChange(value);
 	    },
 	    handleKeyDown: function handleKeyDown(event) {
+	        var options = this.props.options;
+	        var _state = this.state,
+	            isOpen = _state.isOpen,
+	            hoverIndex = _state.hoverIndex;
+
+
+	        switch (event.which) {
+	            case 27:
+	                // ESC
+	                if (isOpen === true) {
+	                    event.stopPropagation();
+	                    this.setState({ isOpen: false });
+	                }
+	                break;
+
+	            case 38:
+	                // Up Arrow
+	                this.setState({
+	                    hoverIndex: hoverIndex === 0 ? options.length - 1 : hoverIndex - 1
+	                });
+	                break;
+
+	            case 40:
+	                // Down Arrow
+	                this.setState({
+	                    hoverIndex: hoverIndex === options.length - 1 ? 0 : hoverIndex + 1
+	                });
+	                break;
+
+	            default:
+	        }
+	    },
+	    handleKeyUp: function handleKeyUp(event) {
 	        var _this = this;
 
-	        var _props = this.props,
-	            multi = _props.multi,
-	            options = _props.options,
-	            onChange = _props.onChange;
-	        var hoverIndex = this.state.hoverIndex;
+	        // Enter
+	        // select or deselect the option.
+	        if (event.which === 13) {
+	            var _ret = function () {
+	                var _props = _this.props,
+	                    multi = _props.multi,
+	                    options = _props.options;
+	                var hoverIndex = _this.state.hoverIndex;
 
-	        (function () {
 
-	            switch (event.which) {
-	                case 27:
-	                    // ESC
-	                    _this.setState({ isOpen: false });
-	                    break;
+	                if (hoverIndex < 0 || options[hoverIndex].disabled) {
+	                    return {
+	                        v: void 0
+	                    };
+	                }
 
-	                case 13:
-	                    // Enter
-	                    // select or deselect the option.
-	                    var optionValue = options[hoverIndex].value;
-	                    var value = _this.getValue();
+	                var optionValue = options[hoverIndex].value;
+	                var value = _this.getValue();
 
-	                    if (options[hoverIndex].disabled) {
-	                        break;
-	                    }
-	                    if (multi) {
-	                        var match = value.filter(function (it) {
-	                            return it === optionValue;
-	                        });
-	                        if (match.length > 0) {
-	                            _this.deSelectOption(optionValue);
-	                        } else {
-	                            _this.selectOption(optionValue);
-	                        }
+	                if (multi) {
+	                    var optionSelected = value.filter(function (it) {
+	                        return it === optionValue;
+	                    }).length > 0;
+
+	                    if (optionSelected) {
+	                        _this.deSelectOption(optionValue);
 	                    } else {
-	                        _this.selectOption(optionValue, value === optionValue);
+	                        _this.selectOption(optionValue);
 	                    }
-	                    break;
+	                } else {
+	                    _this.selectOption(optionValue, value === optionValue);
+	                }
+	            }();
 
-	                case 38:
-	                    // Up Arrow
-	                    _this.setState({
-	                        hoverIndex: hoverIndex === 0 ? options.length - 1 : hoverIndex - 1
-	                    });
-	                    break;
-
-	                case 40:
-	                    // Down Arrow
-	                    _this.setState({
-	                        hoverIndex: hoverIndex === options.length - 1 ? 0 : hoverIndex + 1
-	                    });
-	                    break;
-
-	                default:
-	            }
-	        })();
+	            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	        }
 	    },
 	    render: function render() {
 	        var _this2 = this;
@@ -1988,9 +2030,9 @@ var Z =
 	            multi = _props2.multi,
 	            disabled = _props2.disabled,
 	            options = _props2.options;
-	        var _state = this.state,
-	            isOpen = _state.isOpen,
-	            hoverIndex = _state.hoverIndex;
+	        var _state2 = this.state,
+	            isOpen = _state2.isOpen,
+	            hoverIndex = _state2.hoverIndex;
 
 	        var value = this.getValue();
 	        var trigger = this.renderTigger();
@@ -2004,7 +2046,8 @@ var Z =
 	                    className: cx('dropdown-wrapper select-wrapper', className),
 	                    style: style,
 	                    tabIndex: '0',
-	                    onKeyDown: this.handleKeyDown
+	                    onKeyDown: this.handleKeyDown,
+	                    onKeyUp: this.handleKeyUp
 	                },
 	                trigger,
 	                React.createElement(
@@ -2211,7 +2254,7 @@ var Z =
 	        defaultChecked: React.PropTypes.bool,
 
 	        /**
-	         * Fires when the checkbox is checked or unchecked.
+	         * Callback when the checkbox is checked or unchecked.
 	         * @param {bool} checked
 	         */
 	        onCheck: React.PropTypes.func
@@ -2355,7 +2398,7 @@ var Z =
 	        defaultValue: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]),
 
 	        /**
-	         * Fires when the selected value changes.
+	         * Callback when the selected value changes.
 	         * @param {string} `value`
 	         */
 	        onChange: React.PropTypes.func
@@ -2520,7 +2563,7 @@ var Z =
 	        defaultValue: React.PropTypes.array,
 
 	        /**
-	         * Fires when the selected values change.
+	         * Callback when the selected values change.
 	         * @param {array} value
 	         */
 	        onChange: React.PropTypes.func
@@ -2656,7 +2699,7 @@ var Z =
 	        children: React.PropTypes.node,
 
 	        /**
-	         * Fires when the active tab changes.
+	         * Callback when the active tab changes.
 	         * @param {number} tabIndex
 	         */
 	        onChange: React.PropTypes.func

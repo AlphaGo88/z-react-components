@@ -3,6 +3,10 @@ const { Button } = Z;
 
 let App = React.createClass({
 
+    handleClick(event) {
+        alert('clicked!');
+    },
+
     render() {
 
         return (
@@ -21,7 +25,7 @@ let App = React.createClass({
                 </section>
                 <section>
                     <h4>Flat Button</h4>
-                    <Button type="flat" focus={true}>default</Button>&nbsp;&nbsp;
+                    <Button type="flat" focus={true} onClick={this.handleClick}>default</Button>&nbsp;&nbsp;
                     <Button type="flat" primary={true}>primary</Button>&nbsp;&nbsp;
                     <Button type="flat" disabled={true}>disabled</Button>&nbsp;&nbsp;
                 </section>

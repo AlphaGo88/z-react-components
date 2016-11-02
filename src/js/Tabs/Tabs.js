@@ -40,7 +40,7 @@ let Tabs = React.createClass({
         children: React.PropTypes.node,
 
         /**
-         * Fires when the active tab changes.
+         * Callback when the active tab changes.
          * @param {number} tabIndex
          */
         onChange: React.PropTypes.func,

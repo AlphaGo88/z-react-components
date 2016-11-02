@@ -59,7 +59,7 @@ const CheckboxGroup = React.createClass({
         defaultValue: React.PropTypes.array,
 
         /**
-         * Fires when the selected values change.
+         * Callback when the selected values change.
          * @param {array} value
          */
         onChange: React.PropTypes.func,

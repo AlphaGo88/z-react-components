@@ -52,6 +52,9 @@
 
 	var App = React.createClass({
 	    displayName: "App",
+	    handleClick: function handleClick(event) {
+	        alert('clicked!');
+	    },
 	    render: function render() {
 
 	        return React.createElement(
@@ -120,7 +123,7 @@
 	                ),
 	                React.createElement(
 	                    Button,
-	                    { type: "flat", focus: true },
+	                    { type: "flat", focus: true, onClick: this.handleClick },
 	                    "default"
 	                ),
 	                "\xA0\xA0",

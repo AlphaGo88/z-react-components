@@ -63,13 +63,24 @@
 	    render: function render() {
 
 	        return React.createElement(
-	            'section',
+	            'div',
 	            null,
-	            React.createElement(Pagination, {
-	                recordCount: 100,
-	                current: this.state.pageNo,
-	                onChange: this.handlePageChange
-	            })
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(Pagination, {
+	                    recordCount: 65
+	                })
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(Pagination, {
+	                    recordCount: 100,
+	                    activePage: this.state.pageNo,
+	                    onChange: this.handlePageChange
+	                })
+	            )
 	        );
 	    }
 	});

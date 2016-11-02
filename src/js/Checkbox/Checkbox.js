@@ -40,7 +40,7 @@ const Checkbox = React.createClass({
         defaultChecked: React.PropTypes.bool,
 
         /**
-         * Fires when the checkbox is checked or unchecked.
+         * Callback when the checkbox is checked or unchecked.
          * @param {bool} checked
          */
         onCheck: React.PropTypes.func,

@@ -43,12 +43,19 @@ const Pagination = React.createClass({
         recordCount: React.PropTypes.number,
 
         /**
-         * The current page.
+         * The active page number.
+         * The component is controlled with this prop.
+         * This prop will override `defaultActivePage`.
          */
-        current: React.PropTypes.number,
+        activePage: React.PropTypes.number,
 
         /**
-         * Fires when the current page changes.
+         * The default active page number.
+         */
+        defaultActivePage: React.PropTypes.number,
+
+        /**
+         * Callback when the activePage page changes.
          * @param {number} pageNo
          */
         onChange: React.PropTypes.func,
@@ -57,30 +64,46 @@ const Pagination = React.createClass({
     getDefaultProps() {
         return {
             recordCount: 0,
-            pageDisplay: 5,
+            pageDisplay: 10,
             pageSize: 10,
-            current: 1,
-            onChange() {}
+            defaultActivePage: 1,
+            onChange: () => {}
         };
+    },
+
+    componentWillMount() {
+        if (!this.props.activePage) {
+            this.setState ({
+                activePage: this.props.defaultActivePage
+            });
+        }
+    },
+
+    handlePageChange(page) {
+        if (!this.props.activePage) {
+            this.setState({
+                activePage: page
+            });
+        }
+        this.props.onChange(page);
     },
 
     render() {
         const { 
             className,
-            style,
             pageClassName,
+            style,
             pageStyle,
             recordCount, 
             pageDisplay, 
-            pageSize, 
-            current, 
-            onChange 
+            pageSize
         } = this.props;
 
         if (recordCount === 0) return null;
 
+        const activePage = this.props.activePage || this.state.activePage;
         const pageCount = Math.ceil(recordCount / pageSize);
-        const leftNo = Math.ceil(current / pageDisplay) * pageDisplay - pageDisplay + 1;
+        const leftNo = Math.ceil(activePage / pageDisplay) * pageDisplay - pageDisplay + 1;
         const rightNo = Math.min(leftNo + pageDisplay - 1, pageCount);
         
         let pageNos = [];
@@ -97,18 +120,18 @@ const Pagination = React.createClass({
             >
                 <span 
                     className={cx('page-btn fa fa-angle-double-left', {
-                        'disabled': current === 1
+                        'disabled': activePage === 1
                     })}
                     onClick={e => {
-                        if (1 !== current) onChange(1);
+                        if (1 !== activePage) this.handlePageChange(1);
                     }}
                 />
                 <span 
                     className={cx('page-btn fa fa-angle-left', {
-                        'disabled': current === 1
+                        'disabled': activePage === 1
                     })}
                     onClick={e => {
-                        if (1 !== current) onChange(current - 1);
+                        if (1 !== activePage) this.handlePageChange(activePage - 1);
                     }}
                 />
                 {pageNos.map(pageNo => (
@@ -116,10 +139,10 @@ const Pagination = React.createClass({
                         key={pageNo}
                         style={pageStyle} 
                         className={cx('page', pageClassName, {
-                            'active': pageNo === current
+                            'active': pageNo === activePage
                         })} 
                         onClick={e => {
-                            if (pageNo !== current) onChange(pageNo);
+                            if (pageNo !== activePage) this.handlePageChange(pageNo);
                         }}
                     >
                         {pageNo}
@@ -127,18 +150,18 @@ const Pagination = React.createClass({
                 ))}
                 <span 
                     className={cx('page-btn fa fa-angle-right', {
-                        'disabled': current === pageCount
+                        'disabled': activePage === pageCount
                     })}
                     onClick={e => {
-                        if (pageCount !== current) onChange(current + 1);
+                        if (pageCount !== activePage) this.handlePageChange(activePage + 1);
                     }}
                 />
                 <span 
                     className={cx('page-btn fa fa-angle-double-right', {
-                        'disabled': current === pageCount
+                        'disabled': activePage === pageCount
                     })}
                     onClick={e => {
-                        if (pageCount !== current) onChange(pageCount);
+                        if (pageCount !== activePage) this.handlePageChange(pageCount);
                     }}
                 />
             </div>

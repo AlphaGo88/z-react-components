@@ -75,7 +75,7 @@ const Select = React.createClass({
         ]),
 
         /**
-         * Fires when the selected value change.
+         * Callback when the selected value changes.
          * @param {string} `value`
          */
         onChange: React.PropTypes.func
@@ -158,15 +158,13 @@ const Select = React.createClass({
         } else {
             let newState = { isOpen: false };
 
-            if (selected) {
-                this.setState(newState);
-            } else {
+            if (!selected) {
                 if (!this.isControlled()) {
                     newState.value = optionValue;
                 }
-                this.setState(newState);
                 this.props.onChange(optionValue);
             }
+            this.setState(newState);
         }
     },
 
@@ -181,51 +179,63 @@ const Select = React.createClass({
     },
 
     handleKeyDown(event) {
-        const { multi, options, onChange } = this.props;
-        const { hoverIndex } = this.state;
+        const { options } = this.props;
+        const { isOpen, hoverIndex } = this.state;
 
         switch (event.which) {
             case 27:
                 // ESC
-                this.setState({ isOpen: false });
-                break;
-
-            case 13:
-                // Enter
-                // select or deselect the option.
-                const optionValue = options[hoverIndex].value;
-                const value = this.getValue();
-
-                if (options[hoverIndex].disabled) {
-                    break;
-                }
-                if (multi) {
-                    const match = value.filter(it => it === optionValue);
-                    if (match.length > 0) {
-                        this.deSelectOption(optionValue);
-                    } else {
-                        this.selectOption(optionValue);
-                    }
-                } else {
-                    this.selectOption(optionValue, value === optionValue);
+                if (isOpen === true) {
+                    event.stopPropagation();
+                    this.setState({ isOpen: false });
                 }
                 break;
 
             case 38:
                 // Up Arrow
                 this.setState({ 
-                    hoverIndex: (hoverIndex === 0) ? (options.length - 1) : (hoverIndex - 1)
+                    hoverIndex: (hoverIndex === 0) ? 
+                        (options.length - 1) : (hoverIndex - 1)
                 });
                 break;
 
             case 40:
                 // Down Arrow
                 this.setState({ 
-                    hoverIndex: (hoverIndex === options.length - 1) ? 0 : (hoverIndex + 1)
+                    hoverIndex: (hoverIndex === options.length - 1) ? 
+                        0 : (hoverIndex + 1)
                 });
                 break;
 
             default:
+        }
+    },
+
+    handleKeyUp(event) {
+        // Enter
+        // select or deselect the option.
+        if (event.which === 13) {
+            const { multi, options } = this.props;
+            const { hoverIndex } = this.state;
+
+            if (hoverIndex < 0 || options[hoverIndex].disabled) {
+                return;
+            }
+
+            const optionValue = options[hoverIndex].value;
+            const value = this.getValue();
+
+            if (multi) {
+                const optionSelected = value.filter(it => it === optionValue).length > 0;
+
+                if (optionSelected) {
+                    this.deSelectOption(optionValue);
+                } else {
+                    this.selectOption(optionValue);
+                }
+            } else {
+                this.selectOption(optionValue, value === optionValue);
+            }
         }
     },
 
@@ -250,6 +260,7 @@ const Select = React.createClass({
                     style={style}
                     tabIndex="0" 
                     onKeyDown={this.handleKeyDown}
+                    onKeyUp={this.handleKeyUp}
                 >
                     {trigger}
                     <div 

@@ -69,12 +69,13 @@ const Dialog = React.createClass({
         isOpen: React.PropTypes.bool,
 
         /**
-         * Fires when the cancel button is clicked.
+         * Callback when request to close the dialog.
          */
-        onCancel: React.PropTypes.func,
+        onRequestClose: React.PropTypes.func,
 
         /**
-         * Fires when the ok button is clicked.
+         * Callback when the ok button is clicked.
+         * Won't work when `actions` is customed.
          */
         onOK: React.PropTypes.func,
     },
@@ -82,9 +83,16 @@ const Dialog = React.createClass({
     getDefaultProps() {
         return {
             isOpen: false,
-            onOK() {},
-            onCancel() {}
+            onRequestClose: () => {},
+            onOK: () => {},
         };
+    },
+
+    handleKeyDown(event) {
+        // ESC
+        if (event.which === 27) {
+            this.props.onRequestClose();
+        }
     },
 
     render() {
@@ -101,8 +109,8 @@ const Dialog = React.createClass({
             children, 
             actions, 
             isOpen, 
-            onOK, 
-            onCancel 
+            onRequestClose,
+            onOK 
         } = this.props;
 
         return (
@@ -112,24 +120,29 @@ const Dialog = React.createClass({
                 })}
             >
                 {isOpen &&
-                    <div style={style} className={cx('dialog', className)}>
+                    <div 
+                        tabIndex="0"
+                        style={style} 
+                        className={cx('z-dialog', className)}
+                        onKeyDown={this.handleKeyDown}
+                    >
                         {title && 
                             <h3 
                                 style={titleStyle}
-                                className={cx('dialog-title', titleClassName)}
+                                className={cx('z-dialog-title', titleClassName)}
                             >
                                 {title}
                             </h3>
                         }
                         <div 
                             style={contentStyle}
-                            className={cx('dialog-content', contentClassName)}
+                            className={cx('z-dialog-content', contentClassName)}
                         >
                             {children}
                         </div>
                         <div 
                             style={actionsContainerStyle}
-                            className={cx('dialog-action-container', actionsContainerClassName)}
+                            className={cx('z-dialog-action-container', actionsContainerClassName)}
                         >
                             {actions || 
                                 [
@@ -137,7 +150,7 @@ const Dialog = React.createClass({
                                         key={0}
                                         type="flat" 
                                         primary={true}
-                                        onClick={onCancel}
+                                        onClick={onRequestClose}
                                     >
                                         取消
                                     </Button>,

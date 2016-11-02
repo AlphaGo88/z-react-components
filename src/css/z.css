@@ -1106,7 +1106,7 @@ textarea {
   left: -10000px;
   opacity: 0;
 }
-.z-dialog-mask > .dialog {
+.z-dialog {
   position: relative;
   top: 16%;
   width: 66%;
@@ -1114,34 +1114,26 @@ textarea {
   border-radius: 2px;
   background-color: #fff;
   box-shadow: rgba(0, 0, 0, 0.247059) 0px 14px 45px, rgba(0, 0, 0, 0.219608) 0px 10px 18px;
-  animation: z-dlg-enter 400ms;
 }
-.z-dialog-mask > .dialog > .dialog-title {
+.z-dialog:focus {
+  outline: none;
+}
+.z-dialog-title {
   padding: 15px 22px 0;
   font-size: 18px;
 }
-.z-dialog-mask > .dialog > .dialog-content {
+.z-dialog-content {
   padding: 15px 22px;
 }
-.z-dialog-mask > .dialog > .dialog-action-container {
+.z-dialog-action-container {
   padding: 0 16px 7px;
   text-align: right;
 }
-.z-dialog-mask > .dialog > .dialog-action-container > .btn-flat,
-.z-dialog-mask > .dialog > .dialog-action-container > .btn-float,
-.z-dialog-mask > .dialog > .dialog-action-container > .btn-outline {
+.z-dialog-action-container > .btn-flat,
+.z-dialog-action-container > .btn-float,
+.z-dialog-action-container > .btn-outline {
   margin-left: 5px;
   font-weight: 600;
-}
-@keyframes z-dlg-enter {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0px);
-    opacity: 1;
-  }
 }
 #z-msg-layer {
   position: fixed;

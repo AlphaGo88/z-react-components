@@ -16,13 +16,20 @@ let App = React.createClass({
     render() {
 
         return (
+            <div>
+            <section>
+                <Pagination 
+                    recordCount={65} 
+                />
+            </section>
             <section>
                 <Pagination 
                     recordCount={100} 
-                    current={this.state.pageNo}
+                    activePage={this.state.pageNo}
                     onChange={this.handlePageChange}
                 />
             </section>
+            </div>
         )
     }
 })
