@@ -199,17 +199,17 @@
 	            ),
 	            React.createElement(
 	                Dialog,
-	                { isOpen: dlg1Open, title: '\u5BF9\u8BDD\u6846', style: { width: 500 }, onCancel: this.closeDlg },
+	                { isOpen: dlg1Open, title: '\u5BF9\u8BDD\u6846', style: { width: 500 }, onRequestClose: this.closeDlg },
 	                '\u554A\u4E09\u5B63\u5EA6\u6765\u770B\u623F\u8428\u82AC\u7684\uFF0C \u554A\u91CA\u653E\u4E86\u7A7A\u95F4\u6492\u53CD\u5BF9\u3002\u963F\u65AF\u8482\u82AC\u6492\u65E6\u53D1\u4F60\u79BB\u5F00\u96F7\u514B\u8428\u51CF\u80A5\u7684\u6309\u8BF4\u53CD\u51FB\u7387\u3002'
 	            ),
 	            React.createElement(
 	                Dialog,
-	                { isOpen: dlg2Open, style: { width: "100%" }, onCancel: this.closeDlg1 },
+	                { isOpen: dlg2Open, style: { width: "100%" }, onRequestClose: this.closeDlg1 },
 	                '\u554A\u4E09\u5B63\u5EA6\u6765\u770B\u623F\u8428\u82AC\u7684\uFF0C \u554A\u91CA\u653E\u4E86\u7A7A\u95F4\u6492\u53CD\u5BF9\u3002\u963F\u65AF\u8482\u82AC\u6492\u65E6\u53D1\u4F60\u79BB\u5F00\u96F7\u514B\u8428\u51CF\u80A5\u7684\u6309\u8BF4\u53CD\u51FB\u7387\u3002 \u554A\u4E09\u5B63\u5EA6\u6765\u770B\u623F\u8428\u82AC\u7684\uFF0C \u554A\u91CA\u653E\u4E86\u7A7A\u95F4\u6492\u53CD\u5BF9\u3002\u963F\u65AF\u8482\u82AC\u6492\u65E6\u53D1\u4F60\u79BB\u5F00\u96F7\u514B\u8428\u51CF\u80A5\u7684\u6309\u8BF4\u53CD\u51FB\u7387\u3002 \u554A\u4E09\u5B63\u5EA6\u6765\u770B\u623F\u8428\u82AC\u7684\uFF0C \u554A\u91CA\u653E\u4E86\u7A7A\u95F4\u6492\u53CD\u5BF9\u3002\u963F\u65AF\u8482\u82AC\u6492\u65E6\u53D1\u4F60\u79BB\u5F00\u96F7\u514B\u8428\u51CF\u80A5\u7684\u6309\u8BF4\u53CD\u51FB\u7387\u3002'
 	            ),
 	            React.createElement(
 	                Dialog,
-	                { title: '\u5E26\u8868\u5355\u7684\u5BF9\u8BDD\u6846', isOpen: dlg3Open, onCancel: this.closeDlg2 },
+	                { title: '\u5E26\u8868\u5355\u7684\u5BF9\u8BDD\u6846', isOpen: dlg3Open, onRequestClose: this.closeDlg2 },
 	                React.createElement(
 	                    Formsy.Form,
 	                    { ref: 'form', className: 'clearfix' },

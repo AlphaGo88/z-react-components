@@ -2,6 +2,19 @@
 const { DatePicker } = Z;
 
 let App = React.createClass({
+
+    getInitialState() {
+        return {
+            date: '2016-06-06' 
+        };
+    },
+
+    handleChange(dateStr) {
+        this.setState({
+            date: dateStr
+        });
+    },
+
     render() {
         return (
             <div>
@@ -16,6 +29,14 @@ let App = React.createClass({
                         maxValue="2016-09-20"
                         minValue="2010-03-14"
                     />
+                </section>
+                <section>
+                    <h5>Controlled Date Picker</h5>
+                    <DatePicker value={this.state.date} onChange={this.handleChange}/>
+                </section>
+                <section>
+                    <h5>Controlled Date Picker</h5>
+                    <DatePicker value="2016-06-06" selectTime={true} onChange={(dateStr) => alert(dateStr)}/>
                 </section>
                 <section>
                     <h5>Date Picker with particular dates disabled</h5>

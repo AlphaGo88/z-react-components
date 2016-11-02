@@ -52,6 +52,16 @@
 
 	var App = React.createClass({
 	    displayName: "App",
+	    getInitialState: function getInitialState() {
+	        return {
+	            date: '2016-06-06'
+	        };
+	    },
+	    handleChange: function handleChange(dateStr) {
+	        this.setState({
+	            date: dateStr
+	        });
+	    },
 	    render: function render() {
 	        return React.createElement(
 	            "div",
@@ -79,6 +89,28 @@
 	                    maxValue: "2016-09-20",
 	                    minValue: "2010-03-14"
 	                })
+	            ),
+	            React.createElement(
+	                "section",
+	                null,
+	                React.createElement(
+	                    "h5",
+	                    null,
+	                    "Controlled Date Picker"
+	                ),
+	                React.createElement(DatePicker, { value: this.state.date, onChange: this.handleChange })
+	            ),
+	            React.createElement(
+	                "section",
+	                null,
+	                React.createElement(
+	                    "h5",
+	                    null,
+	                    "Controlled Date Picker"
+	                ),
+	                React.createElement(DatePicker, { value: "2016-06-06", selectTime: true, onChange: function onChange(dateStr) {
+	                        return alert(dateStr);
+	                    } })
 	            ),
 	            React.createElement(
 	                "section",
