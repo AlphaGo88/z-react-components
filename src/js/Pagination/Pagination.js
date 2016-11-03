@@ -99,7 +99,7 @@ const Pagination = React.createClass({
             pageSize
         } = this.props;
 
-        if (recordCount === 0) return null;
+        if (recordCount <= pageSize) return null;
 
         const activePage = this.props.activePage || this.state.activePage;
         const pageCount = Math.ceil(recordCount / pageSize);

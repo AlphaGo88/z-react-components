@@ -383,20 +383,22 @@ const DatePicker = React.createClass({
         return this.props.disableDates(new Date(year, month, date));
     },
 
+    handleKeyUp(event) {
+        if (event.which === 13) {
+            // Enter
+            if (this.props.selectTime) {
+                this.confirm();
+            } else {
+                this.setDate(this.state.date);
+            }
+        }
+    },
+
     handleKeyDown(event) {
         switch (event.which) {
             case 27:
                 // ESC
                 this.hideAndRestore();
-                break;
-
-            case 13:
-                // Enter
-                if (this.props.selectTime) {
-                    this.ok();
-                } else {
-                    this.setDate(this.state.date);
-                }
                 break;
 
             case 37:
@@ -710,6 +712,7 @@ const DatePicker = React.createClass({
                 onFocus={this.handleFocus}
                 onBlur={this.handleBlur}
                 onKeyDown={this.handleKeyDown}
+                onKeyUp={this.handleKeyUp}
             >
                 {trigger}
                 <div 

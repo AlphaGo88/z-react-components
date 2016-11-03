@@ -18,25 +18,27 @@ module.exports = {
         }
 
         let msgBox = document.createElement('div');
-        let _html = '<span class="msg-content">' + content + '</span>';
+        let _html = '';
 
         switch (type) {
             case 'msg':
                 break;
             case 'success':
-                _html = '<i class="fa fa-check-circle icon-success"></i>' + _html;
+                _html = '<i class="fa fa-check-circle icon-success"></i>';
                 break;
             case 'info':
-                _html = '<i class="fa fa-info-circle icon-info"></i>' + _html;
+                _html = '<i class="fa fa-info-circle icon-info"></i>';
                 break;
             case 'warning':
-                _html = '<i class="fa fa-warning icon-warning"></i>' + _html;
+                _html = '<i class="fa fa-warning icon-warning"></i>';
                 break;
             case 'error':
-                _html = '<i class="fa fa-times-circle icon-error"></i>' + _html;
+                _html = '<i class="fa fa-times-circle icon-error"></i>';
                 break;
             default:
         }
+
+        _html += '<span class="msg-content">' + content + '</span>';
 
         msgBox.className = 'z-msg';
         msgBox.innerHTML = _html;

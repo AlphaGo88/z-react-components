@@ -49,7 +49,7 @@ let Tabs = React.createClass({
     getDefaultProps() {
         return {
             activeIndex: 0,
-            onChange() {}
+            onChange: () => {}
         };
     },
 
