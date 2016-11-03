@@ -3,7 +3,12 @@
 
 const React = require('react');
 const cx = require('classnames');
-const ClickAwayListener = require('../internal/ClickAwayListener');
+
+let tabPressed = false;
+
+function handleTabPress(event) {
+    tabPressed = event.which === 9;
+}
 
 const Select = React.createClass({
 
@@ -107,6 +112,16 @@ const Select = React.createClass({
         return state;
     },
 
+    componentDidMount() {
+        // Listen to tab pressing so that we know when it's a keyboard focus. 
+        document.addEventListener('keydown', handleTabPress, false);
+    },
+
+    componentWillUnmount() {
+        this.cancelFocusTimeout();
+        document.removeEventListener('keydown', handleTabPress, false);
+    },
+
     isControlled() {
         return typeof this.props.value !== 'undefined';
     },
@@ -115,7 +130,28 @@ const Select = React.createClass({
         return this.isControlled() ? this.props.value : this.state.value;
     },
 
-    handleClickAway() {
+    cancelFocusTimeout() {
+        if (this.focusTimeout) {
+            clearTimeout(this.focusTimeout);
+            this.focusTimeout = null;
+        }
+    },
+
+    handleFocus(event) {
+        if (event) event.persist();
+        if (!this.props.disabled) {
+            // setTimeout is needed because the focus event fires first
+            // Wait so that we can capture if this was a keyboard focus
+            this.focusTimeout = setTimeout(() => {
+                if (tabPressed) {
+                    this.setState({ isOpen: true });
+                }
+            }, 150);
+        }
+    },
+
+    handleBlur(event) {
+        this.cancelFocusTimeout();
         if (this.state.isOpen) {
             this.setState({ isOpen: false });
         }
@@ -123,6 +159,7 @@ const Select = React.createClass({
 
     handleTriggerClick(event) {
         if (!this.props.disabled) {
+            tabPressed = false;
             this.setState({ 
                 isOpen: !this.state.isOpen 
             });
@@ -254,45 +291,45 @@ const Select = React.createClass({
         const trigger = this.renderTigger();
 
         return (
-            <ClickAwayListener onClickAway={this.handleClickAway}>
+            <div 
+                className={cx('dropdown-wrapper select-wrapper', className)}
+                style={style}
+                tabIndex={disabled ? undefined : '0'} 
+                onFocus={this.handleFocus}
+                onBlur={this.handleBlur}
+                onKeyDown={this.handleKeyDown}
+                onKeyUp={this.handleKeyUp}
+            >
+                {trigger}
                 <div 
-                    className={cx('dropdown-wrapper select-wrapper', className)}
-                    style={style}
-                    tabIndex="0" 
-                    onKeyDown={this.handleKeyDown}
-                    onKeyUp={this.handleKeyUp}
+                    className={cx('dropdown select-dropdown', dropdownClassName, {
+                        'offscreen': !isOpen 
+                    })}
+                    style={dropdownStyle}
                 >
-                    {trigger}
-                    <div 
-                        className={cx('dropdown select-dropdown', dropdownClassName, {
-                            'offscreen': !isOpen 
+                    <ul onMouseLeave={this.handleMouseLeave}>
+                        {options.map((item, i) => {
+                            const selected = multi ? 
+                                value.indexOf(item.value) > -1 : 
+                                value === item.value;
+                            return (
+                                <li 
+                                    key={i}
+                                    className={cx('select-option', {
+                                        'disabled': item.disabled,
+                                        'selected': selected,
+                                        'hover': i === hoverIndex
+                                    })}
+                                    onMouseOver={e => this.handleOptionHover(i)}
+                                    onClick={e => this.handleOptionClick(item, selected)}
+                                >
+                                    {item.text}
+                                </li>
+                            )
                         })}
-                        style={dropdownStyle}
-                    >
-                        <ul onMouseLeave={this.handleMouseLeave}>
-                            {options.map((item, i) => {
-                                const selected = multi ? 
-                                    value.indexOf(item.value) > -1 : 
-                                    value === item.value;
-                                return (
-                                    <li 
-                                        key={i}
-                                        className={cx('select-option', {
-                                            'disabled': item.disabled,
-                                            'selected': selected,
-                                            'hover': i === hoverIndex
-                                        })}
-                                        onMouseOver={e => this.handleOptionHover(i)}
-                                        onClick={e => this.handleOptionClick(item, selected)}
-                                    >
-                                        {item.text}
-                                    </li>
-                                )
-                            })}
-                        </ul>
-                    </div>
+                    </ul>
                 </div>
-            </ClickAwayListener>
+            </div>
         );
     },
 

@@ -117,7 +117,7 @@ const Button = React.createClass({
     },
 
     componentWillUnmount() {
-        clearTimeout(this.focusTimeout);
+        this.cancelFocusTimeout();
         document.removeEventListener('keydown', handleTabPress, false);
     },
 

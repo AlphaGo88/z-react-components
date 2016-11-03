@@ -3,7 +3,13 @@
 
 const React = require('react');
 const cx = require('classnames');
-const ClickAwayListener = require('../internal/ClickAwayListener');
+const objectAssign = require('object-assign');
+
+let tabPressed = false;
+
+function handleTabPress(event) {
+    tabPressed = event.which === 9;
+}
 
 // Whether the year is a leap year
 function isLeapYear(year) {
@@ -18,6 +24,7 @@ function getMonthDays(year, month) {
 function getDateStr(year, month, date) {
     const monthStr = month > 8 ? month + 1 : '0' + (month + 1);
     const dateStr = date > 9 ? date : '0' + date;
+
     return `${year}-${monthStr}-${dateStr}`;
 }
 
@@ -26,18 +33,32 @@ function getDateTimeStr(year, month, date, hours, minutes, seconds) {
     const minutesStr = minutes > 9 ? minutes : '0' + minutes;
     const secondsStr = seconds > 9 ? seconds : '0' + seconds;
     const dateStr = getDateStr(year, month, date);
+
     return `${dateStr} ${hoursStr}:${minutesStr}:${secondsStr}`;
 }
 
 function getDateProps(date) {
-    return {
-        year: date.getFullYear(),
-        month: date.getMonth(),
-        date: date.getDate(),
-        hours: date.getHours(),
-        minutes: date.getMinutes(),
-        seconds: date.getSeconds()
+    if (date) {
+        if (typeof date === 'string') {
+            date = new Date(date);
+        }
+        return {
+            year: date.getFullYear(),
+            month: date.getMonth(),
+            date: date.getDate(),
+            hours: date.getHours(),
+            minutes: date.getMinutes(),
+            seconds: date.getSeconds()
+        };
     }
+    return {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth(),
+        date: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0
+    };
 }
 
 const DatePicker = React.createClass({
@@ -49,7 +70,7 @@ const DatePicker = React.createClass({
         className: React.PropTypes.string,
 
         /**
-         * The class name of the input element.
+         * The class name of the trigger element.
          */
         inputClassName: React.PropTypes.string,
 
@@ -64,7 +85,7 @@ const DatePicker = React.createClass({
         style: React.PropTypes.object,
 
         /**
-         * The inline styles of the input element.
+         * The inline styles of the trigger element.
          */
         inputStyle: React.PropTypes.object,
 
@@ -74,7 +95,7 @@ const DatePicker = React.createClass({
         dropdownStyle: React.PropTypes.object,
 
         /**
-         * The placeholder of the input element.
+         * The placeholder of the trigger element.
          */
         placeholder: React.PropTypes.string,
 
@@ -90,30 +111,14 @@ const DatePicker = React.createClass({
 
         /**
          * Default value of the component.
-         * 
-         * The `defaultValue` must be:
-         * 1. a valid date string, e.g. `2016-06-06`.
-         * 2. a valid date value, e.g. 1476325700327.
-         * 3. a date object.
-         * So are `value`, `maxValue` and `minValue`.
          */
-        defaultValue: React.PropTypes.any,
+        defaultValue: React.PropTypes.string,
 
         /**
          * The value of the component, meaning the component is controlled.
          * Will override `defaultValue`.
          */
-        value: React.PropTypes.any,
-
-        /**
-         * Maximum date value.
-         */
-        maxValue: React.PropTypes.any,
-
-        /**
-         * Minimum date value.
-         */
-        minValue: React.PropTypes.any,
+        value: React.PropTypes.string,
 
         /**
          * Disable dates that satisfy the test function.
@@ -123,9 +128,8 @@ const DatePicker = React.createClass({
         disableDates: React.PropTypes.func,
 
         /**
-         * Fires when the component's value changes.
+         * Callback when the component's value changes.
          * @param {string} dateStr
-         * @param {date} dateObj
          */
         onChange: React.PropTypes.func,
     },
@@ -134,152 +138,167 @@ const DatePicker = React.createClass({
         return {
             disabled: false,
             selectTime: false,
-            onChange() {},
-            disableDates: () => false
+            disableDates: () => false,
+            onChange: () => {}
+        }
+    },
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.value) {
+            this.setState(getDateProps(nextProps.value));
         }
     },
 
     getInitialState() {
-        const { defaultValue, value, maxValue, minValue, disableDates } = this.props;
-        const today = new Date(); 
-        let selectedDate = today;   // defaultly selected date(may not be synchronized to the component's value).
-        let curDate = '';   // the current date object(synchronized with the component's value).
+        const { defaultValue, value, disableDates } = this.props;
+        let initialDate;
 
-        if (value) { 
-            // select specified date
-            selectedDate = new Date(value);
-            curDate = selectedDate;
+        // If neither `value` nor `defaultValue` is provided,
+        // select today defaultly.
+        // And do not select any date if today is disabled.
+        if (value) {
+            initialDate = value;
         } else if (defaultValue) {
-            // select default value
-            selectedDate = new Date(defaultValue);
-            curDate = selectedDate;
+            initialDate = defaultValue;
         } else {
-            // If no value is specified:
-            // If today is greater than `maxValue`, select `maxValue` defaultly.
-            // If today is before `minValue`, select `minValue` defaultly.
-            // Otherwise select today defaultly.
-            if (maxValue && today.valueOf() > new Date(maxValue).valueOf()) {
-                selectedDate = new Date(maxValue);
-            } else if (minValue && today.valueOf() < new Date(minValue).valueOf()) {
-                selectedDate = new Date(minValue);
+            const today = new Date();
+            if (disableDates(today) === false) {
+                initialDate = today;
             }
         }
 
-        this.initialSelectedDate = selectedDate;
-        const dateProps = getDateProps(selectedDate);
-
-        return {
+        const dateProps = getDateProps(initialDate);
+        let state = {
             isOpen: false,
             view: 'date',
-            curDate,
             ...dateProps
         };
+
+        if (!value) {
+            state.value = defaultValue || '';
+        }
+        return state;
     },
 
-    // Restore the value when click away.
-    handleClickAway() {
-        this.state.isOpen && this.hideAndRestore();
+    componentDidMount() {
+        // Listen to tab pressing so that we know when it's a keyboard focus. 
+        document.addEventListener('keydown', handleTabPress, false);
     },
 
-    // Restore the value when click away or cancel.
-    hideAndRestore() {
-        const dateProps = this.state.curDate ? 
-            getDateProps(this.state.curDate) 
-            : 
-            getDateProps(this.initialSelectedDate);
+    componentWillUnmount() {
+        this.cancelFocusTimeout();
+        document.removeEventListener('keydown', handleTabPress, false);
+    },
 
-        this.setState({
-            isOpen: false,
-            view: 'date',
-            ...dateProps
-        });
+    cancelFocusTimeout() {
+        if (this.focusTimeout) {
+            clearTimeout(this.focusTimeout);
+            this.focusTimeout = null;
+        }
+    },
+
+    handleFocus(event) {
+        if (event) event.persist();
+        if (!this.props.disabled) {
+            // setTimeout is needed because the focus event fires first
+            // Wait so that we can capture if this was a keyboard focus
+            this.focusTimeout = setTimeout(() => {
+                if (tabPressed) {
+                    this.setState({ isOpen: true });
+                }
+            }, 150);
+        }
+    },
+
+    handleBlur(event) {
+        this.cancelFocusTimeout();
+        if (this.state.isOpen) {
+            this.hideAndRestore();
+        }
     },
 
     handleTriggerClick() {
-        if (this.props.disabled) {
-            return;
+        if (!this.props.disabled) {
+            tabPressed = false;
+            if (this.state.isOpen) {
+                this.hideAndRestore();
+            } else {
+                this.setState({ isOpen: true });
+            }
         }
-        if (this.state.isOpen) {
-            this.hideAndRestore();
-        } else {
-            this.setState({ isOpen: true });
+    },
+
+    getValue() {
+        return this.props.value || this.state.value;
+    },
+
+    // Restore the original state when no date is selected.
+    hideAndRestore() {
+        let newState = {
+            isOpen: false,
+            view: 'date'
+        };
+
+        if (this.getValue()) {
+            objectAssign(newState, getDateProps(this.getValue()))
         }
+        this.setState(newState);
     },
 
     // Switch to time selection.
     selectTime() {
-        this.setState({ view: 'time' });
+        if (this.state.date) {
+            this.setState({ view: 'time' });
+        }
     },
 
     // Switch to date selection.
     selectDate() {
         this.setState({ view: 'date' });
     },
-    
-    // When go to a year or month,
-    // If the year and month are same with current, select current date,
-    // Otherwise select no date.
-    inCurrentYearAndMonth(year, month) {
-        const { curDate } = this.state;
-        const initialDate = this.initialSelectedDate;
-
-        if (curDate) {
-            if (curDate.getFullYear() === year &&
-                curDate.getMonth() === month) {
-                return curDate.getDate();
-            }
-        } else {
-            if (initialDate.getFullYear() === year &&
-                initialDate.getMonth() === month) {
-                return initialDate.getDate();
-            }
-        }
-
-        return 0;
-    },
 
     prevYear() {
+        const { year, month, date } = this.state;
+
         this.setState({ 
-            year: this.state.year - 1,
-            date: this.inCurrentYearAndMonth(this.state.year - 1, this.state.month)
+            year: year - 1,
+            date: month === 1 && date === 29 ? 
+                28 : date
         });
     },
 
     nextYear() {
+        const { year, month, date } = this.state;
+
         this.setState({ 
-            year: this.state.year + 1,
-            date: this.inCurrentYearAndMonth(this.state.year + 1, this.state.month)
+            year: year + 1,
+            date: month === 1 && date === 29 ? 
+                28 : date
         });
     },
 
     prevMonth() {
-        if (this.state.month === 0) {
-            this.setState({
-                year: this.state.year - 1,
-                month: 11,
-                date: this.inCurrentYearAndMonth(this.state.year - 1, 11)
-            });
-        } else {
-            this.setState({
-                month: this.state.month - 1,
-                date: this.inCurrentYearAndMonth(this.state.year, this.state.month - 1)
-            });
-        }
+        const { year, month, date } = this.state;
+        const prevMonth = month === 0 ? 11 : month - 1;
+        const monthDays = getMonthDays(year, prevMonth);
+
+        this.setState({
+            year: month === 0 ? year - 1 : year,
+            month: prevMonth,
+            date: date > monthDays ? monthDays : date
+        });
     },
 
     nextMonth() {
-        if (this.state.month === 11) {
-            this.setState({
-                year: this.state.year + 1,
-                month: 0,
-                date: this.inCurrentYearAndMonth(this.state.year + 1, 0)
-            });
-        } else {
-            this.setState({
-                month: this.state.month + 1,
-                date: this.inCurrentYearAndMonth(this.state.year, this.state.month + 1)
-            });
-        }
+        const { year, month, date } = this.state;
+        const nextMonth = month === 11 ? 0 : month + 1;
+        const monthDays = getMonthDays(year, nextMonth);
+        
+        this.setState({
+            year: month === 11 ? year + 1 : year,
+            month: nextMonth,
+            date: date > monthDays ? monthDays : date
+        });
     },
 
     // Select a date.
@@ -287,95 +306,81 @@ const DatePicker = React.createClass({
     // Other wise update the component's value.
     setDate(date) {
         if (this.props.selectTime) {
-            if (date !== this.state.date) this.setState({ date });
+            if (date !== this.state.date) {
+                this.setState({ date });
+            }
         } else {
-            const { year, month } = this.state;
-            const dateStr = getDateStr(year, month, date);
-            const dateObj = new Date(year, month, date);
-
-            this.setState({
-                date,
-                curDate: dateObj,
+            const dateStr = getDateStr(this.state.year, this.state.month, date);
+            let newState = {
                 isOpen: false
-            });
+            };
 
-            this.props.onChange(dateStr, dateObj);
+            if (!this.props.value) {
+                objectAssign(newState, {
+                    value: dateStr,
+                    date
+                });
+            }
+            this.setState(newState);
+            this.props.onChange(dateStr);
         }
     },
 
     setHours(hours) {
-        if (hours !== this.state.hours) this.setState({ hours });
+        if (hours !== this.state.hours) {
+            this.setState({ hours });
+        }
     },
 
     setMinutes(minutes) {
-        if (minutes !== this.state.minutes) this.setState({ minutes });
+        if (minutes !== this.state.minutes) {
+            this.setState({ minutes });
+        }
     },
 
     setSeconds(seconds) {
-        if (seconds !== this.state.seconds) this.setState({ seconds });
+        if (seconds !== this.state.seconds) {
+            this.setState({ seconds });
+        }
     },
 
-    setToday() {
-        const today = new Date();
-        const dateProps = getDateProps(today);
-        const dateStr = this.props.selectTime ?
-            getDateTimeStr(dateProps.year, dateProps.month, dateProps.date, dateProps.hours, dateProps.minutes, dateProps.seconds)
-            :
-            getDateStr(dateProps.year, dateProps.month, dateProps.date);
-
-        this.setState({
+    clear() {        
+        let newState = {
             isOpen: false,
-            curDate: today,
-            ...dateProps
-        });
-        this.props.onChange(dateStr, today);
-    },
+            view: 'date'
+        };
 
-    clear() {
-        // Restore the initially selected date.
-        const dateProps = getDateProps(this.initialSelectedDate);
-        this.setState({
-            curDate: '',
-            isOpen: false,
-            view: 'date',
-            ...dateProps
-        });
-        this.props.onChange('', null);
+        if (!this.props.value) {
+            const dateProps = getDateProps(this.initialSelectedDate);
+            objectAssign(newState, {
+                value: '',
+                ...dateProps
+            });
+        }
+        this.setState(newState);
+        this.props.onChange('');
     },
 
     // Confirm selection when `multi` is true.
-    ok() {
-        // Update if any date is selected.
-        // Otherwise cancel.
-        const { year, month, date, hours, minutes, seconds } = this.state;
-        if (date) {
+    confirm() {
+        if (this.state.date) {
+            const { year, month, date, hours, minutes, seconds } = this.state;
             const dateStr = getDateTimeStr(year, month, date, hours, minutes, seconds);
-            const dateObj = new Date(year, month, date, hours, minutes, seconds);
-            this.setState({
-                view: 'date',
-                curDate: dateObj,
-                isOpen: false
-            });
-            this.props.onChange(dateStr, dateObj);
-        } else {
-            this.hideAndRestore();
+            let newState = {
+                isOpen: false,
+                view: 'date'
+            };
+
+            if (!this.props.value) {
+                newState.value = dateStr;
+            }
+            this.setState(newState);
+            this.props.onChange(dateStr);
         }
     },
 
     isDateDisabled(year, month, date) {
-        const { maxValue, minValue, disableDates } = this.props;
-        const _maxValue = maxValue ? new Date(maxValue).valueOf() : 0;
-        const _minValue = minValue ? new Date(minValue).valueOf() : 0;
-        const dateObj = new Date(year, month, date);
-        const dateValue = dateObj.valueOf();
-
-        if (_maxValue && _maxValue < dateValue) {
-            return true;
-        }
-        if (_minValue && _minValue > dateValue) {
-            return true;
-        }
-        return disableDates(dateObj);
+        return this.props.disableDates(new Date(year, month, date));
     },
 
     handleKeyDown(event) {
@@ -418,7 +423,7 @@ const DatePicker = React.createClass({
         }
     },
 
-    // Press on keyboard to select a date.
+    // Use keyboard to select a date.
     pressKeyToDate(offset) {
         if (offset > 31 || offset < -31) return;
 
@@ -440,19 +445,15 @@ const DatePicker = React.createClass({
     },
 
     renderTrigger() {
-        const { inputClassName, inputStyle, placeholder, selectTime, disabled } = this.props;
-        const { curDate, isOpen } = this.state;
-        let dateStr = '';   // The date string displayed.
-
-        // get date string base on current date object.
-        if (curDate) {
-            const dateProps = getDateProps(curDate);
-            const { year, month, date, hours, minutes, seconds } = dateProps;
-            dateStr = selectTime ? 
-                getDateTimeStr(year, month, date, hours, minutes, seconds) 
-                :
-                getDateStr(year, month, date);
-        }
+        const { 
+            inputClassName, 
+            inputStyle, 
+            placeholder, 
+            selectTime, 
+            disabled 
+        } = this.props;
+        const { isOpen } = this.state;
+        const dateStr = this.getValue();
 
         return (
             <div 
@@ -463,71 +464,47 @@ const DatePicker = React.createClass({
                 style={inputStyle}
                 onClick={this.handleTriggerClick}
             >
-                <input
-                    type="text"
-                    className="datepicker-input"
-                    value={dateStr}
-                    placeholder={placeholder}
-                    readOnly
-                />
+                {dateStr ||
+                    <span className="placeholder">{placeholder}</span>
+                }
                 <i className="fa fa-calendar icon"></i>
             </div>
         );
     },
 
     renderPanelHead() {
-        const { maxValue, minValue } = this.props;
-        const { year, month, date, hours, minutes, seconds } = this.state;
-        const minDate = minValue && new Date(minValue) || ''; 
-        const maxDate = maxValue && new Date(maxValue) || '';
-        const preYearDisabled = minDate && minDate.getFullYear() >= year;
-        const nextYearDisabled = maxDate && maxDate.getFullYear() <= year;
-        const preMonthDisabled = minDate && minDate.getFullYear() === year && minDate.getMonth() >= month;
-        const nextMonthDisabled = maxDate && maxDate.getFullYear() === year && maxDate.getMonth() <= month;
-
-        let dateStr = '';
+        const { view, year, month, date, hours, minutes, seconds } = this.state;
+        let dateTimeStr = '';
         
-        if (this.state.view === 'time') {
-            dateStr = getDateTimeStr(year, month, date, hours, minutes, seconds);
+        if (view === 'time') {
+            dateTimeStr = getDateTimeStr(year, month, date, hours, minutes, seconds);
         }
 
         return (
             <div className="datepicker-head">
                 <div className={cx({'hide': this.state.view === 'time'})}>
                     <a 
-                        className={cx(
-                            'fa fa-angle-double-left datepicker-prev-year-btn',
-                            {'disabled': preYearDisabled}
-                        )} 
-                        onClick={() => preYearDisabled || this.prevYear()}>
+                        className="fa fa-angle-double-left datepicker-prev-year-btn"
+                        onClick={this.prevYear}>
                     </a>
                     <a 
-                        className={cx(
-                            'fa fa-angle-left datepicker-prev-month-btn', 
-                            {'disabled': preMonthDisabled}
-                        )} 
-                        onClick={() => preMonthDisabled || this.prevMonth()}>
+                        className="fa fa-angle-left datepicker-prev-month-btn"
+                        onClick={this.prevMonth}>
                     </a>
                     <b>{`${year}年`}</b>
                     <b>{`${month + 1}月`}</b>
                     <a 
-                        className={cx(
-                            'fa fa-angle-right datepicker-next-month-btn', 
-                            {'disabled': nextMonthDisabled}
-                        )} 
-                        onClick={() => nextMonthDisabled || this.nextMonth()}>
+                        className="fa fa-angle-right datepicker-next-month-btn"
+                        onClick={this.nextMonth}>
                     </a>
                     <a 
-                        className={cx(
-                            'fa fa-angle-double-right datepicker-next-year-btn',
-                            {'disabled': nextYearDisabled}
-                        )} 
-                        onClick={() => nextYearDisabled || this.nextYear()}>
+                        className="fa fa-angle-double-right datepicker-next-year-btn"
+                        onClick={this.nextYear}>
                     </a>
                 </div>
-                {this.state.view === 'time' &&
+                {view === 'time' &&
                     <div>
-                        <b>{dateStr}</b>
+                        <b>{dateTimeStr}</b>
                     </div>
                 }
             </div>
@@ -535,13 +512,15 @@ const DatePicker = React.createClass({
     },
 
     renderPanelBody() {
-        const { selectTime, maxValue, minValue, disableDates, value} = this.props;
+        const { selectTime, value} = this.props;
         const { view, year, month, date } = this.state;
 
         /* Generates dates Start */
 
         const howManyDates = getMonthDays(year, month);
-        const offset = new Date(year, month, 1).getDay() || 7;   // What day is the first date of the month.
+        
+        // What day is the first date of the month.
+        const offset = new Date(year, month, 1).getDay() || 7;   
 
         let dates = [], rows = [], i;
 
@@ -568,6 +547,7 @@ const DatePicker = React.createClass({
 
         // Hours, minutes and seconds.
         let hours = [], minutes = [], seconds = [];
+
         if (selectTime) {
             let timeArr = [];
 
@@ -581,7 +561,9 @@ const DatePicker = React.createClass({
 
         return (
             <div className="datepicker-body">
-                <table className={cx('datepicker-table', {'hide': view === 'time'})}>
+                <table className={cx('datepicker-table', {
+                    'hide': view === 'time'
+                })}>
                     <thead>
                         <tr>
                             <th>一</th>
@@ -617,39 +599,38 @@ const DatePicker = React.createClass({
                         ))}
                     </tbody>
                 </table>
-                <div className={cx('datepicker-yearSelect', {'hide': view === 'year'})}>
-                    
-                </div>
                 {selectTime &&
-                    <div className={cx('clearfix', {'hide': view === 'date'})}>
+                    <div className={cx('clearfix', {
+                        'hide': view === 'date'
+                    })}>
                         <ul className="datepicker-time-col">
-                            {hours.map((hour, idx) => (
+                            {hours.map((hour, i) => (
                                 <li 
-                                    key={idx} 
-                                    onClick={e => {this.setHours(idx)}} 
-                                    className={cx({'active': idx === this.state.hours})}
+                                    key={i} 
+                                    onClick={e => {this.setHours(i)}} 
+                                    className={cx({'active': i === this.state.hours})}
                                 >
                                     {`${hour}时`}
                                 </li>
                             ))}
                         </ul>
                         <ul className="datepicker-time-col">
-                            {minutes.map((minute, idx) => (
+                            {minutes.map((minute, i) => (
                                 <li 
-                                    key={idx} 
-                                    onClick={e => {this.setMinutes(idx)}} 
-                                    className={cx({'active': idx === this.state.minutes})}
+                                    key={i} 
+                                    onClick={e => {this.setMinutes(i)}} 
+                                    className={cx({'active': i === this.state.minutes})}
                                 >
                                     {`${minute}分`}
                                 </li>
                             ))}
                         </ul>
                         <ul className="datepicker-time-col">
-                            {seconds.map((second, idx) => (
+                            {seconds.map((second, i) => (
                                 <li 
-                                    key={idx} 
-                                    onClick={e => {this.setSeconds(idx)}} 
-                                    className={cx({'active': idx === this.state.seconds})}
+                                    key={i} 
+                                    onClick={e => {this.setSeconds(i)}} 
+                                    className={cx({'active': i === this.state.seconds})}
                                 >
                                     {`${second}秒`}
                                 </li>
@@ -663,23 +644,43 @@ const DatePicker = React.createClass({
 
     renderPanelFoot() {
         const { selectTime } = this.props;
-        const { view } = this.state;
+        const { view, date } = this.state;
 
         return (
             <div className="datepicker-foot">
                 {selectTime ?
                     <div>
-                        <span className="datepicker-left-btn" onClick={this.clear}>清空</span>
+                        <span className="datepicker-left-btn" onClick={this.clear}>
+                            清空
+                        </span>
                         {view === 'time' ?
-                            <span onClick={this.selectDate}>选择日期</span>
+                            <span onClick={this.selectDate}>
+                                选择日期
+                            </span>
                             :
-                            <span onClick={this.selectTime}>选择时间</span>
+                            <span 
+                                className={cx({
+                                    'disabled': !date
+                                })} 
+                                onClick={this.selectTime}
+                            >
+                                选择时间
+                            </span>
                         }
-                        <span className="datepicker-right-btn" onClick={this.ok}>确认</span>
+                        <span 
+                            className={cx('datepicker-right-btn', {
+                                'disabled': !date
+                            })} 
+                            onClick={this.confirm}
+                        >
+                            确认
+                        </span>
                     </div>
                     :
                     <div>
-                        <span className="datepicker-left-btn" onClick={this.clear}>清空</span>
+                        <span className="datepicker-left-btn" onClick={this.clear}>
+                            清空
+                        </span>
                     </div>
                 }
             </div>
@@ -687,7 +688,13 @@ const DatePicker = React.createClass({
     },
 
     render() {
-        const { className, dropdownClassName, style, dropdownStyle } = this.props;
+        const { 
+            className, 
+            dropdownClassName, 
+            style, 
+            dropdownStyle,
+            disabled 
+        } = this.props;
         const { isOpen } = this.state;
 
         const trigger = this.renderTrigger();
@@ -696,26 +703,26 @@ const DatePicker = React.createClass({
         const panelFoot = this.renderPanelFoot();
 
         return (
-            <ClickAwayListener onClickAway={this.handleClickAway}>
+            <div 
+                className={cx('dropdown-wrapper datepicker-wrapper', className)}
+                style={style}
+                tabIndex={disabled ? undefined : '0'}
+                onFocus={this.handleFocus}
+                onBlur={this.handleBlur}
+                onKeyDown={this.handleKeyDown}
+            >
+                {trigger}
                 <div 
-                    className={cx('dropdown-wrapper', className)}
-                    style={style}
-                    tabIndex="0"
-                    onKeyDown={this.handleKeyDown}
+                    className={cx('dropdown datepicker-panel', dropdownClassName, {
+                        'offscreen': !isOpen
+                    })}
+                    style={dropdownStyle}
                 >
-                    {trigger}
-                    <div 
-                        className={cx('dropdown datepicker-panel', dropdownClassName, {
-                            'offscreen': !isOpen
-                        })}
-                        style={dropdownStyle}
-                    >
-                        {panelHead}
-                        {panelBody}
-                        {panelFoot}
-                    </div>
+                    {panelHead}
+                    {panelBody}
+                    {panelFoot}
                 </div>
-            </ClickAwayListener>
+            </div>
         );
     }
 });

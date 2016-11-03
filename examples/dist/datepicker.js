@@ -44,14 +44,14 @@
 /* 0 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	var _Z = Z,
 	    DatePicker = _Z.DatePicker;
 
 
 	var App = React.createClass({
-	    displayName: "App",
+	    displayName: 'App',
 	    getInitialState: function getInitialState() {
 	        return {
 	            date: '2016-06-06'
@@ -62,63 +62,80 @@
 	            date: dateStr
 	        });
 	    },
+	    handleClick: function handleClick() {
+	        var today = new Date();
+	        this.setState({
+	            date: today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+	        });
+	    },
 	    render: function render() {
 	        return React.createElement(
-	            "div",
+	            'div',
 	            null,
 	            React.createElement(
-	                "section",
+	                'section',
 	                null,
 	                React.createElement(
-	                    "h5",
+	                    'h5',
 	                    null,
-	                    "Date Picker"
+	                    'Date Picker'
 	                ),
 	                React.createElement(DatePicker, null)
 	            ),
 	            React.createElement(
-	                "section",
+	                'section',
 	                null,
 	                React.createElement(
-	                    "h5",
+	                    'h5',
 	                    null,
-	                    "Date Picker with defaultValue and maximum&minimum value"
+	                    'Date Picker with defaultValue and maximum&minimum value'
 	                ),
-	                React.createElement(DatePicker, {
-	                    defaultValue: "2014-08-05",
-	                    maxValue: "2016-09-20",
-	                    minValue: "2010-03-14"
-	                })
+	                React.createElement(DatePicker, { defaultValue: '2014-08-05' })
 	            ),
 	            React.createElement(
-	                "section",
+	                'section',
 	                null,
 	                React.createElement(
-	                    "h5",
+	                    'h5',
 	                    null,
-	                    "Controlled Date Picker"
+	                    'Controlled Date Picker'
 	                ),
-	                React.createElement(DatePicker, { value: this.state.date, onChange: this.handleChange })
+	                React.createElement(DatePicker, { value: '2016-06-06' })
 	            ),
 	            React.createElement(
-	                "section",
+	                'section',
 	                null,
 	                React.createElement(
-	                    "h5",
+	                    'h5',
 	                    null,
-	                    "Controlled Date Picker"
+	                    'Controlled Date Picker'
 	                ),
-	                React.createElement(DatePicker, { value: "2016-06-06", selectTime: true, onChange: function onChange(dateStr) {
+	                React.createElement(DatePicker, { value: this.state.date, onChange: this.handleChange }),
+	                React.createElement(
+	                    'button',
+	                    { style: { marginLeft: 20 }, onClick: this.handleClick },
+	                    '\u73B0\u5728'
+	                )
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(
+	                    'h5',
+	                    null,
+	                    'Controlled Date Picker'
+	                ),
+	                React.createElement(DatePicker, { value: '2016-06-06', selectTime: true, onChange: function onChange(dateStr) {
 	                        return alert(dateStr);
 	                    } })
 	            ),
 	            React.createElement(
-	                "section",
+	                'section',
 	                null,
 	                React.createElement(
-	                    "h5",
+	                    'h5',
 	                    null,
-	                    "Date Picker with particular dates disabled"
+	                    'Date Picker with particular dates disabled'
 	                ),
 	                React.createElement(DatePicker, {
 	                    disableDates: function disableDates(date) {
@@ -127,24 +144,24 @@
 	                })
 	            ),
 	            React.createElement(
-	                "section",
+	                'section',
 	                null,
 	                React.createElement(
-	                    "h5",
+	                    'h5',
 	                    null,
-	                    "Date Picker with time selection"
+	                    'Date Picker with time selection'
 	                ),
 	                React.createElement(DatePicker, {
 	                    selectTime: true
 	                })
 	            ),
 	            React.createElement(
-	                "section",
+	                'section',
 	                null,
 	                React.createElement(
-	                    "h5",
+	                    'h5',
 	                    null,
-	                    "Disabled Date Picker"
+	                    'Disabled Date Picker'
 	                ),
 	                React.createElement(DatePicker, {
 	                    disabled: true

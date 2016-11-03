@@ -56,12 +56,12 @@ var Z =
 	    Message: __webpack_require__(8),
 	    Pagination: __webpack_require__(10),
 	    DatePicker: __webpack_require__(12),
-	    Select: __webpack_require__(15),
-	    Checkbox: __webpack_require__(17),
-	    RadioGroup: __webpack_require__(19),
-	    CheckboxGroup: __webpack_require__(21),
-	    Tabs: __webpack_require__(23),
-	    Formsy: __webpack_require__(26)
+	    Select: __webpack_require__(14),
+	    Checkbox: __webpack_require__(16),
+	    RadioGroup: __webpack_require__(18),
+	    CheckboxGroup: __webpack_require__(20),
+	    Tabs: __webpack_require__(22),
+	    Formsy: __webpack_require__(25)
 	};
 
 /***/ },
@@ -198,7 +198,7 @@ var Z =
 	        document.addEventListener('keydown', handleTabPress, false);
 	    },
 	    componentWillUnmount: function componentWillUnmount() {
-	        clearTimeout(this.focusTimeout);
+	        this.cancelFocusTimeout();
 	        document.removeEventListener('keydown', handleTabPress, false);
 	    },
 	    cancelFocusTimeout: function cancelFocusTimeout() {
@@ -859,7 +859,13 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var ClickAwayListener = __webpack_require__(14);
+	var objectAssign = __webpack_require__(43);
+
+	var tabPressed = false;
+
+	function handleTabPress(event) {
+	    tabPressed = event.which === 9;
+	}
 
 	// Whether the year is a leap year
 	function isLeapYear(year) {
@@ -874,6 +880,7 @@ var Z =
 	function getDateStr(year, month, date) {
 	    var monthStr = month > 8 ? month + 1 : '0' + (month + 1);
 	    var dateStr = date > 9 ? date : '0' + date;
+
 	    return year + '-' + monthStr + '-' + dateStr;
 	}
 
@@ -882,17 +889,31 @@ var Z =
 	    var minutesStr = minutes > 9 ? minutes : '0' + minutes;
 	    var secondsStr = seconds > 9 ? seconds : '0' + seconds;
 	    var dateStr = getDateStr(year, month, date);
+
 	    return dateStr + ' ' + hoursStr + ':' + minutesStr + ':' + secondsStr;
 	}
 
 	function getDateProps(date) {
+	    if (date) {
+	        if (typeof date === 'string') {
+	            date = new Date(date);
+	        }
+	        return {
+	            year: date.getFullYear(),
+	            month: date.getMonth(),
+	            date: date.getDate(),
+	            hours: date.getHours(),
+	            minutes: date.getMinutes(),
+	            seconds: date.getSeconds()
+	        };
+	    }
 	    return {
-	        year: date.getFullYear(),
-	        month: date.getMonth(),
-	        date: date.getDate(),
-	        hours: date.getHours(),
-	        minutes: date.getMinutes(),
-	        seconds: date.getSeconds()
+	        year: new Date().getFullYear(),
+	        month: new Date().getMonth(),
+	        date: 0,
+	        hours: 0,
+	        minutes: 0,
+	        seconds: 0
 	    };
 	}
 
@@ -907,7 +928,7 @@ var Z =
 	        className: React.PropTypes.string,
 
 	        /**
-	         * The class name of the input element.
+	         * The class name of the trigger element.
 	         */
 	        inputClassName: React.PropTypes.string,
 
@@ -922,7 +943,7 @@ var Z =
 	        style: React.PropTypes.object,
 
 	        /**
-	         * The inline styles of the input element.
+	         * The inline styles of the trigger element.
 	         */
 	        inputStyle: React.PropTypes.object,
 
@@ -932,7 +953,7 @@ var Z =
 	        dropdownStyle: React.PropTypes.object,
 
 	        /**
-	         * The placeholder of the input element.
+	         * The placeholder of the trigger element.
 	         */
 	        placeholder: React.PropTypes.string,
 
@@ -948,30 +969,14 @@ var Z =
 
 	        /**
 	         * Default value of the component.
-	         * 
-	         * The `defaultValue` must be:
-	         * 1. a valid date string, e.g. `2016-06-06`.
-	         * 2. a valid date value, e.g. 1476325700327.
-	         * 3. a date object.
-	         * So are `value`, `maxValue` and `minValue`.
 	         */
-	        defaultValue: React.PropTypes.any,
+	        defaultValue: React.PropTypes.string,
 
 	        /**
 	         * The value of the component, meaning the component is controlled.
 	         * Will override `defaultValue`.
 	         */
-	        value: React.PropTypes.any,
-
-	        /**
-	         * Maximum date value.
-	         */
-	        maxValue: React.PropTypes.any,
-
-	        /**
-	         * Minimum date value.
-	         */
-	        minValue: React.PropTypes.any,
+	        value: React.PropTypes.string,
 
 	        /**
 	         * Disable dates that satisfy the test function.
@@ -981,9 +986,8 @@ var Z =
 	        disableDates: React.PropTypes.func,
 
 	        /**
-	         * Fires when the component's value changes.
+	         * Callback when the component's value changes.
 	         * @param {string} dateStr
-	         * @param {date} dateObj
 	         */
 	        onChange: React.PropTypes.func
 	    },
@@ -992,86 +996,118 @@ var Z =
 	        return {
 	            disabled: false,
 	            selectTime: false,
-	            onChange: function onChange() {},
-
 	            disableDates: function disableDates() {
 	                return false;
-	            }
+	            },
+	            onChange: function onChange() {}
 	        };
+	    },
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	        if (nextProps.value) {
+	            this.setState(getDateProps(nextProps.value));
+	        }
 	    },
 	    getInitialState: function getInitialState() {
 	        var _props = this.props,
 	            defaultValue = _props.defaultValue,
 	            value = _props.value,
-	            maxValue = _props.maxValue,
-	            minValue = _props.minValue,
 	            disableDates = _props.disableDates;
 
-	        var today = new Date();
-	        var selectedDate = today; // defaultly selected date(may not be synchronized to the component's value).
-	        var curDate = ''; // the current date object(synchronized with the component's value).
+	        var initialDate = void 0;
 
+	        // If neither `value` nor `defaultValue` is provided,
+	        // select today defaultly.
+	        // And do not select any date if today is disabled.
 	        if (value) {
-	            // select specified date
-	            selectedDate = new Date(value);
-	            curDate = selectedDate;
+	            initialDate = value;
 	        } else if (defaultValue) {
-	            // select default value
-	            selectedDate = new Date(defaultValue);
-	            curDate = selectedDate;
+	            initialDate = defaultValue;
 	        } else {
-	            // If no value is specified:
-	            // If today is greater than `maxValue`, select `maxValue` defaultly.
-	            // If today is before `minValue`, select `minValue` defaultly.
-	            // Otherwise select today defaultly.
-	            if (maxValue && today.valueOf() > new Date(maxValue).valueOf()) {
-	                selectedDate = new Date(maxValue);
-	            } else if (minValue && today.valueOf() < new Date(minValue).valueOf()) {
-	                selectedDate = new Date(minValue);
+	            var today = new Date();
+	            if (disableDates(today) === false) {
+	                initialDate = today;
 	            }
 	        }
 
-	        this.initialSelectedDate = selectedDate;
-	        var dateProps = getDateProps(selectedDate);
-
-	        return _extends({
-	            isOpen: false,
-	            view: 'date',
-	            curDate: curDate
-	        }, dateProps);
-	    },
-
-
-	    // Restore the value when click away.
-	    handleClickAway: function handleClickAway() {
-	        this.state.isOpen && this.hideAndRestore();
-	    },
-
-
-	    // Restore the value when click away or cancel.
-	    hideAndRestore: function hideAndRestore() {
-	        var dateProps = this.state.curDate ? getDateProps(this.state.curDate) : getDateProps(this.initialSelectedDate);
-
-	        this.setState(_extends({
+	        var dateProps = getDateProps(initialDate);
+	        var state = _extends({
 	            isOpen: false,
 	            view: 'date'
-	        }, dateProps));
-	    },
-	    handleTriggerClick: function handleTriggerClick() {
-	        if (this.props.disabled) {
-	            return;
+	        }, dateProps);
+
+	        if (!value) {
+	            state.value = defaultValue || '';
 	        }
+	        return state;
+	    },
+	    componentDidMount: function componentDidMount() {
+	        // Listen to tab pressing so that we know when it's a keyboard focus. 
+	        document.addEventListener('keydown', handleTabPress, false);
+	    },
+	    componentWillUnmount: function componentWillUnmount() {
+	        this.cancelFocusTimeout();
+	        document.removeEventListener('keydown', handleTabPress, false);
+	    },
+	    cancelFocusTimeout: function cancelFocusTimeout() {
+	        if (this.focusTimeout) {
+	            clearTimeout(this.focusTimeout);
+	            this.focusTimeout = null;
+	        }
+	    },
+	    handleFocus: function handleFocus(event) {
+	        var _this = this;
+
+	        if (event) event.persist();
+	        if (!this.props.disabled) {
+	            // setTimeout is needed because the focus event fires first
+	            // Wait so that we can capture if this was a keyboard focus
+	            this.focusTimeout = setTimeout(function () {
+	                if (tabPressed) {
+	                    _this.setState({ isOpen: true });
+	                }
+	            }, 150);
+	        }
+	    },
+	    handleBlur: function handleBlur(event) {
+	        this.cancelFocusTimeout();
 	        if (this.state.isOpen) {
 	            this.hideAndRestore();
-	        } else {
-	            this.setState({ isOpen: true });
 	        }
+	    },
+	    handleTriggerClick: function handleTriggerClick() {
+	        if (!this.props.disabled) {
+	            tabPressed = false;
+	            if (this.state.isOpen) {
+	                this.hideAndRestore();
+	            } else {
+	                this.setState({ isOpen: true });
+	            }
+	        }
+	    },
+	    getValue: function getValue() {
+	        return this.props.value || this.state.value;
+	    },
+
+
+	    // Restore the original state when no date is selected.
+	    hideAndRestore: function hideAndRestore() {
+	        var newState = {
+	            isOpen: false,
+	            view: 'date'
+	        };
+
+	        if (this.getValue()) {
+	            objectAssign(newState, getDateProps(this.getValue()));
+	        }
+	        this.setState(newState);
 	    },
 
 
 	    // Switch to time selection.
 	    selectTime: function selectTime() {
-	        this.setState({ view: 'time' });
+	        if (this.state.date) {
+	            this.setState({ view: 'time' });
+	        }
 	    },
 
 
@@ -1079,67 +1115,59 @@ var Z =
 	    selectDate: function selectDate() {
 	        this.setState({ view: 'date' });
 	    },
-
-
-	    // When go to a year or month,
-	    // If the year and month are same with current, select current date,
-	    // Otherwise select no date.
-	    inCurrentYearAndMonth: function inCurrentYearAndMonth(year, month) {
-	        var curDate = this.state.curDate;
-
-	        var initialDate = this.initialSelectedDate;
-
-	        if (curDate) {
-	            if (curDate.getFullYear() === year && curDate.getMonth() === month) {
-	                return curDate.getDate();
-	            }
-	        } else {
-	            if (initialDate.getFullYear() === year && initialDate.getMonth() === month) {
-	                return initialDate.getDate();
-	            }
-	        }
-
-	        return 0;
-	    },
 	    prevYear: function prevYear() {
+	        var _state = this.state,
+	            year = _state.year,
+	            month = _state.month,
+	            date = _state.date;
+
+
 	        this.setState({
-	            year: this.state.year - 1,
-	            date: this.inCurrentYearAndMonth(this.state.year - 1, this.state.month)
+	            year: year - 1,
+	            date: month === 1 && date === 29 ? 28 : date
 	        });
 	    },
 	    nextYear: function nextYear() {
+	        var _state2 = this.state,
+	            year = _state2.year,
+	            month = _state2.month,
+	            date = _state2.date;
+
+
 	        this.setState({
-	            year: this.state.year + 1,
-	            date: this.inCurrentYearAndMonth(this.state.year + 1, this.state.month)
+	            year: year + 1,
+	            date: month === 1 && date === 29 ? 28 : date
 	        });
 	    },
 	    prevMonth: function prevMonth() {
-	        if (this.state.month === 0) {
-	            this.setState({
-	                year: this.state.year - 1,
-	                month: 11,
-	                date: this.inCurrentYearAndMonth(this.state.year - 1, 11)
-	            });
-	        } else {
-	            this.setState({
-	                month: this.state.month - 1,
-	                date: this.inCurrentYearAndMonth(this.state.year, this.state.month - 1)
-	            });
-	        }
+	        var _state3 = this.state,
+	            year = _state3.year,
+	            month = _state3.month,
+	            date = _state3.date;
+
+	        var prevMonth = month === 0 ? 11 : month - 1;
+	        var monthDays = getMonthDays(year, prevMonth);
+
+	        this.setState({
+	            year: month === 0 ? year - 1 : year,
+	            month: prevMonth,
+	            date: date > monthDays ? monthDays : date
+	        });
 	    },
 	    nextMonth: function nextMonth() {
-	        if (this.state.month === 11) {
-	            this.setState({
-	                year: this.state.year + 1,
-	                month: 0,
-	                date: this.inCurrentYearAndMonth(this.state.year + 1, 0)
-	            });
-	        } else {
-	            this.setState({
-	                month: this.state.month + 1,
-	                date: this.inCurrentYearAndMonth(this.state.year, this.state.month + 1)
-	            });
-	        }
+	        var _state4 = this.state,
+	            year = _state4.year,
+	            month = _state4.month,
+	            date = _state4.date;
+
+	        var nextMonth = month === 11 ? 0 : month + 1;
+	        var monthDays = getMonthDays(year, nextMonth);
+
+	        this.setState({
+	            year: month === 11 ? year + 1 : year,
+	            month: nextMonth,
+	            date: date > monthDays ? monthDays : date
+	        });
 	    },
 
 
@@ -1148,99 +1176,83 @@ var Z =
 	    // Other wise update the component's value.
 	    setDate: function setDate(date) {
 	        if (this.props.selectTime) {
-	            if (date !== this.state.date) this.setState({ date: date });
+	            if (date !== this.state.date) {
+	                this.setState({ date: date });
+	            }
 	        } else {
-	            var _state = this.state,
-	                year = _state.year,
-	                month = _state.month;
-
-	            var dateStr = getDateStr(year, month, date);
-	            var dateObj = new Date(year, month, date);
-
-	            this.setState({
-	                date: date,
-	                curDate: dateObj,
+	            var dateStr = getDateStr(this.state.year, this.state.month, date);
+	            var newState = {
 	                isOpen: false
-	            });
+	            };
 
-	            this.props.onChange(dateStr, dateObj);
+	            if (!this.props.value) {
+	                objectAssign(newState, {
+	                    value: dateStr,
+	                    date: date
+	                });
+	            }
+	            this.setState(newState);
+	            this.props.onChange(dateStr);
 	        }
 	    },
 	    setHours: function setHours(hours) {
-	        if (hours !== this.state.hours) this.setState({ hours: hours });
+	        if (hours !== this.state.hours) {
+	            this.setState({ hours: hours });
+	        }
 	    },
 	    setMinutes: function setMinutes(minutes) {
-	        if (minutes !== this.state.minutes) this.setState({ minutes: minutes });
+	        if (minutes !== this.state.minutes) {
+	            this.setState({ minutes: minutes });
+	        }
 	    },
 	    setSeconds: function setSeconds(seconds) {
-	        if (seconds !== this.state.seconds) this.setState({ seconds: seconds });
-	    },
-	    setToday: function setToday() {
-	        var today = new Date();
-	        var dateProps = getDateProps(today);
-	        var dateStr = this.props.selectTime ? getDateTimeStr(dateProps.year, dateProps.month, dateProps.date, dateProps.hours, dateProps.minutes, dateProps.seconds) : getDateStr(dateProps.year, dateProps.month, dateProps.date);
-
-	        this.setState(_extends({
-	            isOpen: false,
-	            curDate: today
-	        }, dateProps));
-	        this.props.onChange(dateStr, today);
+	        if (seconds !== this.state.seconds) {
+	            this.setState({ seconds: seconds });
+	        }
 	    },
 	    clear: function clear() {
-	        // Restore the initially selected date.
-	        var dateProps = getDateProps(this.initialSelectedDate);
-	        this.setState(_extends({
-	            curDate: '',
+	        var newState = {
 	            isOpen: false,
 	            view: 'date'
-	        }, dateProps));
-	        this.props.onChange('', null);
+	        };
+
+	        if (!this.props.value) {
+	            var dateProps = getDateProps(this.initialSelectedDate);
+	            objectAssign(newState, _extends({
+	                value: ''
+	            }, dateProps));
+	        }
+	        this.setState(newState);
+	        this.props.onChange('');
 	    },
 
 
 	    // Confirm selection when `multi` is true.
-	    ok: function ok() {
-	        // Update if any date is selected.
-	        // Otherwise cancel.
-	        var _state2 = this.state,
-	            year = _state2.year,
-	            month = _state2.month,
-	            date = _state2.date,
-	            hours = _state2.hours,
-	            minutes = _state2.minutes,
-	            seconds = _state2.seconds;
+	    confirm: function confirm() {
+	        if (this.state.date) {
+	            var _state5 = this.state,
+	                year = _state5.year,
+	                month = _state5.month,
+	                date = _state5.date,
+	                hours = _state5.hours,
+	                minutes = _state5.minutes,
+	                seconds = _state5.seconds;
 
-	        if (date) {
 	            var dateStr = getDateTimeStr(year, month, date, hours, minutes, seconds);
-	            var dateObj = new Date(year, month, date, hours, minutes, seconds);
-	            this.setState({
-	                view: 'date',
-	                curDate: dateObj,
-	                isOpen: false
-	            });
-	            this.props.onChange(dateStr, dateObj);
-	        } else {
-	            this.hideAndRestore();
+	            var newState = {
+	                isOpen: false,
+	                view: 'date'
+	            };
+
+	            if (!this.props.value) {
+	                newState.value = dateStr;
+	            }
+	            this.setState(newState);
+	            this.props.onChange(dateStr);
 	        }
 	    },
 	    isDateDisabled: function isDateDisabled(year, month, date) {
-	        var _props2 = this.props,
-	            maxValue = _props2.maxValue,
-	            minValue = _props2.minValue,
-	            disableDates = _props2.disableDates;
-
-	        var _maxValue = maxValue ? new Date(maxValue).valueOf() : 0;
-	        var _minValue = minValue ? new Date(minValue).valueOf() : 0;
-	        var dateObj = new Date(year, month, date);
-	        var dateValue = dateObj.valueOf();
-
-	        if (_maxValue && _maxValue < dateValue) {
-	            return true;
-	        }
-	        if (_minValue && _minValue > dateValue) {
-	            return true;
-	        }
-	        return disableDates(dateObj);
+	        return this.props.disableDates(new Date(year, month, date));
 	    },
 	    handleKeyDown: function handleKeyDown(event) {
 	        switch (event.which) {
@@ -1283,14 +1295,14 @@ var Z =
 	    },
 
 
-	    // Press on keyboard to select a date.
+	    // Use keyboard to select a date.
 	    pressKeyToDate: function pressKeyToDate(offset) {
 	        if (offset > 31 || offset < -31) return;
 
-	        var _state3 = this.state,
-	            year = _state3.year,
-	            month = _state3.month,
-	            date = _state3.date;
+	        var _state6 = this.state,
+	            year = _state6.year,
+	            month = _state6.month,
+	            date = _state6.date;
 
 	        var dateObj = new Date(new Date(year, month, date).valueOf() + offset * 24 * 3600000);
 	        var newYear = dateObj.getFullYear();
@@ -1308,30 +1320,15 @@ var Z =
 	        }
 	    },
 	    renderTrigger: function renderTrigger() {
-	        var _props3 = this.props,
-	            inputClassName = _props3.inputClassName,
-	            inputStyle = _props3.inputStyle,
-	            placeholder = _props3.placeholder,
-	            selectTime = _props3.selectTime,
-	            disabled = _props3.disabled;
-	        var _state4 = this.state,
-	            curDate = _state4.curDate,
-	            isOpen = _state4.isOpen;
+	        var _props2 = this.props,
+	            inputClassName = _props2.inputClassName,
+	            inputStyle = _props2.inputStyle,
+	            placeholder = _props2.placeholder,
+	            selectTime = _props2.selectTime,
+	            disabled = _props2.disabled;
+	        var isOpen = this.state.isOpen;
 
-	        var dateStr = ''; // The date string displayed.
-
-	        // get date string base on current date object.
-	        if (curDate) {
-	            var dateProps = getDateProps(curDate);
-	            var year = dateProps.year,
-	                month = dateProps.month,
-	                date = dateProps.date,
-	                hours = dateProps.hours,
-	                minutes = dateProps.minutes,
-	                seconds = dateProps.seconds;
-
-	            dateStr = selectTime ? getDateTimeStr(year, month, date, hours, minutes, seconds) : getDateStr(year, month, date);
-	        }
+	        var dateStr = this.getValue();
 
 	        return React.createElement(
 	            'div',
@@ -1343,41 +1340,28 @@ var Z =
 	                style: inputStyle,
 	                onClick: this.handleTriggerClick
 	            },
-	            React.createElement('input', {
-	                type: 'text',
-	                className: 'datepicker-input',
-	                value: dateStr,
-	                placeholder: placeholder,
-	                readOnly: true
-	            }),
+	            dateStr || React.createElement(
+	                'span',
+	                { className: 'placeholder' },
+	                placeholder
+	            ),
 	            React.createElement('i', { className: 'fa fa-calendar icon' })
 	        );
 	    },
 	    renderPanelHead: function renderPanelHead() {
-	        var _this = this;
+	        var _state7 = this.state,
+	            view = _state7.view,
+	            year = _state7.year,
+	            month = _state7.month,
+	            date = _state7.date,
+	            hours = _state7.hours,
+	            minutes = _state7.minutes,
+	            seconds = _state7.seconds;
 
-	        var _props4 = this.props,
-	            maxValue = _props4.maxValue,
-	            minValue = _props4.minValue;
-	        var _state5 = this.state,
-	            year = _state5.year,
-	            month = _state5.month,
-	            date = _state5.date,
-	            hours = _state5.hours,
-	            minutes = _state5.minutes,
-	            seconds = _state5.seconds;
+	        var dateTimeStr = '';
 
-	        var minDate = minValue && new Date(minValue) || '';
-	        var maxDate = maxValue && new Date(maxValue) || '';
-	        var preYearDisabled = minDate && minDate.getFullYear() >= year;
-	        var nextYearDisabled = maxDate && maxDate.getFullYear() <= year;
-	        var preMonthDisabled = minDate && minDate.getFullYear() === year && minDate.getMonth() >= month;
-	        var nextMonthDisabled = maxDate && maxDate.getFullYear() === year && maxDate.getMonth() <= month;
-
-	        var dateStr = '';
-
-	        if (this.state.view === 'time') {
-	            dateStr = getDateTimeStr(year, month, date, hours, minutes, seconds);
+	        if (view === 'time') {
+	            dateTimeStr = getDateTimeStr(year, month, date, hours, minutes, seconds);
 	        }
 
 	        return React.createElement(
@@ -1387,15 +1371,11 @@ var Z =
 	                'div',
 	                { className: cx({ 'hide': this.state.view === 'time' }) },
 	                React.createElement('a', {
-	                    className: cx('fa fa-angle-double-left datepicker-prev-year-btn', { 'disabled': preYearDisabled }),
-	                    onClick: function onClick() {
-	                        return preYearDisabled || _this.prevYear();
-	                    } }),
+	                    className: 'fa fa-angle-double-left datepicker-prev-year-btn',
+	                    onClick: this.prevYear }),
 	                React.createElement('a', {
-	                    className: cx('fa fa-angle-left datepicker-prev-month-btn', { 'disabled': preMonthDisabled }),
-	                    onClick: function onClick() {
-	                        return preMonthDisabled || _this.prevMonth();
-	                    } }),
+	                    className: 'fa fa-angle-left datepicker-prev-month-btn',
+	                    onClick: this.prevMonth }),
 	                React.createElement(
 	                    'b',
 	                    null,
@@ -1407,23 +1387,19 @@ var Z =
 	                    month + 1 + '\u6708'
 	                ),
 	                React.createElement('a', {
-	                    className: cx('fa fa-angle-right datepicker-next-month-btn', { 'disabled': nextMonthDisabled }),
-	                    onClick: function onClick() {
-	                        return nextMonthDisabled || _this.nextMonth();
-	                    } }),
+	                    className: 'fa fa-angle-right datepicker-next-month-btn',
+	                    onClick: this.nextMonth }),
 	                React.createElement('a', {
-	                    className: cx('fa fa-angle-double-right datepicker-next-year-btn', { 'disabled': nextYearDisabled }),
-	                    onClick: function onClick() {
-	                        return nextYearDisabled || _this.nextYear();
-	                    } })
+	                    className: 'fa fa-angle-double-right datepicker-next-year-btn',
+	                    onClick: this.nextYear })
 	            ),
-	            this.state.view === 'time' && React.createElement(
+	            view === 'time' && React.createElement(
 	                'div',
 	                null,
 	                React.createElement(
 	                    'b',
 	                    null,
-	                    dateStr
+	                    dateTimeStr
 	                )
 	            )
 	        );
@@ -1431,22 +1407,21 @@ var Z =
 	    renderPanelBody: function renderPanelBody() {
 	        var _this2 = this;
 
-	        var _props5 = this.props,
-	            selectTime = _props5.selectTime,
-	            maxValue = _props5.maxValue,
-	            minValue = _props5.minValue,
-	            disableDates = _props5.disableDates,
-	            value = _props5.value;
-	        var _state6 = this.state,
-	            view = _state6.view,
-	            year = _state6.year,
-	            month = _state6.month,
-	            date = _state6.date;
+	        var _props3 = this.props,
+	            selectTime = _props3.selectTime,
+	            value = _props3.value;
+	        var _state8 = this.state,
+	            view = _state8.view,
+	            year = _state8.year,
+	            month = _state8.month,
+	            date = _state8.date;
 
 	        /* Generates dates Start */
 
 	        var howManyDates = getMonthDays(year, month);
-	        var offset = new Date(year, month, 1).getDay() || 7; // What day is the first date of the month.
+
+	        // What day is the first date of the month.
+	        var offset = new Date(year, month, 1).getDay() || 7;
 
 	        var dates = [],
 	            rows = [],
@@ -1477,6 +1452,7 @@ var Z =
 	        var hours = [],
 	            minutes = [],
 	            seconds = [];
+
 	        if (selectTime) {
 	            var timeArr = [];
 
@@ -1493,7 +1469,9 @@ var Z =
 	            { className: 'datepicker-body' },
 	            React.createElement(
 	                'table',
-	                { className: cx('datepicker-table', { 'hide': view === 'time' }) },
+	                { className: cx('datepicker-table', {
+	                        'hide': view === 'time'
+	                    }) },
 	                React.createElement(
 	                    'thead',
 	                    null,
@@ -1567,22 +1545,23 @@ var Z =
 	                    })
 	                )
 	            ),
-	            React.createElement('div', { className: cx('datepicker-yearSelect', { 'hide': view === 'year' }) }),
 	            selectTime && React.createElement(
 	                'div',
-	                { className: cx('clearfix', { 'hide': view === 'date' }) },
+	                { className: cx('clearfix', {
+	                        'hide': view === 'date'
+	                    }) },
 	                React.createElement(
 	                    'ul',
 	                    { className: 'datepicker-time-col' },
-	                    hours.map(function (hour, idx) {
+	                    hours.map(function (hour, i) {
 	                        return React.createElement(
 	                            'li',
 	                            {
-	                                key: idx,
+	                                key: i,
 	                                onClick: function onClick(e) {
-	                                    _this2.setHours(idx);
+	                                    _this2.setHours(i);
 	                                },
-	                                className: cx({ 'active': idx === _this2.state.hours })
+	                                className: cx({ 'active': i === _this2.state.hours })
 	                            },
 	                            hour + '\u65F6'
 	                        );
@@ -1591,15 +1570,15 @@ var Z =
 	                React.createElement(
 	                    'ul',
 	                    { className: 'datepicker-time-col' },
-	                    minutes.map(function (minute, idx) {
+	                    minutes.map(function (minute, i) {
 	                        return React.createElement(
 	                            'li',
 	                            {
-	                                key: idx,
+	                                key: i,
 	                                onClick: function onClick(e) {
-	                                    _this2.setMinutes(idx);
+	                                    _this2.setMinutes(i);
 	                                },
-	                                className: cx({ 'active': idx === _this2.state.minutes })
+	                                className: cx({ 'active': i === _this2.state.minutes })
 	                            },
 	                            minute + '\u5206'
 	                        );
@@ -1608,15 +1587,15 @@ var Z =
 	                React.createElement(
 	                    'ul',
 	                    { className: 'datepicker-time-col' },
-	                    seconds.map(function (second, idx) {
+	                    seconds.map(function (second, i) {
 	                        return React.createElement(
 	                            'li',
 	                            {
-	                                key: idx,
+	                                key: i,
 	                                onClick: function onClick(e) {
-	                                    _this2.setSeconds(idx);
+	                                    _this2.setSeconds(i);
 	                                },
-	                                className: cx({ 'active': idx === _this2.state.seconds })
+	                                className: cx({ 'active': i === _this2.state.seconds })
 	                            },
 	                            second + '\u79D2'
 	                        );
@@ -1627,7 +1606,9 @@ var Z =
 	    },
 	    renderPanelFoot: function renderPanelFoot() {
 	        var selectTime = this.props.selectTime;
-	        var view = this.state.view;
+	        var _state9 = this.state,
+	            view = _state9.view,
+	            date = _state9.date;
 
 
 	        return React.createElement(
@@ -1647,12 +1628,22 @@ var Z =
 	                    '\u9009\u62E9\u65E5\u671F'
 	                ) : React.createElement(
 	                    'span',
-	                    { onClick: this.selectTime },
+	                    {
+	                        className: cx({
+	                            'disabled': !date
+	                        }),
+	                        onClick: this.selectTime
+	                    },
 	                    '\u9009\u62E9\u65F6\u95F4'
 	                ),
 	                React.createElement(
 	                    'span',
-	                    { className: 'datepicker-right-btn', onClick: this.ok },
+	                    {
+	                        className: cx('datepicker-right-btn', {
+	                            'disabled': !date
+	                        }),
+	                        onClick: this.confirm
+	                    },
 	                    '\u786E\u8BA4'
 	                )
 	            ) : React.createElement(
@@ -1667,11 +1658,12 @@ var Z =
 	        );
 	    },
 	    render: function render() {
-	        var _props6 = this.props,
-	            className = _props6.className,
-	            dropdownClassName = _props6.dropdownClassName,
-	            style = _props6.style,
-	            dropdownStyle = _props6.dropdownStyle;
+	        var _props4 = this.props,
+	            className = _props4.className,
+	            dropdownClassName = _props4.dropdownClassName,
+	            style = _props4.style,
+	            dropdownStyle = _props4.dropdownStyle,
+	            disabled = _props4.disabled;
 	        var isOpen = this.state.isOpen;
 
 
@@ -1681,29 +1673,27 @@ var Z =
 	        var panelFoot = this.renderPanelFoot();
 
 	        return React.createElement(
-	            ClickAwayListener,
-	            { onClickAway: this.handleClickAway },
+	            'div',
+	            {
+	                className: cx('dropdown-wrapper datepicker-wrapper', className),
+	                style: style,
+	                tabIndex: disabled ? undefined : '0',
+	                onFocus: this.handleFocus,
+	                onBlur: this.handleBlur,
+	                onKeyDown: this.handleKeyDown
+	            },
+	            trigger,
 	            React.createElement(
 	                'div',
 	                {
-	                    className: cx('dropdown-wrapper', className),
-	                    style: style,
-	                    tabIndex: '0',
-	                    onKeyDown: this.handleKeyDown
+	                    className: cx('dropdown datepicker-panel', dropdownClassName, {
+	                        'offscreen': !isOpen
+	                    }),
+	                    style: dropdownStyle
 	                },
-	                trigger,
-	                React.createElement(
-	                    'div',
-	                    {
-	                        className: cx('dropdown datepicker-panel', dropdownClassName, {
-	                            'offscreen': !isOpen
-	                        }),
-	                        style: dropdownStyle
-	                    },
-	                    panelHead,
-	                    panelBody,
-	                    panelFoot
-	                )
+	                panelHead,
+	                panelBody,
+	                panelFoot
 	            )
 	        );
 	    }
@@ -1717,66 +1707,10 @@ var Z =
 
 	'use strict';
 
-	// ClickAwayListener
-	// ------------------------
-
-	var React = __webpack_require__(3);
-
-	var isDescendant = function isDescendant(el, target) {
-	    if (target !== null) {
-	        return el === target || isDescendant(el, target.parentNode);
-	    }
-	    return false;
-	};
-
-	var ClickAwayListener = React.createClass({
-	    displayName: 'ClickAwayListener',
-
-
-	    propTypes: {
-	        children: React.PropTypes.node,
-	        onClickAway: React.PropTypes.func
-	    },
-
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            onClickAway: function onClickAway() {}
-	        };
-	    },
-	    componentDidMount: function componentDidMount() {
-	        document.addEventListener('click', this.handleClickAway, false);
-	    },
-	    componentWillUnmount: function componentWillUnmount() {
-	        document.removeEventListener('click', this.handleClickAway, false);
-	    },
-	    handleClickAway: function handleClickAway(event) {
-	        if (event.defaultPrevented) {
-	            return;
-	        }
-
-	        var el = ReactDOM.findDOMNode(this);
-
-	        if (document.documentElement.contains(event.target) && !isDescendant(el, event.target)) {
-	            this.props.onClickAway(event);
-	        }
-	    },
-	    render: function render() {
-	        return this.props.children;
-	    }
-	});
-
-	module.exports = ClickAwayListener;
+	module.exports = __webpack_require__(15);
 
 /***/ },
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	module.exports = __webpack_require__(16);
-
-/***/ },
-/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1788,7 +1722,12 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var ClickAwayListener = __webpack_require__(14);
+
+	var tabPressed = false;
+
+	function handleTabPress(event) {
+	    tabPressed = event.which === 9;
+	}
 
 	var Select = React.createClass({
 	    displayName: 'Select',
@@ -1884,19 +1823,49 @@ var Z =
 	        }
 	        return state;
 	    },
+	    componentDidMount: function componentDidMount() {
+	        // Listen to tab pressing so that we know when it's a keyboard focus. 
+	        document.addEventListener('keydown', handleTabPress, false);
+	    },
+	    componentWillUnmount: function componentWillUnmount() {
+	        this.cancelFocusTimeout();
+	        document.removeEventListener('keydown', handleTabPress, false);
+	    },
 	    isControlled: function isControlled() {
 	        return typeof this.props.value !== 'undefined';
 	    },
 	    getValue: function getValue() {
 	        return this.isControlled() ? this.props.value : this.state.value;
 	    },
-	    handleClickAway: function handleClickAway() {
+	    cancelFocusTimeout: function cancelFocusTimeout() {
+	        if (this.focusTimeout) {
+	            clearTimeout(this.focusTimeout);
+	            this.focusTimeout = null;
+	        }
+	    },
+	    handleFocus: function handleFocus(event) {
+	        var _this = this;
+
+	        if (event) event.persist();
+	        if (!this.props.disabled) {
+	            // setTimeout is needed because the focus event fires first
+	            // Wait so that we can capture if this was a keyboard focus
+	            this.focusTimeout = setTimeout(function () {
+	                if (tabPressed) {
+	                    _this.setState({ isOpen: true });
+	                }
+	            }, 150);
+	        }
+	    },
+	    handleBlur: function handleBlur(event) {
+	        this.cancelFocusTimeout();
 	        if (this.state.isOpen) {
 	            this.setState({ isOpen: false });
 	        }
 	    },
 	    handleTriggerClick: function handleTriggerClick(event) {
 	        if (!this.props.disabled) {
+	            tabPressed = false;
 	            this.setState({
 	                isOpen: !this.state.isOpen
 	            });
@@ -1980,16 +1949,16 @@ var Z =
 	        }
 	    },
 	    handleKeyUp: function handleKeyUp(event) {
-	        var _this = this;
+	        var _this2 = this;
 
 	        // Enter
 	        // select or deselect the option.
 	        if (event.which === 13) {
 	            var _ret = function () {
-	                var _props = _this.props,
+	                var _props = _this2.props,
 	                    multi = _props.multi,
 	                    options = _props.options;
-	                var hoverIndex = _this.state.hoverIndex;
+	                var hoverIndex = _this2.state.hoverIndex;
 
 
 	                if (hoverIndex < 0 || options[hoverIndex].disabled) {
@@ -1999,7 +1968,7 @@ var Z =
 	                }
 
 	                var optionValue = options[hoverIndex].value;
-	                var value = _this.getValue();
+	                var value = _this2.getValue();
 
 	                if (multi) {
 	                    var optionSelected = value.filter(function (it) {
@@ -2007,12 +1976,12 @@ var Z =
 	                    }).length > 0;
 
 	                    if (optionSelected) {
-	                        _this.deSelectOption(optionValue);
+	                        _this2.deSelectOption(optionValue);
 	                    } else {
-	                        _this.selectOption(optionValue);
+	                        _this2.selectOption(optionValue);
 	                    }
 	                } else {
-	                    _this.selectOption(optionValue, value === optionValue);
+	                    _this2.selectOption(optionValue, value === optionValue);
 	                }
 	            }();
 
@@ -2020,7 +1989,7 @@ var Z =
 	        }
 	    },
 	    render: function render() {
-	        var _this2 = this;
+	        var _this3 = this;
 
 	        var _props2 = this.props,
 	            className = _props2.className,
@@ -2038,57 +2007,55 @@ var Z =
 	        var trigger = this.renderTigger();
 
 	        return React.createElement(
-	            ClickAwayListener,
-	            { onClickAway: this.handleClickAway },
+	            'div',
+	            {
+	                className: cx('dropdown-wrapper select-wrapper', className),
+	                style: style,
+	                tabIndex: disabled ? undefined : '0',
+	                onFocus: this.handleFocus,
+	                onBlur: this.handleBlur,
+	                onKeyDown: this.handleKeyDown,
+	                onKeyUp: this.handleKeyUp
+	            },
+	            trigger,
 	            React.createElement(
 	                'div',
 	                {
-	                    className: cx('dropdown-wrapper select-wrapper', className),
-	                    style: style,
-	                    tabIndex: '0',
-	                    onKeyDown: this.handleKeyDown,
-	                    onKeyUp: this.handleKeyUp
+	                    className: cx('dropdown select-dropdown', dropdownClassName, {
+	                        'offscreen': !isOpen
+	                    }),
+	                    style: dropdownStyle
 	                },
-	                trigger,
 	                React.createElement(
-	                    'div',
-	                    {
-	                        className: cx('dropdown select-dropdown', dropdownClassName, {
-	                            'offscreen': !isOpen
-	                        }),
-	                        style: dropdownStyle
-	                    },
-	                    React.createElement(
-	                        'ul',
-	                        { onMouseLeave: this.handleMouseLeave },
-	                        options.map(function (item, i) {
-	                            var selected = multi ? value.indexOf(item.value) > -1 : value === item.value;
-	                            return React.createElement(
-	                                'li',
-	                                {
-	                                    key: i,
-	                                    className: cx('select-option', {
-	                                        'disabled': item.disabled,
-	                                        'selected': selected,
-	                                        'hover': i === hoverIndex
-	                                    }),
-	                                    onMouseOver: function onMouseOver(e) {
-	                                        return _this2.handleOptionHover(i);
-	                                    },
-	                                    onClick: function onClick(e) {
-	                                        return _this2.handleOptionClick(item, selected);
-	                                    }
+	                    'ul',
+	                    { onMouseLeave: this.handleMouseLeave },
+	                    options.map(function (item, i) {
+	                        var selected = multi ? value.indexOf(item.value) > -1 : value === item.value;
+	                        return React.createElement(
+	                            'li',
+	                            {
+	                                key: i,
+	                                className: cx('select-option', {
+	                                    'disabled': item.disabled,
+	                                    'selected': selected,
+	                                    'hover': i === hoverIndex
+	                                }),
+	                                onMouseOver: function onMouseOver(e) {
+	                                    return _this3.handleOptionHover(i);
 	                                },
-	                                item.text
-	                            );
-	                        })
-	                    )
+	                                onClick: function onClick(e) {
+	                                    return _this3.handleOptionClick(item, selected);
+	                                }
+	                            },
+	                            item.text
+	                        );
+	                    })
 	                )
 	            )
 	        );
 	    },
 	    renderTigger: function renderTigger() {
-	        var _this3 = this;
+	        var _this4 = this;
 
 	        var _props3 = this.props,
 	            selectClassName = _props3.selectClassName,
@@ -2145,7 +2112,7 @@ var Z =
 	                            key: i,
 	                            onClick: function onClick(e) {
 	                                e.stopPropagation();
-	                                _this3.deSelectOption(item.value);
+	                                _this4.deSelectOption(item.value);
 	                            }
 	                        },
 	                        item.text,
@@ -2197,15 +2164,15 @@ var Z =
 	module.exports = Select;
 
 /***/ },
-/* 17 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(18);
+	module.exports = __webpack_require__(17);
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2323,15 +2290,15 @@ var Z =
 	module.exports = Checkbox;
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(20);
+	module.exports = __webpack_require__(19);
 
 /***/ },
-/* 20 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2487,15 +2454,15 @@ var Z =
 	module.exports = RadioGroup;
 
 /***/ },
-/* 21 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(22);
+	module.exports = __webpack_require__(21);
 
 /***/ },
-/* 22 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2505,7 +2472,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Checkbox = __webpack_require__(17);
+	var Checkbox = __webpack_require__(16);
 
 	var CheckboxGroup = React.createClass({
 	    displayName: 'CheckboxGroup',
@@ -2642,15 +2609,15 @@ var Z =
 	module.exports = CheckboxGroup;
 
 /***/ },
-/* 23 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(24);
+	module.exports = __webpack_require__(23);
 
 /***/ },
-/* 24 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2660,7 +2627,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Tab = __webpack_require__(25);
+	var Tab = __webpack_require__(24);
 
 	var Tabs = React.createClass({
 	    displayName: 'Tabs',
@@ -2775,7 +2742,7 @@ var Z =
 	module.exports = Tabs;
 
 /***/ },
-/* 25 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2814,15 +2781,15 @@ var Z =
 	module.exports = Tab;
 
 /***/ },
-/* 26 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(27);
+	module.exports = __webpack_require__(26);
 
 /***/ },
-/* 27 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2830,22 +2797,22 @@ var Z =
 	// Form
 	// ------------------------
 
-	var Formsy = __webpack_require__(28);
+	var Formsy = __webpack_require__(27);
 
-	Formsy.HiddenField = __webpack_require__(35);
-	Formsy.TextField = __webpack_require__(36);
-	Formsy.InputField = __webpack_require__(37);
-	Formsy.SelectField = __webpack_require__(38);
-	Formsy.DateField = __webpack_require__(39);
-	Formsy.RadioGroupField = __webpack_require__(40);
-	Formsy.CheckboxField = __webpack_require__(41);
-	Formsy.CheckboxGroupField = __webpack_require__(42);
-	Formsy.TextAreaField = __webpack_require__(43);
+	Formsy.HiddenField = __webpack_require__(34);
+	Formsy.TextField = __webpack_require__(35);
+	Formsy.InputField = __webpack_require__(36);
+	Formsy.SelectField = __webpack_require__(37);
+	Formsy.DateField = __webpack_require__(38);
+	Formsy.RadioGroupField = __webpack_require__(39);
+	Formsy.CheckboxField = __webpack_require__(40);
+	Formsy.CheckboxGroupField = __webpack_require__(41);
+	Formsy.TextAreaField = __webpack_require__(42);
 
 	module.exports = Formsy;
 
 /***/ },
-/* 28 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -2858,12 +2825,12 @@ var Z =
 
 	var React = global.React || __webpack_require__(3);
 	var Formsy = {};
-	var validationRules = __webpack_require__(29);
-	var formDataToObject = __webpack_require__(30);
-	var utils = __webpack_require__(31);
-	var Mixin = __webpack_require__(32);
-	var HOC = __webpack_require__(33);
-	var Decorator = __webpack_require__(34);
+	var validationRules = __webpack_require__(28);
+	var formDataToObject = __webpack_require__(29);
+	var utils = __webpack_require__(30);
+	var Mixin = __webpack_require__(31);
+	var HOC = __webpack_require__(32);
+	var Decorator = __webpack_require__(33);
 	var options = {};
 	var emptyArray = [];
 
@@ -3311,7 +3278,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 29 */
+/* 28 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3396,7 +3363,7 @@ var Z =
 	module.exports = validations;
 
 /***/ },
-/* 30 */
+/* 29 */
 /***/ function(module, exports) {
 
 	function toObj(source) {
@@ -3447,7 +3414,7 @@ var Z =
 	}
 
 /***/ },
-/* 31 */
+/* 30 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3509,12 +3476,12 @@ var Z =
 	};
 
 /***/ },
-/* 32 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
-	var utils = __webpack_require__(31);
+	var utils = __webpack_require__(30);
 	var React = global.React || __webpack_require__(3);
 
 	var convertValidationsToObject = function convertValidationsToObject(validations) {
@@ -3689,7 +3656,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -3697,7 +3664,7 @@ var Z =
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = global.React || __webpack_require__(3);
-	var Mixin = __webpack_require__(32);
+	var Mixin = __webpack_require__(31);
 	module.exports = function (Component) {
 	  return React.createClass({
 	    displayName: 'Formsy(' + getDisplayName(Component) + ')',
@@ -3730,7 +3697,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -3738,7 +3705,7 @@ var Z =
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = global.React || __webpack_require__(3);
-	var Mixin = __webpack_require__(32);
+	var Mixin = __webpack_require__(31);
 	module.exports = function () {
 	  return function (Component) {
 	    return React.createClass({
@@ -3768,7 +3735,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 35 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3777,7 +3744,7 @@ var Z =
 	// ---------------------------
 
 	var React = __webpack_require__(3);
-	var Formsy = __webpack_require__(28);
+	var Formsy = __webpack_require__(27);
 
 	var HiddenField = React.createClass({
 	    displayName: 'HiddenField',
@@ -3800,7 +3767,7 @@ var Z =
 	module.exports = HiddenField;
 
 /***/ },
-/* 36 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3809,7 +3776,7 @@ var Z =
 	// ---------------------------
 
 	var React = __webpack_require__(3);
-	var Formsy = __webpack_require__(28);
+	var Formsy = __webpack_require__(27);
 	var cx = __webpack_require__(4);
 
 	var TextField = React.createClass({
@@ -3848,7 +3815,7 @@ var Z =
 	module.exports = TextField;
 
 /***/ },
-/* 37 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3862,7 +3829,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(28);
+	var Formsy = __webpack_require__(27);
 
 	var InputField = React.createClass({
 	    displayName: 'InputField',
@@ -3938,7 +3905,7 @@ var Z =
 	module.exports = InputField;
 
 /***/ },
-/* 38 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3952,8 +3919,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Select = __webpack_require__(15);
-	var Formsy = __webpack_require__(28);
+	var Select = __webpack_require__(14);
+	var Formsy = __webpack_require__(27);
 
 	var SelectField = React.createClass({
 	    displayName: 'SelectField',
@@ -4021,7 +3988,7 @@ var Z =
 	module.exports = SelectField;
 
 /***/ },
-/* 39 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4036,7 +4003,7 @@ var Z =
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
 	var DatePicker = __webpack_require__(12);
-	var Formsy = __webpack_require__(28);
+	var Formsy = __webpack_require__(27);
 
 	var DateField = React.createClass({
 	    displayName: 'DateField',
@@ -4096,7 +4063,7 @@ var Z =
 	module.exports = DateField;
 
 /***/ },
-/* 40 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4110,8 +4077,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(28);
-	var RadioGroup = __webpack_require__(19);
+	var Formsy = __webpack_require__(27);
+	var RadioGroup = __webpack_require__(18);
 
 	var RadioGroupField = React.createClass({
 	    displayName: 'RadioGroupField',
@@ -4158,7 +4125,7 @@ var Z =
 	module.exports = RadioGroupField;
 
 /***/ },
-/* 41 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4172,8 +4139,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(28);
-	var Checkbox = __webpack_require__(17);
+	var Formsy = __webpack_require__(27);
+	var Checkbox = __webpack_require__(16);
 
 	var CheckboxField = React.createClass({
 	    displayName: 'CheckboxField',
@@ -4216,7 +4183,7 @@ var Z =
 	module.exports = CheckboxField;
 
 /***/ },
-/* 42 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4230,8 +4197,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(28);
-	var CheckboxGroup = __webpack_require__(21);
+	var Formsy = __webpack_require__(27);
+	var CheckboxGroup = __webpack_require__(20);
 
 	var CheckboxGroupField = React.createClass({
 	    displayName: 'CheckboxGroupField',
@@ -4279,7 +4246,7 @@ var Z =
 	module.exports = CheckboxGroupField;
 
 /***/ },
-/* 43 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4293,7 +4260,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(28);
+	var Formsy = __webpack_require__(27);
 
 	var TextAreaField = React.createClass({
 	    displayName: 'TextAreaField',
@@ -4350,6 +4317,95 @@ var Z =
 	});
 
 	module.exports = TextAreaField;
+
+/***/ },
+/* 43 */
+/***/ function(module, exports) {
+
+	'use strict';
+	/* eslint-disable no-unused-vars */
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+	function toObject(val) {
+		if (val === null || val === undefined) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	function shouldUseNative() {
+		try {
+			if (!Object.assign) {
+				return false;
+			}
+
+			// Detect buggy property enumeration order in older V8 versions.
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+			var test1 = new String('abc');  // eslint-disable-line
+			test1[5] = 'de';
+			if (Object.getOwnPropertyNames(test1)[0] === '5') {
+				return false;
+			}
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test2 = {};
+			for (var i = 0; i < 10; i++) {
+				test2['_' + String.fromCharCode(i)] = i;
+			}
+			var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+				return test2[n];
+			});
+			if (order2.join('') !== '0123456789') {
+				return false;
+			}
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test3 = {};
+			'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+				test3[letter] = letter;
+			});
+			if (Object.keys(Object.assign({}, test3)).join('') !==
+					'abcdefghijklmnopqrst') {
+				return false;
+			}
+
+			return true;
+		} catch (e) {
+			// We don't expect any of the above to throw, but better to be safe.
+			return false;
+		}
+	}
+
+	module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+		var from;
+		var to = toObject(target);
+		var symbols;
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = Object(arguments[s]);
+
+			for (var key in from) {
+				if (hasOwnProperty.call(from, key)) {
+					to[key] = from[key];
+				}
+			}
+
+			if (Object.getOwnPropertySymbols) {
+				symbols = Object.getOwnPropertySymbols(from);
+				for (var i = 0; i < symbols.length; i++) {
+					if (propIsEnumerable.call(from, symbols[i])) {
+						to[symbols[i]] = from[symbols[i]];
+					}
+				}
+			}
+		}
+
+		return to;
+	};
+
 
 /***/ }
 /******/ ]);

@@ -15,6 +15,13 @@ let App = React.createClass({
         });
     },
 
+    handleClick() {
+        const today = new Date();
+        this.setState({
+            date: today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+        });
+    },
+
     render() {
         return (
             <div>
@@ -24,15 +31,16 @@ let App = React.createClass({
                 </section>
                 <section>
                     <h5>Date Picker with defaultValue and maximum&minimum value</h5>
-                    <DatePicker 
-                        defaultValue="2014-08-05"
-                        maxValue="2016-09-20"
-                        minValue="2010-03-14"
-                    />
+                    <DatePicker defaultValue="2014-08-05"/>
+                </section>
+                <section>
+                    <h5>Controlled Date Picker</h5>
+                    <DatePicker value="2016-06-06"/>
                 </section>
                 <section>
                     <h5>Controlled Date Picker</h5>
                     <DatePicker value={this.state.date} onChange={this.handleChange}/>
+                    <button style={{marginLeft: 20}} onClick={this.handleClick}>现在</button>
                 </section>
                 <section>
                     <h5>Controlled Date Picker</h5>

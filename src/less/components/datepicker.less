@@ -2,11 +2,16 @@
 // Date Picker
 // --------------------------------------------------
 
+.datepicker-wrapper {
+    width: 180px;
+}
+
 .datepicker-trigger {
     position: relative;
     width: 100%;
     height: @input-height;
     line-height: @input-height - 2;
+    padding: 0 22px 0 10px;
     border: 1px solid @border-color-base;
 
     &.focus {
@@ -29,12 +34,6 @@
             color: @text-color-light;
             cursor: @cursor-disabled;
         }
-    }
-    > .datepicker-input {
-        width: 100%;
-        height: 100%;
-        padding-right: 22px;
-        border: 0;
     }
     > .icon {
         position: absolute;
@@ -184,6 +183,10 @@
 
         &:hover {
             color: @primary-color-dark;
+        }
+        &.disabled {
+            color: @text-color-lighter;
+            cursor: @cursor-disabled;
         }
     }
 }
