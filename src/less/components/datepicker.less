@@ -4,19 +4,19 @@
 
 .datepicker-wrapper {
     width: 180px;
+
+    &:focus > .datepicker-trigger {
+        border-color: darken(@border-color-base, 18%);
+    }
 }
 
 .datepicker-trigger {
     position: relative;
-    width: 100%;
     height: @input-height;
     line-height: @input-height - 2;
     padding: 0 22px 0 10px;
     border: 1px solid @border-color-base;
 
-    &.focus {
-        border-color: darken(@border-color-base, 18%);
-    }
     &.required {
         border-color: @color-warning;
     }
@@ -25,29 +25,26 @@
     }
     &.disabled {
         background-color: #efefef;
-        color: @text-color-lighter;
+        cursor: @cursor-disabled;
 
-        > .datepicker-input {
-            cursor: @cursor-disabled;
-        }
-        > .icon {
+        .icon {
             color: @text-color-light;
             cursor: @cursor-disabled;
         }
     }
-    > .icon {
+    .icon {
         position: absolute;
         top: 10px;
         right: 5px;
         cursor: pointer;
     }
-    > .placeholder {
+    .placeholder {
         color: @text-color-lighter;
     }
 }
 
 .datepicker-panel {
-    width: 266px;
+    width: 263px;
 }
 
 .datepicker-head,
@@ -59,24 +56,39 @@
 
 .datepicker-head {
     text-align: center;
+    background-color: @primary-color;
+    color: #fff;
 
     a {
         position: absolute;
         display: inline-block;
-        padding: 0 3px;
-        line-height: 34px;
+        top: 8px;
+        padding: 2px 4px;
+        border-radius: 2px;
         font-size: 14px;
         cursor: pointer;
-        color: @text-color-light;
+        color: #fff;
         text-decoration: none;
 
         &:hover {
-            color: #000;
+            background-color: @primary-color-light;
         }
         &.disabled {
             color: @text-color-lighter;
             cursor: @cursor-disabled;
         }
+    }
+}
+
+.datepicker-year {
+    margin-right: 5px;
+    padding: 2px 4px;
+    border-radius: 2px;
+    color: #fff;
+    cursor: pointer;
+
+    &:hover {
+        background-color: @primary-color-light;
     }
 }
 
@@ -140,6 +152,26 @@
     }
 }
 
+.datepicker-year-select {
+    max-height: 202px;
+    overflow-y: auto;
+
+    > li {
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgb(232, 232, 232);
+        }
+        &.active {
+            background-color: @primary-color;
+            color: #fff;
+        }
+    }
+}
+
 .datepicker-time-col {
     float: left;
     width: 88px;
@@ -151,6 +183,7 @@
         overflow-y: auto;
     }
     &:first-child {
+        width: 87px;
         border-left-width: 0;
     }
     > li {
@@ -167,7 +200,7 @@
             background-color: rgb(232, 232, 232);
         }
         &.active {
-            background-color: @primary-color;
+            background-color: #aaa;
             color: #fff;
         }
     }

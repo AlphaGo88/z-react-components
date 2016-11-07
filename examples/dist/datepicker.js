@@ -88,16 +88,6 @@
 	                React.createElement(
 	                    'h5',
 	                    null,
-	                    'Date Picker with defaultValue and maximum&minimum value'
-	                ),
-	                React.createElement(DatePicker, { defaultValue: '2014-08-05' })
-	            ),
-	            React.createElement(
-	                'section',
-	                null,
-	                React.createElement(
-	                    'h5',
-	                    null,
 	                    'Controlled Date Picker'
 	                ),
 	                React.createElement(DatePicker, { value: '2016-06-06' })

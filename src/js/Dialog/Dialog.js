@@ -106,12 +106,32 @@ const Dialog = React.createClass({
             contentStyle, 
             actionsContainerStyle, 
             title, 
-            children, 
-            actions, 
+            children,  
             isOpen, 
             onRequestClose,
             onOK 
         } = this.props;
+
+        const actions = this.props.actions ||
+            [                                
+                <Button 
+                    key={0}
+                    type="flat" 
+                    primary={true}
+                    onClick={onRequestClose}
+                >
+                    取消
+                </Button>,
+                <Button 
+                    key={1}
+                    type="flat" 
+                    primary={true}
+                    focus={true}
+                    onClick={onOK}
+                >
+                    确认
+                </Button>
+            ];
 
         return (
             <div 
@@ -144,27 +164,7 @@ const Dialog = React.createClass({
                             style={actionsContainerStyle}
                             className={cx('z-dialog-action-container', actionsContainerClassName)}
                         >
-                            {actions || 
-                                [
-                                    <Button 
-                                        key={0}
-                                        type="flat" 
-                                        primary={true}
-                                        onClick={onRequestClose}
-                                    >
-                                        取消
-                                    </Button>,
-                                    <Button 
-                                        key={1}
-                                        type="flat" 
-                                        primary={true}
-                                        focus={true}
-                                        onClick={onOK}
-                                    >
-                                        确认
-                                    </Button>
-                                ]
-                            }
+                            {actions}
                         </div>
                     </div>
                 }

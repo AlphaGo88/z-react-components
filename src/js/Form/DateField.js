@@ -47,6 +47,7 @@ const DateField = React.createClass({
                         'required': this.showRequired(),
                         'error': this.showError()
                     })}
+                    inputStyle={{width: '100%'}}
                     value={this.getValue() || ''}
                     onChange={this.changeValue}
                 />

@@ -54,37 +54,86 @@
 	    displayName: "App",
 	    getInitialState: function getInitialState() {
 	        return {
-	            activeTab: 0
+	            activeTab: 'tab1'
 	        };
 	    },
-	    handleTabChange: function handleTabChange(tabIndex) {
-	        this.setState({ activeTab: tabIndex });
+	    handleTabChange: function handleTabChange(value) {
+	        this.setState({ activeTab: value });
 	    },
 	    render: function render() {
 
 	        return React.createElement(
-	            "section",
+	            "div",
 	            null,
 	            React.createElement(
-	                Tabs,
-	                {
-	                    activeIndex: this.state.activeTab,
-	                    onChange: this.handleTabChange
-	                },
+	                "section",
+	                null,
 	                React.createElement(
-	                    Tabs.Tab,
-	                    { label: "tab1" },
-	                    "jdsifojflsmfd"
-	                ),
+	                    Tabs,
+	                    null,
+	                    React.createElement(
+	                        Tabs.Tab,
+	                        { label: "tab1" },
+	                        "jdsifojflsmfd"
+	                    ),
+	                    React.createElement(
+	                        Tabs.Tab,
+	                        { label: "tab2" },
+	                        "\u4F60\u597D\u820D\u5F97\u79BB\u5F00\u623F\u95F4"
+	                    ),
+	                    React.createElement(
+	                        Tabs.Tab,
+	                        { label: "tab3" },
+	                        "\u5973\u90CE\u7684\u5B50\u5973\u963F\u4F5Bi\u8FDD\u6CD5jo\u989D\u5916i\u4ED8\u91D1\u989D\u6211if"
+	                    )
+	                )
+	            ),
+	            React.createElement(
+	                "section",
+	                null,
 	                React.createElement(
-	                    Tabs.Tab,
-	                    { label: "tab2" },
-	                    "\u4F60\u597D\u820D\u5F97\u79BB\u5F00\u623F\u95F4"
-	                ),
+	                    Tabs,
+	                    { value: this.state.activeTab, onChange: this.handleTabChange },
+	                    React.createElement(
+	                        Tabs.Tab,
+	                        { label: "tab1", value: "tab1" },
+	                        "jdsifojflsmfd"
+	                    ),
+	                    React.createElement(
+	                        Tabs.Tab,
+	                        { label: "tab2", value: "tab2" },
+	                        "\u4F60\u597D\u820D\u5F97\u79BB\u5F00\u623F\u95F4"
+	                    ),
+	                    React.createElement(
+	                        Tabs.Tab,
+	                        { label: "tab3", value: "tab3", onActive: function onActive(value) {
+	                                return alert(value);
+	                            } },
+	                        "\u5973\u90CE\u7684\u5B50\u5973\u963F\u4F5Bi\u8FDD\u6CD5jo\u989D\u5916i\u4ED8\u91D1\u989D\u6211if"
+	                    )
+	                )
+	            ),
+	            React.createElement(
+	                "section",
+	                null,
 	                React.createElement(
-	                    Tabs.Tab,
-	                    { label: "tab3" },
-	                    "\u5973\u90CE\u7684\u5B50\u5973\u963F\u4F5Bi\u8FDD\u6CD5jo\u989D\u5916i\u4ED8\u91D1\u989D\u6211if"
+	                    Tabs,
+	                    { defaultActiveIndex: 1, tabStyle: { width: 200 } },
+	                    React.createElement(
+	                        Tabs.Tab,
+	                        { label: "tab1", contentStyle: { backgroundColor: 'yellow' } },
+	                        "jdsifojflsmfd"
+	                    ),
+	                    React.createElement(
+	                        Tabs.Tab,
+	                        { label: "tab2" },
+	                        "\u4F60\u597D\u820D\u5F97\u79BB\u5F00\u623F\u95F4"
+	                    ),
+	                    React.createElement(
+	                        Tabs.Tab,
+	                        { label: "tab3" },
+	                        "\u5973\u90CE\u7684\u5B50\u5973\u963F\u4F5Bi\u8FDD\u6CD5jo\u989D\u5916i\u4ED8\u91D1\u989D\u6211if"
+	                    )
 	                )
 	            )
 	        );

@@ -2,20 +2,20 @@
 // Pagination
 // --------------------------------------------------
 
-.pagination {
+.z-pagination {
 
     > .page,
     > .page-btn {
         display: inline-block;
         height: 26px;
         line-height: 26px;
+        color: @text-color-light;
         cursor: pointer;
         .user-select(none);
     }
     
     > .page {
         margin: 0 2px;
-        padding: 0 10px;
 
         &:hover {
             color: @primary-color;
@@ -29,6 +29,15 @@
         }
     }
 
+    > .page-small {
+        width: 26px;
+        text-align: center;
+    }
+
+    > .page-big {
+        padding: 0 4px;
+    }
+
     > .page-btn {
         margin: 0 6px;
         font-size: 16px;
@@ -39,7 +48,7 @@
         }
 
         &.disabled {
-            color: #999;
+            color: #aaa;
             cursor: @cursor-disabled;
         }
     }

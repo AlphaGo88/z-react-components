@@ -30,10 +30,6 @@ let App = React.createClass({
                     <DatePicker/>
                 </section>
                 <section>
-                    <h5>Date Picker with defaultValue and maximum&minimum value</h5>
-                    <DatePicker defaultValue="2014-08-05"/>
-                </section>
-                <section>
                     <h5>Controlled Date Picker</h5>
                     <DatePicker value="2016-06-06"/>
                 </section>

@@ -11,8 +11,9 @@ module.exports = {
         if (!layer) {
             layer = document.createElement('div');
             layer.id = 'z-msg-layer';
-            layer.addEventListener('transitionend', function(e) {
-                layer.removeChild(e.target);
+            layer.addEventListener('transitionend', function(event) {
+                clearTimeout(event.target.exitTimeout);
+                layer.removeChild(event.target);
             }, false);
             document.body.appendChild(layer);
         }
@@ -44,7 +45,7 @@ module.exports = {
         msgBox.innerHTML = _html;
         layer.appendChild(msgBox);
 
-        setTimeout(function() {
+        msgBox.exitTimeout = setTimeout(function() {
             msgBox.className += ' exit';
         }, duration || 4000);
     },

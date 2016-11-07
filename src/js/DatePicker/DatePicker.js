@@ -217,7 +217,7 @@ const DatePicker = React.createClass({
         }
     },
 
-    handleTriggerClick() {
+    handleTriggerClick(event) {
         if (!this.props.disabled) {
             tabPressed = false;
             if (this.state.isOpen) {
@@ -225,6 +225,12 @@ const DatePicker = React.createClass({
             } else {
                 this.setState({ isOpen: true });
             }
+        }
+    },
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.view === 'year') {
+            this.yearSelect.scrollTop = 2310;
         }
     },
 
@@ -243,6 +249,13 @@ const DatePicker = React.createClass({
             objectAssign(newState, getDateProps(this.getValue()))
         }
         this.setState(newState);
+    },
+
+    // Switch to year selection.
+    selectYear() {
+        if (this.state.date) {
+            this.setState({ view: 'year' });
+        }
     },
 
     // Switch to time selection.
@@ -298,6 +311,14 @@ const DatePicker = React.createClass({
             year: month === 11 ? year + 1 : year,
             month: nextMonth,
             date: date > monthDays ? monthDays : date
+        });
+    },
+
+    // Select a year.
+    setYear(year) {
+        this.setState({
+            view: 'date',
+            year 
         });
     },
 
@@ -446,34 +467,6 @@ const DatePicker = React.createClass({
         }
     },
 
-    renderTrigger() {
-        const { 
-            inputClassName, 
-            inputStyle, 
-            placeholder, 
-            selectTime, 
-            disabled 
-        } = this.props;
-        const { isOpen } = this.state;
-        const dateStr = this.getValue();
-
-        return (
-            <div 
-                className={cx('datepicker-trigger', inputClassName, {
-                    'focus': isOpen,
-                    'disabled': disabled
-                })}
-                style={inputStyle}
-                onClick={this.handleTriggerClick}
-            >
-                {dateStr ||
-                    <span className="placeholder">{placeholder}</span>
-                }
-                <i className="fa fa-calendar icon"></i>
-            </div>
-        );
-    },
-
     renderPanelHead() {
         const { view, year, month, date, hours, minutes, seconds } = this.state;
         let dateTimeStr = '';
@@ -493,8 +486,8 @@ const DatePicker = React.createClass({
                         className="fa fa-angle-left datepicker-prev-month-btn"
                         onClick={this.prevMonth}>
                     </a>
-                    <b>{`${year}年`}</b>
-                    <b>{`${month + 1}月`}</b>
+                    <b className="datepicker-year" onClick={this.selectYear}>{`${year}年`}</b>
+                    <b className="datepicker-month">{`${month + 1}月`}</b>
                     <a 
                         className="fa fa-angle-right datepicker-next-month-btn"
                         onClick={this.nextMonth}>
@@ -519,12 +512,13 @@ const DatePicker = React.createClass({
 
         /* Generates dates Start */
 
-        const howManyDates = getMonthDays(year, month);
+        let dates = [], i;
+        let renderedDates = [];
+
+        const dayCount = getMonthDays(year, month);
         
         // What day is the first date of the month.
         const offset = new Date(year, month, 1).getDay() || 7;   
-
-        let dates = [], rows = [], i;
 
         // Empty dates before the first date.
         for (i = 1; i < offset; i++) {
@@ -532,7 +526,7 @@ const DatePicker = React.createClass({
         }
 
         // Dates of current month.
-        for (i = 1; i <= howManyDates; i++) {
+        for (i = 1; i <= dayCount; i++) {
             dates.push({
                 value: i,
                 active: i === date,
@@ -540,31 +534,105 @@ const DatePicker = React.createClass({
             });
         }
 
-        // Rows of dates.
         for (i = 0; i <= dates.length; i += 7) {
-            rows.push(dates.slice(i, i + 7));
+            renderedDates.push(
+                <tr key={i}>
+                    {dates.slice(i, i + 7).map((date, j) => (
+                        <td key={j}>
+                            {date.value > 0 &&
+                                <span 
+                                    className={cx('datepicker-date', { 
+                                        'disabled': date.disabled, 
+                                        'active': date.active 
+                                    })}
+                                    onClick={e => {
+                                        !date.disabled && this.setDate(date.value);
+                                    }}
+                                >
+                                    {date.value}
+                                </span>
+                            }
+                        </td>
+                    ))}
+                </tr>
+            );
         }
 
         /* Generates dates End */
 
+        // Years
+        let years = [];
+        let renderedYears = [];
+
+        for (i = year - 100; i <= year + 100; i++) {
+            years.push(i);
+        }
+        renderedYears = years.map((year, i) => (
+            <li 
+                key={i}
+                className={cx({
+                    'active': year === this.state.year
+                })}
+                onClick={e => this.setYear(year)}
+            >
+                {year}
+            </li>
+        ));
+
         // Hours, minutes and seconds.
-        let hours = [], minutes = [], seconds = [];
+        let renderedTimeSelect = null;
 
         if (selectTime) {
             let timeArr = [];
 
-            for (i = 0; i <= 60; i++) {
+            for (i = 0; i <= 59; i++) {
                 timeArr.push(i < 10 ? ('0' + i) : i);
             }
-            hours = timeArr.slice(0, 24);
-            minutes = timeArr.slice(0, 60);
-            seconds = timeArr.slice(0, 60);
+            renderedTimeSelect = (
+                <div className={cx('clearfix', {
+                    'hide': view === 'date'
+                })}>
+                    <ul className="datepicker-time-col">
+                        {timeArr.slice(0, 24).map((hour, i) => (
+                            <li 
+                                key={i} 
+                                onClick={e => this.setHours(i)} 
+                                className={cx({'active': i === this.state.hours})}
+                            >
+                                {`${hour}时`}
+                            </li>
+                        ))}
+                    </ul>
+                    <ul className="datepicker-time-col">
+                        {timeArr.map((minute, i) => (
+                            <li 
+                                key={i} 
+                                onClick={e => this.setMinutes(i)} 
+                                className={cx({'active': i === this.state.minutes})}
+                            >
+                                {`${minute}分`}
+                            </li>
+                        ))}
+                    </ul>
+                    <ul className="datepicker-time-col">
+                        {timeArr.map((second, i) => (
+                            <li 
+                                key={i} 
+                                onClick={e => this.setSeconds(i)} 
+                                className={cx({'active': i === this.state.seconds})}
+                            >
+                                {`${second}秒`}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
         }
 
         return (
             <div className="datepicker-body">
                 <table className={cx('datepicker-table', {
-                    'hide': view === 'time'
+                    'hide': view !== 'date'
                 })}>
                     <thead>
                         <tr>
@@ -578,68 +646,18 @@ const DatePicker = React.createClass({
                         </tr>
                     </thead>
                     <tbody>
-                        {rows.map((row, idx) => (
-                            <tr key={idx}>
-                                {row.map((item, idx) => (
-                                    <td key={idx}>
-                                        {item.value > 0 &&
-                                            <span 
-                                                className={cx('datepicker-date', { 
-                                                    'disabled': item.disabled, 
-                                                    'active': item.active 
-                                                })}
-                                                onClick={() => {
-                                                    item.disabled || this.setDate(item.value);
-                                                }}
-                                            >
-                                                {item.value}
-                                            </span>
-                                        }
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
+                        {renderedDates}
                     </tbody>
                 </table>
-                {selectTime &&
-                    <div className={cx('clearfix', {
-                        'hide': view === 'date'
-                    })}>
-                        <ul className="datepicker-time-col">
-                            {hours.map((hour, i) => (
-                                <li 
-                                    key={i} 
-                                    onClick={e => {this.setHours(i)}} 
-                                    className={cx({'active': i === this.state.hours})}
-                                >
-                                    {`${hour}时`}
-                                </li>
-                            ))}
-                        </ul>
-                        <ul className="datepicker-time-col">
-                            {minutes.map((minute, i) => (
-                                <li 
-                                    key={i} 
-                                    onClick={e => {this.setMinutes(i)}} 
-                                    className={cx({'active': i === this.state.minutes})}
-                                >
-                                    {`${minute}分`}
-                                </li>
-                            ))}
-                        </ul>
-                        <ul className="datepicker-time-col">
-                            {seconds.map((second, i) => (
-                                <li 
-                                    key={i} 
-                                    onClick={e => {this.setSeconds(i)}} 
-                                    className={cx({'active': i === this.state.seconds})}
-                                >
-                                    {`${second}秒`}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                {view === 'year' &&
+                    <ul 
+                        ref={(ul) => this.yearSelect = ul}
+                        className="datepicker-year-select"
+                    >
+                        {renderedYears}
+                    </ul>
                 }
+                {selectTime && renderedTimeSelect}
             </div>
         );
     },
@@ -662,7 +680,7 @@ const DatePicker = React.createClass({
                             :
                             <span 
                                 className={cx({
-                                    'disabled': !date
+                                    'disabled': !date || date < 0
                                 })} 
                                 onClick={this.selectTime}
                             >
@@ -671,7 +689,7 @@ const DatePicker = React.createClass({
                         }
                         <span 
                             className={cx('datepicker-right-btn', {
-                                'disabled': !date
+                                'disabled': !date || date < 0
                             })} 
                             onClick={this.confirm}
                         >
@@ -692,14 +710,17 @@ const DatePicker = React.createClass({
     render() {
         const { 
             className, 
+            inputClassName,
             dropdownClassName, 
             style, 
+            inputStyle,
             dropdownStyle,
+            placeholder,
             disabled 
         } = this.props;
         const { isOpen } = this.state;
+        const dateStr = this.getValue();
 
-        const trigger = this.renderTrigger();
         const panelHead = this.renderPanelHead();
         const panelBody = this.renderPanelBody();
         const panelFoot = this.renderPanelFoot();
@@ -714,7 +735,18 @@ const DatePicker = React.createClass({
                 onKeyDown={this.handleKeyDown}
                 onKeyUp={this.handleKeyUp}
             >
-                {trigger}
+                <div
+                    className={cx('dropdown-trigger datepicker-trigger', inputClassName, {
+                        'disabled': disabled
+                    })}  
+                    style={inputStyle}
+                    onClick={this.handleTriggerClick}
+                >
+                    {dateStr ||
+                        <span className="placeholder">{placeholder}</span>
+                    }
+                    <i className="fa fa-calendar icon"></i>
+                </div>
                 <div 
                     className={cx('dropdown datepicker-panel', dropdownClassName, {
                         'offscreen': !isOpen

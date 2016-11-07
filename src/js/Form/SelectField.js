@@ -53,8 +53,9 @@ const SelectField = React.createClass({
                     className={cx('form-control', controlClassName)}
                     selectClassName={cx({
                         'required': this.showRequired(),
-                        'error': this.showError()
+                        'error': this.showError()                        
                     })}
+                    selectStyle={{width: '100%'}}
                     multi={multi}
                     value={_value}
                     onChange={this.changeValue}

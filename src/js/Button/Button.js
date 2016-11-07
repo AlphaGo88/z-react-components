@@ -59,22 +59,27 @@ const Button = React.createClass({
         focus: React.PropTypes.bool,
 
         /**
-         * Remove the focus status of the button.
-         */
-        removeFocus: React.PropTypes.bool,
-
-        /**
          * Whether the button is disabled.
          */
         disabled: React.PropTypes.bool,
 
         /**
-         * Callback when the button is blurred.
+         * Fires when the button is focused.
+         */
+        onFocus: React.PropTypes.func,
+
+        /**
+         * Fires when the button is focused by keyboard.
+         */
+        onTabFocus: React.PropTypes.func,
+
+        /**
+         * Fires when the button is blurred.
          */
         onBlur: React.PropTypes.func,
 
         /**
-         * Callback when clicking the button.
+         * Fires when clicking the button.
          */
         onClick: React.PropTypes.func
     },
@@ -88,8 +93,8 @@ const Button = React.createClass({
             fullWidth: false,
             disabled: false,
             focus: false,
-            removeFocus: false,
             onFocus: () => {},
+            onTabFocus: () => {},
             onBlur: () => {},
             onClick: () => {}
         };
@@ -102,15 +107,14 @@ const Button = React.createClass({
     },
 
     componentWillReceiveProps(nextProps) {
-        if ((nextProps.disabled || nextProps.removeFocus) && 
-            this.state.focused) {
+        if (nextProps.disabled && this.state.focused) {
             this.setState({ focused: false });
         }
     },
 
     componentDidMount() {
         if (!this.props.disabled && this.props.focus) {
-            ReactDOM.findDOMNode(this).focus();
+            this.button.focus();
         }
         // Listen to tab pressing so that we know when it's a keyboard focus. 
         document.addEventListener('keydown', handleTabPress, false);
@@ -130,12 +134,13 @@ const Button = React.createClass({
 
     handleFocus(event) {
         if (event) event.persist();
-        if (!this.props.disabled && !this.props.removeFocus) {
+        if (!this.props.disabled) {
             // setTimeout is needed because the focus event fires first
             // Wait so that we can capture if this was a keyboard focus
             this.focusTimeout = setTimeout(() => {
                 if (tabPressed) {
                     this.setState({ focused: true });
+                    this.props.onTabFocus(event);
                 }
             }, 150);
             this.props.onFocus(event);
@@ -178,6 +183,7 @@ const Button = React.createClass({
         }
 
         const renderProps = {
+            ref: (el) => this.button = el,
             className: cx(className, {
                 [`btn-${type}`]: true,
                 [`btn-${size}`]: true,

@@ -56,7 +56,7 @@ const Pagination = React.createClass({
 
         /**
          * Callback when the activePage page changes.
-         * @param {number} pageNo
+         * @param {number} page
          */
         onChange: React.PropTypes.func,
     },
@@ -116,7 +116,7 @@ const Pagination = React.createClass({
         return (
             <div 
                 style={style} 
-                className={cx('pagination', className)}
+                className={cx('z-pagination', className)}
             >
                 <span 
                     className={cx('page-btn fa fa-angle-double-left', {
@@ -139,6 +139,8 @@ const Pagination = React.createClass({
                         key={pageNo}
                         style={pageStyle} 
                         className={cx('page', pageClassName, {
+                            'page-small': pageNo < 100,
+                            'page-big': pageNo >= 100,
                             'active': pageNo === activePage
                         })} 
                         onClick={e => {

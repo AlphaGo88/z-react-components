@@ -143,10 +143,10 @@
 	                React.createElement(Date, { className: 'col-6', name: 'birth', title: 'graduate', selectTime: true }),
 	                React.createElement(Checkbox, { className: 'col-6', name: 'cb1', title: '\u662F\u5426\u5DF2\u5A5A' }),
 	                React.createElement(Checkbox, { className: 'col-6', name: 'cb2', title: '\u662F\u5426\u5355\u8EAB' }),
-	                React.createElement(Select, { className: 'col-6', name: 'select1', options: countries, title: 'country', onChange: this.countryChange }),
+	                React.createElement(Select, { className: 'col-6', name: 'select1', options: countries, title: 'country', onChange: this.countryChange, required: true }),
 	                React.createElement(Select, { ref: 'citySelect', className: 'col-6', name: 'select2', options: cities[country], title: 'city' }),
-	                React.createElement(RadioGroup, { className: 'col-6', name: 'radio', items: countries, required: true }),
-	                React.createElement(CheckboxGroup, { className: 'col-6', name: 'checkbox', items: fruits, required: true }),
+	                React.createElement(RadioGroup, { className: 'col-6', name: 'radio', items: countries }),
+	                React.createElement(CheckboxGroup, { className: 'col-6', name: 'checkbox', items: fruits }),
 	                React.createElement(TextArea, { className: 'col-6', name: 'ta' }),
 	                React.createElement(
 	                    'div',

@@ -86,7 +86,7 @@ const RadioGroup = React.createClass({
         }
     },
 
-    handleChange(value) {
+    handleChange(event, value) {
         if (!this.props.disabled) {
             if (!this.props.value) {
                 this.setState({ value });
@@ -130,7 +130,7 @@ const RadioGroup = React.createClass({
                                 value={item.value}
                                 disabled={item.disabled || this.props.disabled}
                                 checked={item.value === selectedValue}
-                                onChange={(e) => this.handleChange(item.value)}
+                                onChange={e => this.handleChange(e, item.value)}
                             />
                             <span>{item.text}</span>
                         </label>

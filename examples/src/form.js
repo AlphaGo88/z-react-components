@@ -81,10 +81,10 @@ const MyAppForm = React.createClass({
                 <Date className="col-6" name="birth" title="graduate" selectTime={true}/>
                 <Checkbox className="col-6" name="cb1" title="是否已婚"/>
                 <Checkbox className="col-6" name="cb2" title="是否单身"/>
-                <Select className="col-6" name="select1" options={countries} title="country" onChange={this.countryChange}/>
+                <Select className="col-6" name="select1" options={countries} title="country" onChange={this.countryChange} required/>
                 <Select ref="citySelect" className="col-6" name="select2" options={cities[country]} title="city"/>
-                <RadioGroup className="col-6" name="radio" items={countries} required/>
-                <CheckboxGroup className="col-6" name="checkbox" items={fruits} required/>
+                <RadioGroup className="col-6" name="radio" items={countries}/>
+                <CheckboxGroup className="col-6" name="checkbox" items={fruits}/>
                 <TextArea className="col-6" name="ta"/>
                 <div className="form-group col-12">
                     <Button primary={true} disabled={!this.state.canSubmit}>Submit</Button>

@@ -19,7 +19,7 @@ const Select = React.createClass({
         className: React.PropTypes.string,
 
         /**
-         * The css class name of the select element.
+         * The css class name of the trigger element.
          */
         selectClassName: React.PropTypes.string,
 
@@ -34,7 +34,7 @@ const Select = React.createClass({
         style: React.PropTypes.object,
 
         /**
-         * Overwrite the inline styles of the select element.
+         * Overwrite the inline styles of the trigger element.
          */
         selectStyle: React.PropTypes.object,
 
@@ -49,7 +49,13 @@ const Select = React.createClass({
         multi: React.PropTypes.bool,
 
         /**
-         * The placeholder of the input element.
+         * The select's options.
+         * Each option has a `value` prop and a `text` prop.
+         */
+        options: React.PropTypes.array,
+
+        /**
+         * The placeholder text.
          */
         placeholder: React.PropTypes.string,
 
@@ -122,14 +128,6 @@ const Select = React.createClass({
         document.removeEventListener('keydown', handleTabPress, false);
     },
 
-    isControlled() {
-        return typeof this.props.value !== 'undefined';
-    },
-
-    getValue() {
-        return this.isControlled() ? this.props.value : this.state.value;
-    },
-
     cancelFocusTimeout() {
         if (this.focusTimeout) {
             clearTimeout(this.focusTimeout);
@@ -166,15 +164,23 @@ const Select = React.createClass({
         }
     },
 
-    handleMouseLeave() {
+    isControlled() {
+        return typeof this.props.value !== 'undefined';
+    },
+
+    getValue() {
+        return this.isControlled() ? this.props.value : this.state.value;
+    },
+
+    handleMouseLeave(event) {
         this.setState({ hoverIndex: -1 });
     },
 
-    handleOptionHover(index) {
+    handleOptionHover(event, index) {
         this.setState({ hoverIndex: index });
     },
 
-    handleOptionClick(item, selected) {
+    handleOptionClick(event, item, selected) {
         if (!item.disabled) {
             if (this.props.multi && selected) {
                 this.deSelectOption(item.value);
@@ -279,98 +285,45 @@ const Select = React.createClass({
     render() {
         const { 
             className, 
+            selectClassName,
             dropdownClassName,
             style, 
-            dropdownStyle,
-            multi, 
-            disabled, 
-            options
-        } = this.props;
-        const { isOpen, hoverIndex } = this.state;
-        const value = this.getValue();
-        const trigger = this.renderTigger();
-
-        return (
-            <div 
-                className={cx('dropdown-wrapper select-wrapper', className)}
-                style={style}
-                tabIndex={disabled ? undefined : '0'} 
-                onFocus={this.handleFocus}
-                onBlur={this.handleBlur}
-                onKeyDown={this.handleKeyDown}
-                onKeyUp={this.handleKeyUp}
-            >
-                {trigger}
-                <div 
-                    className={cx('dropdown select-dropdown', dropdownClassName, {
-                        'offscreen': !isOpen 
-                    })}
-                    style={dropdownStyle}
-                >
-                    <ul onMouseLeave={this.handleMouseLeave}>
-                        {options.map((item, i) => {
-                            const selected = multi ? 
-                                value.indexOf(item.value) > -1 : 
-                                value === item.value;
-                            return (
-                                <li 
-                                    key={i}
-                                    className={cx('select-option', {
-                                        'disabled': item.disabled,
-                                        'selected': selected,
-                                        'hover': i === hoverIndex
-                                    })}
-                                    onMouseOver={e => this.handleOptionHover(i)}
-                                    onClick={e => this.handleOptionClick(item, selected)}
-                                >
-                                    {item.text}
-                                </li>
-                            )
-                        })}
-                    </ul>
-                </div>
-            </div>
-        );
-    },
-
-    renderTigger() {
-        const { 
-            selectClassName,
             selectStyle,
+            dropdownStyle,
             placeholder, 
             multi, 
             disabled,
             options
         } = this.props;
-        const { isOpen } = this.state;
+        const { isOpen, hoverIndex } = this.state;
         const value = this.getValue();
 
-        let displayText = '';
-        let selectedItems = [];
-        let content;
+        let selectedOptionText = '';    // the selected option's text when `multi` is false
+        let selectedOptions = [];       // the selected options when `multi` is true
+        let triggerContent;
 
         if (multi) {
-            // get selected items when `multi` is true
+            // get selected options when `multi` is true
             if (value && value.length > 0) {
                 let k, idx;
                 for (k = 0; k < options.length; k++) {
                     idx = value.indexOf(options[k].value);
                     if (idx > -1) {
-                        selectedItems[idx] = options[k];
+                        selectedOptions[idx] = options[k];
                     }
                 }
-                if (selectedItems.length < 1) {
+                if (selectedOptions.length < 1) {
                     console.warn('The `value` prop of `Select` does not match any of its options.');
                 }
             }
         } else {
-            // when `multi` is false
+            // when `multi` is false, get the selected item's text.
             if (value || value === 0) {
-                const selectedItem = options.filter(item => 
+                const selectedOption = options.filter(item => 
                     item.value === value
                 );
-                if (selectedItem.length) {
-                    displayText = selectedItem[0].text;
+                if (selectedOption.length) {
+                    selectedOptionText = selectedOption[0].text;
                 } else {
                     console.warn('The `value` prop of `Select` does not match any of its options.');
                 }
@@ -378,17 +331,17 @@ const Select = React.createClass({
         }
 
         if (multi) {
-            content = (selectedItems.length ?
+            triggerContent = (selectedOptions.length ?
                 <ul>
-                    {selectedItems.map((item, i) => (
+                    {selectedOptions.map((option, i) => (
                         <li
                             key={i}
                             onClick={e => {
                                 e.stopPropagation();
-                                this.deSelectOption(item.value);
+                                this.deSelectOption(option.value);
                             }}
                         >
-                            {item.text}
+                            {option.text}
                             <i className="fa fa-close"/>
                         </li>
                     ))}
@@ -397,9 +350,9 @@ const Select = React.createClass({
                 <span className="placeholder">{placeholder}</span>
             );
         } else {
-            content = (
+            triggerContent = (
                 <div>
-                    {displayText ||
+                    {selectedOptionText ||
                         <span className="placeholder">{placeholder}</span>
                     }
                     <span className={cx({
@@ -412,18 +365,56 @@ const Select = React.createClass({
             );
         }
 
+        const renderedOptions = options.map((option, i) => {
+            const selected = multi ? value.indexOf(option.value) > -1 : 
+                value === option.value;
+            return (
+                <li 
+                    key={i}
+                    className={cx('select-option', {
+                        'disabled': option.disabled,
+                        'selected': selected,
+                        'hover': i === hoverIndex
+                    })}
+                    onMouseOver={e => this.handleOptionHover(e, i)}
+                    onClick={e => this.handleOptionClick(e, option, selected)}
+                >
+                    {option.text}
+                </li>
+            );
+        });
+
         return (
             <div 
-                className={cx(selectClassName, {
-                    'select-trigger-single': !multi,
-                    'select-trigger-multi': multi,
-                    'focus': isOpen,
-                    'disabled': disabled
-                })}
-                style={selectStyle}
-                onClick={this.handleTriggerClick}
+                className={cx('dropdown-wrapper select-wrapper', className)}
+                style={style}
+                tabIndex={disabled ? undefined : '0'}
+                onFocus={this.handleFocus}
+                onBlur={this.handleBlur}
+                onKeyDown={this.handleKeyDown}
+                onKeyUp={this.handleKeyUp}
             >
-                {content}
+                <div
+                    className={cx('dropdown-trigger', selectClassName, {
+                        'select-trigger-single': !multi,
+                        'select-trigger-multi': multi,
+                        'disabled': disabled
+                    })}  
+                    style={selectStyle}
+                    onClick={this.handleTriggerClick}
+                >
+                    {triggerContent}
+                </div>
+                <div 
+                    className={cx('dropdown select-dropdown', dropdownClassName, {
+                        'offscreen': !isOpen 
+                    })}
+                    style={dropdownStyle}
+                >
+                    <ul onMouseLeave={this.handleMouseLeave}>
+                        {renderedOptions}
+                    </ul>
+                </div>
             </div>
         );
     }

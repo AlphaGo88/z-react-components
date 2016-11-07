@@ -13,6 +13,10 @@
     }
 }
 
+.dropdown-trigger {
+    width: 100%;
+}
+
 .dropdown {
     position: absolute;
     width: 100%;
@@ -21,7 +25,6 @@
     margin: 4px 0 0;
     overflow: auto;
     background-color: #fff;
-    border: 1px solid #ccc;
     box-shadow: @box-shadow-base;
     transition: opacity 240ms, transform 240ms;
     transform-origin: 0% 0%;
@@ -33,9 +36,5 @@
         left: -10000px;
         opacity: 0;
         transform: scaleY(0.4);
-    }
-    
-    &:focus {
-        outline: none;
     }
 }

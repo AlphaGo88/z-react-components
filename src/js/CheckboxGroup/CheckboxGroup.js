@@ -59,7 +59,7 @@ const CheckboxGroup = React.createClass({
         defaultValue: React.PropTypes.array,
 
         /**
-         * Callback when the selected values change.
+         * Fires when the selected values change.
          * @param {array} value
          */
         onChange: React.PropTypes.func,
@@ -104,7 +104,7 @@ const CheckboxGroup = React.createClass({
             items,
         } = this.props;
 
-        const selectedValues = this.props.value || this.state.value;
+        const checkedValues = this.props.value || this.state.value;
 
         return (
             <ul 
@@ -121,7 +121,7 @@ const CheckboxGroup = React.createClass({
                     >
                         <Checkbox
                             label={item.text}
-                            checked={selectedValues.indexOf(item.value) > -1}
+                            checked={checkedValues.indexOf(item.value) > -1}
                             onCheck={(checked) => this.handleChange(item.value, checked)}
                         />
                     </li>

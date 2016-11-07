@@ -827,19 +827,19 @@ label.checkbox > input[type="checkbox"]:checked + span:before {
 label.checkbox > input[type="checkbox"]:focus + span {
   border: 1px solid red;
 }
-.tabs {
+.z-tabs {
   border-left: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
 }
-.tabs:before,
-.tabs:after {
+.z-tabs:before,
+.z-tabs:after {
   content: " ";
   display: table;
 }
-.tabs:after {
+.z-tabs:after {
   clear: both;
 }
-.tabs > .tab {
+.z-tab {
   float: left;
   position: relative;
   margin-bottom: -1px;
@@ -852,32 +852,29 @@ label.checkbox > input[type="checkbox"]:focus + span {
   background-color: #fff;
   cursor: pointer;
 }
-.tabs > .tab:hover {
+.z-tab:hover {
   color: #333;
 }
-.tabs > .tab.active {
+.z-tab.active {
   color: #333;
   border-bottom-color: #fff;
 }
-.tabs > .tab > .marker {
+.z-tab > .ink-bar {
   position: absolute;
   top: -1px;
   width: 100%;
   height: 2px;
   background-color: #2599f2;
 }
-.tabs > .slider {
-  position: absolute;
-  top: 0;
-  height: 2px;
-  background-color: #2599f2;
-}
-.tab-content {
-  display: none;
+.z-tab-content-container {
   border: 1px solid #ccc;
   border-top: 0;
 }
-.tab-content.active {
+.z-tab-content {
+  display: none;
+  padding: 15px;
+}
+.z-tab-content.active {
   display: block;
 }
 input {
@@ -1248,40 +1245,47 @@ table th[class*="col-"] {
   float: none;
   display: table-cell;
 }
-.pagination > .page,
-.pagination > .page-btn {
+.z-pagination > .page,
+.z-pagination > .page-btn {
   display: inline-block;
   height: 26px;
   line-height: 26px;
+  color: #666;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
 }
-.pagination > .page {
+.z-pagination > .page {
   margin: 0 2px;
-  padding: 0 10px;
 }
-.pagination > .page:hover {
+.z-pagination > .page:hover {
   color: #2599f2;
 }
-.pagination > .page.active {
+.z-pagination > .page.active {
   color: #fff;
   border-radius: 4px;
   background-color: #2599f2;
   cursor: default;
 }
-.pagination > .page-btn {
+.z-pagination > .page-small {
+  width: 26px;
+  text-align: center;
+}
+.z-pagination > .page-big {
+  padding: 0 4px;
+}
+.z-pagination > .page-btn {
   margin: 0 6px;
   font-size: 16px;
   color: #666;
 }
-.pagination > .page-btn:hover {
+.z-pagination > .page-btn:hover {
   color: #000;
 }
-.pagination > .page-btn.disabled {
-  color: #999;
+.z-pagination > .page-btn.disabled {
+  color: #aaa;
   cursor: not-allowed;
 }
 .dropdown-wrapper {
@@ -1291,6 +1295,9 @@ table th[class*="col-"] {
 .dropdown-wrapper:focus {
   outline: none;
 }
+.dropdown-trigger {
+  width: 100%;
+}
 .dropdown {
   position: absolute;
   width: 100%;
@@ -1299,7 +1306,6 @@ table th[class*="col-"] {
   margin: 4px 0 0;
   overflow: auto;
   background-color: #fff;
-  border: 1px solid #ccc;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   transition: opacity 240ms, transform 240ms;
   transform-origin: 0% 0%;
@@ -1311,9 +1317,6 @@ table th[class*="col-"] {
   left: -10000px;
   opacity: 0;
   transform: scaleY(0.4);
-}
-.dropdown:focus {
-  outline: none;
 }
 .dropdown-menu {
   min-width: 150px;
@@ -1346,21 +1349,18 @@ table th[class*="col-"] {
 .select-wrapper {
   width: 200px;
 }
+.select-wrapper:focus > .select-trigger-single,
+.select-wrapper:focus > .select-trigger-multi {
+  border-color: #9e9e9e;
+}
 .select-trigger-single,
 .select-trigger-multi {
-  position: relative;
-  width: 100%;
   min-height: 36px;
   border: 1px solid #ccc;
-}
-.select-trigger-single.focus,
-.select-trigger-multi.focus {
-  border-color: #9e9e9e;
 }
 .select-trigger-single.disabled,
 .select-trigger-multi.disabled {
   background-color: #efefef;
-  color: #999;
   cursor: not-allowed;
 }
 .select-trigger-single.required,
@@ -1442,10 +1442,12 @@ table th[class*="col-"] {
 .select-dropdown {
   padding: 10px 0;
   max-height: 288px;
+  border: 1px solid #ccc;
 }
 .select-dropdown .select-option {
   display: block;
   padding: 7px 18px;
+  line-height: normal;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -1469,16 +1471,15 @@ table th[class*="col-"] {
 .datepicker-wrapper {
   width: 180px;
 }
+.datepicker-wrapper:focus > .datepicker-trigger {
+  border-color: #9e9e9e;
+}
 .datepicker-trigger {
   position: relative;
-  width: 100%;
   height: 36px;
   line-height: 34px;
   padding: 0 22px 0 10px;
   border: 1px solid #ccc;
-}
-.datepicker-trigger.focus {
-  border-color: #9e9e9e;
 }
 .datepicker-trigger.required {
   border-color: #f0ad4e;
@@ -1488,26 +1489,23 @@ table th[class*="col-"] {
 }
 .datepicker-trigger.disabled {
   background-color: #efefef;
-  color: #999;
-}
-.datepicker-trigger.disabled > .datepicker-input {
   cursor: not-allowed;
 }
-.datepicker-trigger.disabled > .icon {
+.datepicker-trigger.disabled .icon {
   color: #666;
   cursor: not-allowed;
 }
-.datepicker-trigger > .icon {
+.datepicker-trigger .icon {
   position: absolute;
   top: 10px;
   right: 5px;
   cursor: pointer;
 }
-.datepicker-trigger > .placeholder {
+.datepicker-trigger .placeholder {
   color: #999;
 }
 .datepicker-panel {
-  width: 266px;
+  width: 263px;
 }
 .datepicker-head,
 .datepicker-foot {
@@ -1517,23 +1515,36 @@ table th[class*="col-"] {
 }
 .datepicker-head {
   text-align: center;
+  background-color: #2599f2;
+  color: #fff;
 }
 .datepicker-head a {
   position: absolute;
   display: inline-block;
-  padding: 0 3px;
-  line-height: 34px;
+  top: 8px;
+  padding: 2px 4px;
+  border-radius: 2px;
   font-size: 14px;
   cursor: pointer;
-  color: #666;
+  color: #fff;
   text-decoration: none;
 }
 .datepicker-head a:hover {
-  color: #000;
+  background-color: #5fb4f5;
 }
 .datepicker-head a.disabled {
   color: #999;
   cursor: not-allowed;
+}
+.datepicker-year {
+  margin-right: 5px;
+  padding: 2px 4px;
+  border-radius: 2px;
+  color: #fff;
+  cursor: pointer;
+}
+.datepicker-year:hover {
+  background-color: #5fb4f5;
 }
 .datepicker-prev-year-btn {
   left: 10px;
@@ -1587,6 +1598,23 @@ table th[class*="col-"] {
   color: #999;
   cursor: not-allowed;
 }
+.datepicker-year-select {
+  max-height: 202px;
+  overflow-y: auto;
+}
+.datepicker-year-select > li {
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  cursor: pointer;
+}
+.datepicker-year-select > li:hover {
+  background-color: #e8e8e8;
+}
+.datepicker-year-select > li.active {
+  background-color: #2599f2;
+  color: #fff;
+}
 .datepicker-time-col {
   float: left;
   width: 88px;
@@ -1598,6 +1626,7 @@ table th[class*="col-"] {
   overflow-y: auto;
 }
 .datepicker-time-col:first-child {
+  width: 87px;
   border-left-width: 0;
 }
 .datepicker-time-col > li {
@@ -1617,7 +1646,7 @@ table th[class*="col-"] {
   background-color: #e8e8e8;
 }
 .datepicker-time-col > li.active {
-  background-color: #2599f2;
+  background-color: #aaa;
   color: #fff;
 }
 .datepicker-foot {

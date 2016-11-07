@@ -29,9 +29,18 @@ let Tabs = React.createClass({
         tabStyle: React.PropTypes.object,
 
         /**
-         * The active tab's index.
+         * Initial active index.
          */
-        activeIndex: React.PropTypes.number,
+        defaultActiveIndex: React.PropTypes.number,
+
+        /**
+         * Select the tab whose prop matches this prop.
+         * The component is controlled with this prop.
+         */
+        value: React.PropTypes.oneOfType([
+            React.PropTypes.string,
+            React.PropTypes.number
+        ]),
 
         /**
          * The children of the component.
@@ -48,15 +57,26 @@ let Tabs = React.createClass({
 
     getDefaultProps() {
         return {
-            activeIndex: 0,
+            defaultActiveIndex: 0,
             onChange: () => {}
         };
     },
 
-    handleChange(tabIndex) {
-        if (tabIndex !== this.props.activeIndex) {
-            this.props.onChange(tabIndex);
+    componentWillMount: function() {
+        if (typeof this.props.value === 'undefined') {
+            this.setState({
+                activeIndex: this.props.defaultActiveIndex
+            });
         }
+    },
+
+    handleChange(tabIndex, value) {
+        if (typeof this.props.value === 'undefined') {
+            this.setState({
+                activeIndex: tabIndex 
+            });
+        }
+        this.props.onChange(value);
     },
 
     render() {
@@ -65,46 +85,59 @@ let Tabs = React.createClass({
             tabClassName,
             style,
             tabStyle,
-            activeIndex, 
             children 
         } = this.props;
+
+        let tabs = [];
+        let contents = [];
+
+        React.Children.forEach(children, (child, i) => {
+            const active = this.state ? this.state.activeIndex === i :
+                this.props.value === child.props.value;
+
+            tabs.push(
+                <Tab 
+                    key={i}
+                    className={tabClassName}
+                    style={tabStyle}
+                    label={child.props.label}
+                    value={child.props.value}
+                    active={active}
+                    onActive={value => {
+                        this.handleChange(i, value);
+                        child.props.onActive && child.props.onActive(value);
+                    }}
+                />
+            );
+
+            contents.push(
+                <div 
+                    key={i}
+                    className={cx('z-tab-content', child.props.contentClassName, {
+                        'active': active
+                    })}
+                    style={child.props.contentStyle}
+                >
+                    {child.props.children}
+                </div>
+            );
+        });
 
         return (
             <div 
                 className={className}
                 style={style}
             >
-                <ul className="tabs">
-                    {React.Children.map(children, (child, i) => (
-                        <li 
-                            className={cx('tab', tabClassName, {
-                                'active': i === activeIndex
-                            })}
-                            style={tabStyle}
-                            onClick={e => this.handleChange(i)}
-                        >
-                            {child.props.label}
-                            {i === activeIndex &&
-                                <div className="marker"/>
-                            }
-                        </li>
-                    ))}
-                </ul>
-                {React.Children.map(children, (child, i) => (
-                    <div 
-                        className={cx('tab-content', child.props.contentClassName, {
-                            'active': i === activeIndex
-                        })}
-                        style={child.props.contentStyle}
-                    >
-                        {child.props.children}
-                    </div>
-                ))}
+                <div className="z-tabs">
+                    {tabs}
+                </div>
+                <div className="z-tab-content-container">
+                    {contents}
+                </div>
             </div>
         );
     }
 });
 
 Tabs.Tab = Tab;
-
 module.exports = Tabs;
