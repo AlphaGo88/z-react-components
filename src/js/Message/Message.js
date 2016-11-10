@@ -1,72 +1,68 @@
 // Message
 // ------------------------
 
-module.exports = {
+const React = require('react');
+const cx = require('classnames');
 
-    _msg(type, content, duration) {
+const Message = React.createClass({
 
-        // create message layer if not been created.
-        let layer = document.getElementById('z-msg-layer');
+    getDefaultProps() {
+        return {
+            type: 'msg',
+            duration: 4000
+        };
+    },
 
-        if (!layer) {
-            layer = document.createElement('div');
-            layer.id = 'z-msg-layer';
-            layer.addEventListener('transitionend', function(event) {
-                clearTimeout(event.target.exitTimeout);
-                layer.removeChild(event.target);
-            }, false);
-            document.body.appendChild(layer);
-        }
+    getInitialState() {
+        return {
+            exiting: false 
+        };
+    },
 
-        let msgBox = document.createElement('div');
-        let _html = '';
+    componentDidMount() {
+        this.exitTimeOut = setTimeout(() => {
+            this.setState({
+                exiting: true 
+            });
+        }, this.props.duration);
+    },
+
+    componentWillUnmount() {
+        clearTimeout(this.exitTimeOut);
+    },
+
+    render() {
+        const { type, children } = this.props;
+        let iconClass = '';
 
         switch (type) {
-            case 'msg':
-                break;
             case 'success':
-                _html = '<i class="fa fa-check-circle icon-success"></i>';
+                iconClass = 'fa fa-check-circle icon-success';
                 break;
             case 'info':
-                _html = '<i class="fa fa-info-circle icon-info"></i>';
+                iconClass = 'fa fa-info-circle icon-info';
                 break;
             case 'warning':
-                _html = '<i class="fa fa-warning icon-warning"></i>';
+                iconClass = 'fa fa-warning icon-warning';
                 break;
             case 'error':
-                _html = '<i class="fa fa-times-circle icon-error"></i>';
+                iconClass = 'fa fa-times-circle icon-error';
                 break;
             default:
         }
 
-        _html += '<span class="msg-content">' + content + '</span>';
-
-        msgBox.className = 'z-msg';
-        msgBox.innerHTML = _html;
-        layer.appendChild(msgBox);
-
-        msgBox.exitTimeout = setTimeout(function() {
-            msgBox.className += ' exit';
-        }, duration || 4000);
-    },
-
-    msg(content, duration) {
-        this._msg('msg', content, duration);
-    },
-
-    success(content, duration) {
-        this._msg('success', content, duration);
-    },
-
-    info(content, duration) {
-        this._msg('info', content, duration);
-    },
-
-    warning(content, duration) {
-        this._msg('warning', content, duration);
-    },
-
-    error(content, duration) {
-        this._msg('error', content, duration);
+        return (
+            <div className={cx('z-msg', {
+                'exit': this.state.exiting
+            })}>
+                {type !== 'msg' &&
+                    <i className={iconClass}/>
+                }
+                {children}
+            </div>
+        );
     }
-};
+    
+});
+
+module.exports = Message;

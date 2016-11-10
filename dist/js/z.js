@@ -56,12 +56,12 @@ var Z =
 	    Message: __webpack_require__(8),
 	    Pagination: __webpack_require__(10),
 	    DatePicker: __webpack_require__(12),
-	    Select: __webpack_require__(15),
-	    Checkbox: __webpack_require__(17),
-	    RadioGroup: __webpack_require__(19),
-	    CheckboxGroup: __webpack_require__(21),
-	    Tabs: __webpack_require__(23),
-	    Formsy: __webpack_require__(26)
+	    Select: __webpack_require__(14),
+	    Checkbox: __webpack_require__(16),
+	    RadioGroup: __webpack_require__(18),
+	    CheckboxGroup: __webpack_require__(20),
+	    Tabs: __webpack_require__(22),
+	    Formsy: __webpack_require__(25)
 	};
 
 /***/ },
@@ -587,63 +587,33 @@ var Z =
 
 	'use strict';
 
-	module.exports = __webpack_require__(9);
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	// Message
-	// ------------------------
+	var ReactDOM = __webpack_require__(6);
+	var Message = __webpack_require__(46);
 
 	module.exports = {
 	    _msg: function _msg(type, content, duration) {
-
 	        // create message layer if not been created.
 	        var layer = document.getElementById('z-msg-layer');
 
 	        if (!layer) {
 	            layer = document.createElement('div');
 	            layer.id = 'z-msg-layer';
-	            layer.addEventListener('transitionend', function (event) {
-	                clearTimeout(event.target.exitTimeout);
-	                layer.removeChild(event.target);
-	            }, false);
 	            document.body.appendChild(layer);
 	        }
 
-	        var msgBox = document.createElement('div');
-	        var _html = '';
+	        var container = document.createElement('div');
 
-	        switch (type) {
-	            case 'msg':
-	                break;
-	            case 'success':
-	                _html = '<i class="fa fa-check-circle icon-success"></i>';
-	                break;
-	            case 'info':
-	                _html = '<i class="fa fa-info-circle icon-info"></i>';
-	                break;
-	            case 'warning':
-	                _html = '<i class="fa fa-warning icon-warning"></i>';
-	                break;
-	            case 'error':
-	                _html = '<i class="fa fa-times-circle icon-error"></i>';
-	                break;
-	            default:
-	        }
+	        container.addEventListener('transitionend', function (event) {
+	            ReactDOM.unmountComponentAtNode(container);
+	            layer.removeChild(container);
+	        });
+	        layer.appendChild(container);
 
-	        _html += '<span class="msg-content">' + content + '</span>';
-
-	        msgBox.className = 'z-msg';
-	        msgBox.innerHTML = _html;
-	        layer.appendChild(msgBox);
-
-	        msgBox.exitTimeout = setTimeout(function () {
-	            msgBox.className += ' exit';
-	        }, duration || 4000);
+	        ReactDOM.render(React.createElement(
+	            Message,
+	            { type: type, duration: duration },
+	            content
+	        ), container);
 	    },
 	    msg: function msg(content, duration) {
 	        this._msg('msg', content, duration);
@@ -663,6 +633,7 @@ var Z =
 	};
 
 /***/ },
+/* 9 */,
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -875,7 +846,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var objectAssign = __webpack_require__(14);
+	var objectAssign = __webpack_require__(45);
 
 	var tabPressed = false;
 
@@ -1808,103 +1779,14 @@ var Z =
 
 /***/ },
 /* 14 */
-/***/ function(module, exports) {
-
-	'use strict';
-	/* eslint-disable no-unused-vars */
-	var hasOwnProperty = Object.prototype.hasOwnProperty;
-	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-	function toObject(val) {
-		if (val === null || val === undefined) {
-			throw new TypeError('Object.assign cannot be called with null or undefined');
-		}
-
-		return Object(val);
-	}
-
-	function shouldUseNative() {
-		try {
-			if (!Object.assign) {
-				return false;
-			}
-
-			// Detect buggy property enumeration order in older V8 versions.
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-			var test1 = new String('abc');  // eslint-disable-line
-			test1[5] = 'de';
-			if (Object.getOwnPropertyNames(test1)[0] === '5') {
-				return false;
-			}
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-			var test2 = {};
-			for (var i = 0; i < 10; i++) {
-				test2['_' + String.fromCharCode(i)] = i;
-			}
-			var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-				return test2[n];
-			});
-			if (order2.join('') !== '0123456789') {
-				return false;
-			}
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-			var test3 = {};
-			'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-				test3[letter] = letter;
-			});
-			if (Object.keys(Object.assign({}, test3)).join('') !==
-					'abcdefghijklmnopqrst') {
-				return false;
-			}
-
-			return true;
-		} catch (e) {
-			// We don't expect any of the above to throw, but better to be safe.
-			return false;
-		}
-	}
-
-	module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-		var from;
-		var to = toObject(target);
-		var symbols;
-
-		for (var s = 1; s < arguments.length; s++) {
-			from = Object(arguments[s]);
-
-			for (var key in from) {
-				if (hasOwnProperty.call(from, key)) {
-					to[key] = from[key];
-				}
-			}
-
-			if (Object.getOwnPropertySymbols) {
-				symbols = Object.getOwnPropertySymbols(from);
-				for (var i = 0; i < symbols.length; i++) {
-					if (propIsEnumerable.call(from, symbols[i])) {
-						to[symbols[i]] = from[symbols[i]];
-					}
-				}
-			}
-		}
-
-		return to;
-	};
-
-
-/***/ },
-/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(16);
+	module.exports = __webpack_require__(15);
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2351,15 +2233,15 @@ var Z =
 	module.exports = Select;
 
 /***/ },
-/* 17 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(18);
+	module.exports = __webpack_require__(17);
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2477,15 +2359,15 @@ var Z =
 	module.exports = Checkbox;
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(20);
+	module.exports = __webpack_require__(19);
 
 /***/ },
-/* 20 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2641,15 +2523,15 @@ var Z =
 	module.exports = RadioGroup;
 
 /***/ },
-/* 21 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(22);
+	module.exports = __webpack_require__(21);
 
 /***/ },
-/* 22 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2659,7 +2541,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Checkbox = __webpack_require__(17);
+	var Checkbox = __webpack_require__(16);
 
 	var CheckboxGroup = React.createClass({
 	    displayName: 'CheckboxGroup',
@@ -2796,15 +2678,15 @@ var Z =
 	module.exports = CheckboxGroup;
 
 /***/ },
-/* 23 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(24);
+	module.exports = __webpack_require__(23);
 
 /***/ },
-/* 24 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2814,7 +2696,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Tab = __webpack_require__(25);
+	var Tab = __webpack_require__(24);
 
 	var Tabs = React.createClass({
 	    displayName: 'Tabs',
@@ -2956,7 +2838,7 @@ var Z =
 	module.exports = Tabs;
 
 /***/ },
-/* 25 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3051,15 +2933,15 @@ var Z =
 	module.exports = Tab;
 
 /***/ },
-/* 26 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(27);
+	module.exports = __webpack_require__(26);
 
 /***/ },
-/* 27 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3067,18 +2949,18 @@ var Z =
 	// Form
 	// ------------------------
 
-	var Formsy = __webpack_require__(28);
-	var validationRules = __webpack_require__(35);
+	var Formsy = __webpack_require__(27);
+	var validationRules = __webpack_require__(34);
 
-	Formsy.HiddenField = __webpack_require__(36);
-	Formsy.TextField = __webpack_require__(37);
-	Formsy.InputField = __webpack_require__(38);
-	Formsy.SelectField = __webpack_require__(39);
-	Formsy.DateField = __webpack_require__(40);
-	Formsy.RadioGroupField = __webpack_require__(41);
-	Formsy.CheckboxField = __webpack_require__(42);
-	Formsy.CheckboxGroupField = __webpack_require__(43);
-	Formsy.TextAreaField = __webpack_require__(44);
+	Formsy.HiddenField = __webpack_require__(35);
+	Formsy.TextField = __webpack_require__(36);
+	Formsy.InputField = __webpack_require__(37);
+	Formsy.SelectField = __webpack_require__(38);
+	Formsy.DateField = __webpack_require__(39);
+	Formsy.RadioGroupField = __webpack_require__(40);
+	Formsy.CheckboxField = __webpack_require__(41);
+	Formsy.CheckboxGroupField = __webpack_require__(42);
+	Formsy.TextAreaField = __webpack_require__(43);
 
 	for (var name in validationRules) {
 	    Formsy.addValidationRule(name, validationRules[name]);
@@ -3087,7 +2969,7 @@ var Z =
 	module.exports = Formsy;
 
 /***/ },
-/* 28 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -3100,12 +2982,12 @@ var Z =
 
 	var React = global.React || __webpack_require__(3);
 	var Formsy = {};
-	var validationRules = __webpack_require__(29);
-	var formDataToObject = __webpack_require__(30);
-	var utils = __webpack_require__(31);
-	var Mixin = __webpack_require__(32);
-	var HOC = __webpack_require__(33);
-	var Decorator = __webpack_require__(34);
+	var validationRules = __webpack_require__(28);
+	var formDataToObject = __webpack_require__(29);
+	var utils = __webpack_require__(30);
+	var Mixin = __webpack_require__(31);
+	var HOC = __webpack_require__(32);
+	var Decorator = __webpack_require__(33);
 	var options = {};
 	var emptyArray = [];
 
@@ -3553,7 +3435,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 29 */
+/* 28 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3638,7 +3520,7 @@ var Z =
 	module.exports = validations;
 
 /***/ },
-/* 30 */
+/* 29 */
 /***/ function(module, exports) {
 
 	function toObj(source) {
@@ -3689,7 +3571,7 @@ var Z =
 	}
 
 /***/ },
-/* 31 */
+/* 30 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3751,12 +3633,12 @@ var Z =
 	};
 
 /***/ },
-/* 32 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
-	var utils = __webpack_require__(31);
+	var utils = __webpack_require__(30);
 	var React = global.React || __webpack_require__(3);
 
 	var convertValidationsToObject = function convertValidationsToObject(validations) {
@@ -3931,7 +3813,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -3939,7 +3821,7 @@ var Z =
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = global.React || __webpack_require__(3);
-	var Mixin = __webpack_require__(32);
+	var Mixin = __webpack_require__(31);
 	module.exports = function (Component) {
 	  return React.createClass({
 	    displayName: 'Formsy(' + getDisplayName(Component) + ')',
@@ -3972,7 +3854,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -3980,7 +3862,7 @@ var Z =
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = global.React || __webpack_require__(3);
-	var Mixin = __webpack_require__(32);
+	var Mixin = __webpack_require__(31);
 	module.exports = function () {
 	  return function (Component) {
 	    return React.createClass({
@@ -4010,7 +3892,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 35 */
+/* 34 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -4030,7 +3912,7 @@ var Z =
 	module.exports = validations;
 
 /***/ },
-/* 36 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4039,7 +3921,7 @@ var Z =
 	// ---------------------------
 
 	var React = __webpack_require__(3);
-	var Formsy = __webpack_require__(28);
+	var Formsy = __webpack_require__(27);
 
 	var HiddenField = React.createClass({
 	    displayName: 'HiddenField',
@@ -4062,7 +3944,7 @@ var Z =
 	module.exports = HiddenField;
 
 /***/ },
-/* 37 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4071,7 +3953,7 @@ var Z =
 	// ---------------------------
 
 	var React = __webpack_require__(3);
-	var Formsy = __webpack_require__(28);
+	var Formsy = __webpack_require__(27);
 	var cx = __webpack_require__(4);
 
 	var TextField = React.createClass({
@@ -4110,7 +3992,7 @@ var Z =
 	module.exports = TextField;
 
 /***/ },
-/* 38 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4124,7 +4006,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(28);
+	var Formsy = __webpack_require__(27);
 
 	var InputField = React.createClass({
 	    displayName: 'InputField',
@@ -4200,7 +4082,7 @@ var Z =
 	module.exports = InputField;
 
 /***/ },
-/* 39 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4214,8 +4096,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Select = __webpack_require__(15);
-	var Formsy = __webpack_require__(28);
+	var Select = __webpack_require__(14);
+	var Formsy = __webpack_require__(27);
 
 	var SelectField = React.createClass({
 	    displayName: 'SelectField',
@@ -4284,7 +4166,7 @@ var Z =
 	module.exports = SelectField;
 
 /***/ },
-/* 40 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4299,7 +4181,7 @@ var Z =
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
 	var DatePicker = __webpack_require__(12);
-	var Formsy = __webpack_require__(28);
+	var Formsy = __webpack_require__(27);
 
 	var DateField = React.createClass({
 	    displayName: 'DateField',
@@ -4360,7 +4242,7 @@ var Z =
 	module.exports = DateField;
 
 /***/ },
-/* 41 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4374,8 +4256,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(28);
-	var RadioGroup = __webpack_require__(19);
+	var Formsy = __webpack_require__(27);
+	var RadioGroup = __webpack_require__(18);
 
 	var RadioGroupField = React.createClass({
 	    displayName: 'RadioGroupField',
@@ -4422,7 +4304,7 @@ var Z =
 	module.exports = RadioGroupField;
 
 /***/ },
-/* 42 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4436,8 +4318,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(28);
-	var Checkbox = __webpack_require__(17);
+	var Formsy = __webpack_require__(27);
+	var Checkbox = __webpack_require__(16);
 
 	var CheckboxField = React.createClass({
 	    displayName: 'CheckboxField',
@@ -4480,7 +4362,7 @@ var Z =
 	module.exports = CheckboxField;
 
 /***/ },
-/* 43 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4494,8 +4376,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(28);
-	var CheckboxGroup = __webpack_require__(21);
+	var Formsy = __webpack_require__(27);
+	var CheckboxGroup = __webpack_require__(20);
 
 	var CheckboxGroupField = React.createClass({
 	    displayName: 'CheckboxGroupField',
@@ -4543,7 +4425,7 @@ var Z =
 	module.exports = CheckboxGroupField;
 
 /***/ },
-/* 44 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4557,7 +4439,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(28);
+	var Formsy = __webpack_require__(27);
 
 	var TextAreaField = React.createClass({
 	    displayName: 'TextAreaField',
@@ -4614,6 +4496,169 @@ var Z =
 	});
 
 	module.exports = TextAreaField;
+
+/***/ },
+/* 44 */,
+/* 45 */
+/***/ function(module, exports) {
+
+	'use strict';
+	/* eslint-disable no-unused-vars */
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+	function toObject(val) {
+		if (val === null || val === undefined) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	function shouldUseNative() {
+		try {
+			if (!Object.assign) {
+				return false;
+			}
+
+			// Detect buggy property enumeration order in older V8 versions.
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+			var test1 = new String('abc');  // eslint-disable-line
+			test1[5] = 'de';
+			if (Object.getOwnPropertyNames(test1)[0] === '5') {
+				return false;
+			}
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test2 = {};
+			for (var i = 0; i < 10; i++) {
+				test2['_' + String.fromCharCode(i)] = i;
+			}
+			var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+				return test2[n];
+			});
+			if (order2.join('') !== '0123456789') {
+				return false;
+			}
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test3 = {};
+			'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+				test3[letter] = letter;
+			});
+			if (Object.keys(Object.assign({}, test3)).join('') !==
+					'abcdefghijklmnopqrst') {
+				return false;
+			}
+
+			return true;
+		} catch (e) {
+			// We don't expect any of the above to throw, but better to be safe.
+			return false;
+		}
+	}
+
+	module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+		var from;
+		var to = toObject(target);
+		var symbols;
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = Object(arguments[s]);
+
+			for (var key in from) {
+				if (hasOwnProperty.call(from, key)) {
+					to[key] = from[key];
+				}
+			}
+
+			if (Object.getOwnPropertySymbols) {
+				symbols = Object.getOwnPropertySymbols(from);
+				for (var i = 0; i < symbols.length; i++) {
+					if (propIsEnumerable.call(from, symbols[i])) {
+						to[symbols[i]] = from[symbols[i]];
+					}
+				}
+			}
+		}
+
+		return to;
+	};
+
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	// Message
+	// ------------------------
+
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+
+	var Message = React.createClass({
+	    displayName: 'Message',
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            type: 'msg',
+	            duration: 4000
+	        };
+	    },
+	    getInitialState: function getInitialState() {
+	        return {
+	            exiting: false
+	        };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        var _this = this;
+
+	        this.exitTimeOut = setTimeout(function () {
+	            _this.setState({
+	                exiting: true
+	            });
+	        }, this.props.duration);
+	    },
+	    componentWillUnmount: function componentWillUnmount() {
+	        clearTimeout(this.exitTimeOut);
+	    },
+	    render: function render() {
+	        var _props = this.props,
+	            type = _props.type,
+	            children = _props.children;
+
+	        var iconClass = '';
+
+	        switch (type) {
+	            case 'success':
+	                iconClass = 'fa fa-check-circle icon-success';
+	                break;
+	            case 'info':
+	                iconClass = 'fa fa-info-circle icon-info';
+	                break;
+	            case 'warning':
+	                iconClass = 'fa fa-warning icon-warning';
+	                break;
+	            case 'error':
+	                iconClass = 'fa fa-times-circle icon-error';
+	                break;
+	            default:
+	        }
+
+	        return React.createElement(
+	            'div',
+	            { className: cx('z-msg', {
+	                    'exit': this.state.exiting
+	                }) },
+	            type !== 'msg' && React.createElement('i', { className: iconClass }),
+	            children
+	        );
+	    }
+	});
+
+	module.exports = Message;
 
 /***/ }
 /******/ ]);
