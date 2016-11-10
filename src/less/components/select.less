@@ -14,17 +14,16 @@
 .select-trigger-single,
 .select-trigger-multi {
     min-height: @input-height;
-    border: 1px solid @border-color-base;
 
+    &.required {
+        border-color: @color-warning !important;
+    }
+    &.error {
+        border-color: @color-danger !important;
+    }
     &.disabled {
         background-color: #efefef;
         cursor: @cursor-disabled;
-    }
-    &.required {
-        border-color: @color-warning;
-    }
-    &.error {
-        border-color: @color-danger;
     }
     .placeholder {
         color: @text-color-lighter;
@@ -42,11 +41,6 @@
         right: 0;
         height: 100%;
         width: 20px;
-        cursor: pointer;
-    }
-    &.disabled .caret-up,
-    &.disabled .caret-down {
-        cursor: @cursor-disabled;
     }
     b {
         position: absolute;

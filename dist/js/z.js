@@ -56,12 +56,12 @@ var Z =
 	    Message: __webpack_require__(8),
 	    Pagination: __webpack_require__(10),
 	    DatePicker: __webpack_require__(12),
-	    Select: __webpack_require__(16),
-	    Checkbox: __webpack_require__(18),
-	    RadioGroup: __webpack_require__(20),
-	    CheckboxGroup: __webpack_require__(22),
-	    Tabs: __webpack_require__(24),
-	    Formsy: __webpack_require__(27)
+	    Select: __webpack_require__(15),
+	    Checkbox: __webpack_require__(17),
+	    RadioGroup: __webpack_require__(19),
+	    CheckboxGroup: __webpack_require__(21),
+	    Tabs: __webpack_require__(23),
+	    Formsy: __webpack_require__(26)
 	};
 
 /***/ },
@@ -874,9 +874,8 @@ var Z =
 	// ------------------------
 
 	var React = __webpack_require__(3);
-	var DropdownTrigger = __webpack_require__(14);
 	var cx = __webpack_require__(4);
-	var objectAssign = __webpack_require__(15);
+	var objectAssign = __webpack_require__(14);
 
 	var tabPressed = false;
 
@@ -1299,7 +1298,13 @@ var Z =
 	            if (this.props.selectTime) {
 	                this.confirm();
 	            } else {
-	                this.setDate(this.state.date);
+	                if (this.state.view === 'date') {
+	                    this.setDate(this.state.date);
+	                } else if (this.state.view === 'year') {
+	                    this.setState({
+	                        view: 'date'
+	                    });
+	                }
 	            }
 	        }
 	    },
@@ -1317,7 +1322,13 @@ var Z =
 
 	            case 38:
 	                // Up Arrow
-	                this.state.view === 'date' && this.pressKeyToDate(-7);
+	                if (this.state.view === 'date') {
+	                    this.pressKeyToDate(-7);
+	                } else if (this.state.view === 'year') {
+	                    this.setState({
+	                        year: this.state.year - 1
+	                    });
+	                }
 	                break;
 
 	            case 39:
@@ -1327,7 +1338,13 @@ var Z =
 
 	            case 40:
 	                // Down Arrow
-	                this.state.view === 'date' && this.pressKeyToDate(7);
+	                if (this.state.view === 'date') {
+	                    this.pressKeyToDate(7);
+	                } else if (this.state.view === 'year') {
+	                    this.setState({
+	                        year: this.state.year + 1
+	                    });
+	                }
 	                break;
 
 	            default:
@@ -1389,7 +1406,11 @@ var Z =
 	                    onClick: this.prevMonth }),
 	                React.createElement(
 	                    'b',
-	                    { className: 'datepicker-year', onClick: this.selectYear },
+	                    {
+	                        className: 'datepicker-year',
+	                        title: '\u9009\u62E9\u5E74\u4EFD',
+	                        onClick: this.selectYear
+	                    },
 	                    year + '\u5E74'
 	                ),
 	                React.createElement(
@@ -1515,7 +1536,7 @@ var Z =
 	            renderedTimeSelect = React.createElement(
 	                'div',
 	                { className: cx('clearfix', {
-	                        'hide': view === 'date'
+	                        'hide': view !== 'time'
 	                    }) },
 	                React.createElement(
 	                    'ul',
@@ -1588,37 +1609,65 @@ var Z =
 	                        React.createElement(
 	                            'th',
 	                            null,
-	                            '\u4E00'
+	                            React.createElement(
+	                                'span',
+	                                null,
+	                                '\u4E00'
+	                            )
 	                        ),
 	                        React.createElement(
 	                            'th',
 	                            null,
-	                            '\u4E8C'
+	                            React.createElement(
+	                                'span',
+	                                null,
+	                                '\u4E8C'
+	                            )
 	                        ),
 	                        React.createElement(
 	                            'th',
 	                            null,
-	                            '\u4E09'
+	                            React.createElement(
+	                                'span',
+	                                null,
+	                                '\u4E09'
+	                            )
 	                        ),
 	                        React.createElement(
 	                            'th',
 	                            null,
-	                            '\u56DB'
+	                            React.createElement(
+	                                'span',
+	                                null,
+	                                '\u56DB'
+	                            )
 	                        ),
 	                        React.createElement(
 	                            'th',
 	                            null,
-	                            '\u4E94'
+	                            React.createElement(
+	                                'span',
+	                                null,
+	                                '\u4E94'
+	                            )
 	                        ),
 	                        React.createElement(
 	                            'th',
 	                            null,
-	                            '\u516D'
+	                            React.createElement(
+	                                'span',
+	                                null,
+	                                '\u516D'
+	                            )
 	                        ),
 	                        React.createElement(
 	                            'th',
 	                            null,
-	                            '\u65E5'
+	                            React.createElement(
+	                                'span',
+	                                null,
+	                                '\u65E5'
+	                            )
 	                        )
 	                    )
 	                ),
@@ -1759,114 +1808,6 @@ var Z =
 
 /***/ },
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	// DropdownTrigger
-	// ------------------------
-
-	var React = __webpack_require__(3);
-	var cx = __webpack_require__(4);
-
-	var tabPressed = false;
-
-	function handleTabPress(event) {
-	    tabPressed = event.which === 9;
-	}
-
-	var DropdownTrigger = React.createClass({
-	    displayName: 'DropdownTrigger',
-
-
-	    propTypes: {
-	        disabled: React.PropTypes.bool,
-	        children: React.PropTypes.node,
-	        onTabFocus: React.PropTypes.func,
-	        onBlur: React.PropTypes.func,
-	        onClick: React.PropTypes.func
-	    },
-
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            disabled: false,
-	            onTabFocus: function onTabFocus() {},
-	            onBlur: function onBlur() {},
-	            onClick: function onClick() {}
-	        };
-	    },
-	    componentDidMount: function componentDidMount() {
-	        // Listen to tab pressing so that we know when it's a keyboard focus. 
-	        document.addEventListener('keydown', handleTabPress, false);
-	    },
-	    componentWillUnmount: function componentWillUnmount() {
-	        this.cancelFocusTimeout();
-	        document.removeEventListener('keydown', handleTabPress, false);
-	    },
-	    cancelFocusTimeout: function cancelFocusTimeout() {
-	        if (this.focusTimeout) {
-	            clearTimeout(this.focusTimeout);
-	            this.focusTimeout = null;
-	        }
-	    },
-	    handleFocus: function handleFocus(event) {
-	        var _this = this;
-
-	        if (event) event.persist();
-	        if (!this.props.disabled) {
-	            // setTimeout is needed because the focus event fires first
-	            // Wait so that we can capture if this was a keyboard focus
-	            this.focusTimeout = setTimeout(function () {
-	                if (tabPressed) {
-	                    _this.props.onTabFocus(event);
-	                }
-	            }, 150);
-	        }
-	    },
-	    handleBlur: function handleBlur(event) {
-	        this.cancelFocusTimeout();
-	        this.props.onBlur(event);
-	    },
-	    handleClick: function handleClick(event) {
-	        if (!this.props.disabled) {
-	            tabPressed = false;
-	            this.props.onClick(event);
-	        }
-	    },
-	    render: function render() {
-	        var _props = this.props,
-	            className = _props.className,
-	            style = _props.style,
-	            disabled = _props.disabled,
-	            onTabFocus = _props.onTabFocus,
-	            onBlur = _props.onBlur,
-	            onClick = _props.onClick,
-	            children = _props.children,
-	            otherProps = _objectWithoutProperties(_props, ['className', 'style', 'disabled', 'onTabFocus', 'onBlur', 'onClick', 'children']);
-
-	        return React.createElement(
-	            'div',
-	            _extends({}, otherProps, {
-	                className: cx('dropdown-trigger', className),
-	                style: style,
-	                tabIndex: disabled ? undefined : '0',
-	                onFocus: this.handleFocus,
-	                onBlur: this.handleBlur,
-	                onClick: this.handleClick
-	            }),
-	            children
-	        );
-	    }
-	});
-
-	module.exports = DropdownTrigger;
-
-/***/ },
-/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1955,15 +1896,15 @@ var Z =
 
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(17);
+	module.exports = __webpack_require__(16);
 
 /***/ },
-/* 17 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1974,7 +1915,6 @@ var Z =
 	// ------------------------
 
 	var React = __webpack_require__(3);
-	var DropdownTrigger = __webpack_require__(14);
 	var cx = __webpack_require__(4);
 
 	var tabPressed = false;
@@ -2411,15 +2351,15 @@ var Z =
 	module.exports = Select;
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(19);
+	module.exports = __webpack_require__(18);
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2537,15 +2477,15 @@ var Z =
 	module.exports = Checkbox;
 
 /***/ },
-/* 20 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(21);
+	module.exports = __webpack_require__(20);
 
 /***/ },
-/* 21 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2701,15 +2641,15 @@ var Z =
 	module.exports = RadioGroup;
 
 /***/ },
-/* 22 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(23);
+	module.exports = __webpack_require__(22);
 
 /***/ },
-/* 23 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2719,7 +2659,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Checkbox = __webpack_require__(18);
+	var Checkbox = __webpack_require__(17);
 
 	var CheckboxGroup = React.createClass({
 	    displayName: 'CheckboxGroup',
@@ -2856,15 +2796,15 @@ var Z =
 	module.exports = CheckboxGroup;
 
 /***/ },
-/* 24 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(25);
+	module.exports = __webpack_require__(24);
 
 /***/ },
-/* 25 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2874,7 +2814,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Tab = __webpack_require__(26);
+	var Tab = __webpack_require__(25);
 
 	var Tabs = React.createClass({
 	    displayName: 'Tabs',
@@ -3016,7 +2956,7 @@ var Z =
 	module.exports = Tabs;
 
 /***/ },
-/* 26 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3111,15 +3051,15 @@ var Z =
 	module.exports = Tab;
 
 /***/ },
-/* 27 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(28);
+	module.exports = __webpack_require__(27);
 
 /***/ },
-/* 28 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3127,18 +3067,18 @@ var Z =
 	// Form
 	// ------------------------
 
-	var Formsy = __webpack_require__(29);
-	var validationRules = __webpack_require__(36);
+	var Formsy = __webpack_require__(28);
+	var validationRules = __webpack_require__(35);
 
-	Formsy.HiddenField = __webpack_require__(37);
-	Formsy.TextField = __webpack_require__(38);
-	Formsy.InputField = __webpack_require__(39);
-	Formsy.SelectField = __webpack_require__(40);
-	Formsy.DateField = __webpack_require__(41);
-	Formsy.RadioGroupField = __webpack_require__(42);
-	Formsy.CheckboxField = __webpack_require__(43);
-	Formsy.CheckboxGroupField = __webpack_require__(44);
-	Formsy.TextAreaField = __webpack_require__(45);
+	Formsy.HiddenField = __webpack_require__(36);
+	Formsy.TextField = __webpack_require__(37);
+	Formsy.InputField = __webpack_require__(38);
+	Formsy.SelectField = __webpack_require__(39);
+	Formsy.DateField = __webpack_require__(40);
+	Formsy.RadioGroupField = __webpack_require__(41);
+	Formsy.CheckboxField = __webpack_require__(42);
+	Formsy.CheckboxGroupField = __webpack_require__(43);
+	Formsy.TextAreaField = __webpack_require__(44);
 
 	for (var name in validationRules) {
 	    Formsy.addValidationRule(name, validationRules[name]);
@@ -3147,7 +3087,7 @@ var Z =
 	module.exports = Formsy;
 
 /***/ },
-/* 29 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -3160,12 +3100,12 @@ var Z =
 
 	var React = global.React || __webpack_require__(3);
 	var Formsy = {};
-	var validationRules = __webpack_require__(30);
-	var formDataToObject = __webpack_require__(31);
-	var utils = __webpack_require__(32);
-	var Mixin = __webpack_require__(33);
-	var HOC = __webpack_require__(34);
-	var Decorator = __webpack_require__(35);
+	var validationRules = __webpack_require__(29);
+	var formDataToObject = __webpack_require__(30);
+	var utils = __webpack_require__(31);
+	var Mixin = __webpack_require__(32);
+	var HOC = __webpack_require__(33);
+	var Decorator = __webpack_require__(34);
 	var options = {};
 	var emptyArray = [];
 
@@ -3613,7 +3553,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 30 */
+/* 29 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3698,7 +3638,7 @@ var Z =
 	module.exports = validations;
 
 /***/ },
-/* 31 */
+/* 30 */
 /***/ function(module, exports) {
 
 	function toObj(source) {
@@ -3749,7 +3689,7 @@ var Z =
 	}
 
 /***/ },
-/* 32 */
+/* 31 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3811,12 +3751,12 @@ var Z =
 	};
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
-	var utils = __webpack_require__(32);
+	var utils = __webpack_require__(31);
 	var React = global.React || __webpack_require__(3);
 
 	var convertValidationsToObject = function convertValidationsToObject(validations) {
@@ -3991,7 +3931,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -3999,7 +3939,7 @@ var Z =
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = global.React || __webpack_require__(3);
-	var Mixin = __webpack_require__(33);
+	var Mixin = __webpack_require__(32);
 	module.exports = function (Component) {
 	  return React.createClass({
 	    displayName: 'Formsy(' + getDisplayName(Component) + ')',
@@ -4032,7 +3972,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 35 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -4040,7 +3980,7 @@ var Z =
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = global.React || __webpack_require__(3);
-	var Mixin = __webpack_require__(33);
+	var Mixin = __webpack_require__(32);
 	module.exports = function () {
 	  return function (Component) {
 	    return React.createClass({
@@ -4070,7 +4010,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 36 */
+/* 35 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -4090,7 +4030,7 @@ var Z =
 	module.exports = validations;
 
 /***/ },
-/* 37 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4099,7 +4039,7 @@ var Z =
 	// ---------------------------
 
 	var React = __webpack_require__(3);
-	var Formsy = __webpack_require__(29);
+	var Formsy = __webpack_require__(28);
 
 	var HiddenField = React.createClass({
 	    displayName: 'HiddenField',
@@ -4122,7 +4062,7 @@ var Z =
 	module.exports = HiddenField;
 
 /***/ },
-/* 38 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4131,7 +4071,7 @@ var Z =
 	// ---------------------------
 
 	var React = __webpack_require__(3);
-	var Formsy = __webpack_require__(29);
+	var Formsy = __webpack_require__(28);
 	var cx = __webpack_require__(4);
 
 	var TextField = React.createClass({
@@ -4170,7 +4110,7 @@ var Z =
 	module.exports = TextField;
 
 /***/ },
-/* 39 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4184,7 +4124,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(29);
+	var Formsy = __webpack_require__(28);
 
 	var InputField = React.createClass({
 	    displayName: 'InputField',
@@ -4260,7 +4200,7 @@ var Z =
 	module.exports = InputField;
 
 /***/ },
-/* 40 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4274,8 +4214,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Select = __webpack_require__(16);
-	var Formsy = __webpack_require__(29);
+	var Select = __webpack_require__(15);
+	var Formsy = __webpack_require__(28);
 
 	var SelectField = React.createClass({
 	    displayName: 'SelectField',
@@ -4344,7 +4284,7 @@ var Z =
 	module.exports = SelectField;
 
 /***/ },
-/* 41 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4359,7 +4299,7 @@ var Z =
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
 	var DatePicker = __webpack_require__(12);
-	var Formsy = __webpack_require__(29);
+	var Formsy = __webpack_require__(28);
 
 	var DateField = React.createClass({
 	    displayName: 'DateField',
@@ -4420,7 +4360,7 @@ var Z =
 	module.exports = DateField;
 
 /***/ },
-/* 42 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4434,8 +4374,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(29);
-	var RadioGroup = __webpack_require__(20);
+	var Formsy = __webpack_require__(28);
+	var RadioGroup = __webpack_require__(19);
 
 	var RadioGroupField = React.createClass({
 	    displayName: 'RadioGroupField',
@@ -4482,7 +4422,7 @@ var Z =
 	module.exports = RadioGroupField;
 
 /***/ },
-/* 43 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4496,8 +4436,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(29);
-	var Checkbox = __webpack_require__(18);
+	var Formsy = __webpack_require__(28);
+	var Checkbox = __webpack_require__(17);
 
 	var CheckboxField = React.createClass({
 	    displayName: 'CheckboxField',
@@ -4540,7 +4480,7 @@ var Z =
 	module.exports = CheckboxField;
 
 /***/ },
-/* 44 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4554,8 +4494,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(29);
-	var CheckboxGroup = __webpack_require__(22);
+	var Formsy = __webpack_require__(28);
+	var CheckboxGroup = __webpack_require__(21);
 
 	var CheckboxGroupField = React.createClass({
 	    displayName: 'CheckboxGroupField',
@@ -4603,7 +4543,7 @@ var Z =
 	module.exports = CheckboxGroupField;
 
 /***/ },
-/* 45 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4617,7 +4557,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(29);
+	var Formsy = __webpack_require__(28);
 
 	var TextAreaField = React.createClass({
 	    displayName: 'TextAreaField',

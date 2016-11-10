@@ -410,7 +410,13 @@ const DatePicker = React.createClass({
             if (this.props.selectTime) {
                 this.confirm();
             } else {
-                this.setDate(this.state.date);
+                if (this.state.view === 'date') {
+                    this.setDate(this.state.date);
+                } else if (this.state.view === 'year') {
+                    this.setState({
+                        view: 'date'
+                    });
+                }
             }
         }
     },
@@ -429,7 +435,13 @@ const DatePicker = React.createClass({
 
             case 38:
                 // Up Arrow
-                this.state.view === 'date' && this.pressKeyToDate(-7);
+                if (this.state.view === 'date') {
+                    this.pressKeyToDate(-7);
+                } else if (this.state.view === 'year') {
+                    this.setState({
+                        year: this.state.year - 1 
+                    });
+                }
                 break;
 
             case 39:
@@ -439,7 +451,13 @@ const DatePicker = React.createClass({
 
             case 40:
                 // Down Arrow
-                this.state.view === 'date' && this.pressKeyToDate(7);
+                if (this.state.view === 'date') {
+                    this.pressKeyToDate(7);
+                } else if (this.state.view === 'year') {
+                    this.setState({
+                        year: this.state.year + 1 
+                    });
+                }
                 break;
 
             default:
@@ -486,8 +504,16 @@ const DatePicker = React.createClass({
                         className="fa fa-angle-left datepicker-prev-month-btn"
                         onClick={this.prevMonth}>
                     </a>
-                    <b className="datepicker-year" onClick={this.selectYear}>{`${year}年`}</b>
-                    <b className="datepicker-month">{`${month + 1}月`}</b>
+                    <b 
+                        className="datepicker-year" 
+                        title="选择年份"
+                        onClick={this.selectYear}
+                    >
+                        {`${year}年`}
+                    </b>
+                    <b className="datepicker-month">
+                        {`${month + 1}月`}
+                    </b>
                     <a 
                         className="fa fa-angle-right datepicker-next-month-btn"
                         onClick={this.nextMonth}>
@@ -590,7 +616,7 @@ const DatePicker = React.createClass({
             }
             renderedTimeSelect = (
                 <div className={cx('clearfix', {
-                    'hide': view === 'date'
+                    'hide': view !== 'time'
                 })}>
                     <ul className="datepicker-time-col">
                         {timeArr.slice(0, 24).map((hour, i) => (
@@ -636,13 +662,13 @@ const DatePicker = React.createClass({
                 })}>
                     <thead>
                         <tr>
-                            <th>一</th>
-                            <th>二</th>
-                            <th>三</th>
-                            <th>四</th>
-                            <th>五</th>
-                            <th>六</th>
-                            <th>日</th>
+                            <th><span>一</span></th>
+                            <th><span>二</span></th>
+                            <th><span>三</span></th>
+                            <th><span>四</span></th>
+                            <th><span>五</span></th>
+                            <th><span>六</span></th>
+                            <th><span>日</span></th>
                         </tr>
                     </thead>
                     <tbody>
