@@ -1357,6 +1357,7 @@ table th[class*="col-"] {
 .select-trigger-single,
 .select-trigger-multi {
   min-height: 36px;
+  border: 1px solid #ccc;
 }
 .select-trigger-single.required,
 .select-trigger-multi.required {
@@ -1437,7 +1438,6 @@ table th[class*="col-"] {
 .select-dropdown {
   padding: 10px 0;
   max-height: 288px;
-  border: 1px solid #ccc;
 }
 .select-dropdown .select-option {
   display: block;
