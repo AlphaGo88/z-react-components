@@ -46,10 +46,9 @@
 
 	'use strict';
 
-	var _Z = Z,
-	    Message = _Z.Message,
-	    Dialog = _Z.Dialog,
-	    Form = _Z.Form;
+	var _zui = zui,
+	    Dialog = _zui.Dialog,
+	    Form = _zui.Form;
 
 
 	var countries = [{
@@ -80,18 +79,6 @@
 	        };
 	    },
 
-	    msg1: function msg1() {
-	        Message.msg('This is some message.');
-	    },
-	    msg2: function msg2() {
-	        Message.success('This is a success message.');
-	    },
-	    msg3: function msg3() {
-	        Message.warning('This is a warning message.');
-	    },
-	    msg4: function msg4() {
-	        Message.error('This is an error message.');
-	    },
 	    openDialog: function openDialog() {
 	        this.setState({ dlg1Open: true });
 	    },
@@ -133,43 +120,6 @@
 	        return React.createElement(
 	            'div',
 	            null,
-	            React.createElement(
-	                'section',
-	                null,
-	                React.createElement(
-	                    'a',
-	                    { onClick: this.msg1 },
-	                    'Message'
-	                )
-	            ),
-	            React.createElement(
-	                'section',
-	                null,
-	                React.createElement(
-	                    'a',
-	                    { onClick: this.msg2 },
-	                    'Success message'
-	                )
-	            ),
-	            React.createElement(
-	                'section',
-	                null,
-	                React.createElement(
-	                    'a',
-	                    { onClick: this.msg3 },
-	                    'Warning message'
-	                )
-	            ),
-	            React.createElement(
-	                'section',
-	                null,
-	                React.createElement(
-	                    'a',
-	                    { onClick: this.msg4 },
-	                    'Error message'
-	                )
-	            ),
-	            React.createElement('hr', null),
 	            React.createElement(
 	                'section',
 	                null,

@@ -1,5 +1,5 @@
 
-const { Pagination } = Z;
+const { Pagination } = zui;
 
 let App = React.createClass({
 

@@ -17,15 +17,14 @@
     width: 100%;
 }
 
-.dropdown {
+.dropdown,
+.dropdown-no-border {
     position: absolute;
-    width: 100%;
     top: 100%;
     left: 0;
     margin: 4px 0 0;
     overflow: auto;
     background-color: #fff;
-    border: 1px solid @border-color-base;
     box-shadow: @box-shadow-base;
     transition: opacity 240ms, transform 240ms;
     transform-origin: 0% 0%;
@@ -38,4 +37,8 @@
         opacity: 0;
         transform: scaleY(0.4);
     }
+}
+
+.dropdown {
+    border: 1px solid @border-color-base;
 }

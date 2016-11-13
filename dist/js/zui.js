@@ -1,4 +1,4 @@
-var Z =
+var zui =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -54,14 +54,18 @@ var Z =
 	    Button: __webpack_require__(1),
 	    Dialog: __webpack_require__(5),
 	    Message: __webpack_require__(8),
-	    Pagination: __webpack_require__(10),
-	    DatePicker: __webpack_require__(12),
-	    Select: __webpack_require__(14),
-	    Checkbox: __webpack_require__(16),
-	    RadioGroup: __webpack_require__(18),
-	    CheckboxGroup: __webpack_require__(20),
-	    Tabs: __webpack_require__(22),
-	    Formsy: __webpack_require__(25)
+	    Notification: __webpack_require__(10),
+	    Pagination: __webpack_require__(12),
+	    DatePicker: __webpack_require__(14),
+	    Select: __webpack_require__(17),
+	    Checkbox: __webpack_require__(19),
+	    RadioGroup: __webpack_require__(21),
+	    CheckboxGroup: __webpack_require__(23),
+	    Tabs: __webpack_require__(25),
+	    Menu: __webpack_require__(28),
+	    DropdownMenu: __webpack_require__(32),
+	    Divider: __webpack_require__(35),
+	    Formsy: __webpack_require__(37)
 	};
 
 /***/ },
@@ -588,7 +592,7 @@ var Z =
 	'use strict';
 
 	var ReactDOM = __webpack_require__(6);
-	var Message = __webpack_require__(46);
+	var Message = __webpack_require__(9);
 
 	module.exports = {
 	    _msg: function _msg(type, content, duration) {
@@ -633,16 +637,250 @@ var Z =
 	};
 
 /***/ },
-/* 9 */,
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	// Message
+	// ------------------------
+
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+
+	var Message = React.createClass({
+	    displayName: 'Message',
+
+
+	    propTypes: {
+	        type: React.PropTypes.string,
+	        duration: React.PropTypes.number
+	    },
+
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            type: 'msg',
+	            duration: 4000
+	        };
+	    },
+	    getInitialState: function getInitialState() {
+	        return {
+	            exiting: false
+	        };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        var _this = this;
+
+	        this.exitTimeOut = setTimeout(function () {
+	            _this.setState({
+	                exiting: true
+	            });
+	        }, this.props.duration);
+	    },
+	    componentWillUnmount: function componentWillUnmount() {
+	        clearTimeout(this.exitTimeOut);
+	    },
+	    render: function render() {
+	        var _props = this.props,
+	            type = _props.type,
+	            children = _props.children;
+
+	        var iconClass = '';
+
+	        switch (type) {
+	            case 'success':
+	                iconClass = 'fa fa-check-circle icon-success';
+	                break;
+	            case 'info':
+	                iconClass = 'fa fa-info-circle icon-info';
+	                break;
+	            case 'warning':
+	                iconClass = 'fa fa-warning icon-warning';
+	                break;
+	            case 'error':
+	                iconClass = 'fa fa-times-circle icon-error';
+	                break;
+	            default:
+	        }
+
+	        return React.createElement(
+	            'div',
+	            { className: cx('z-msg', {
+	                    'exit': this.state.exiting
+	                }) },
+	            type !== 'msg' && React.createElement('i', { className: iconClass }),
+	            children
+	        );
+	    }
+	});
+
+	module.exports = Message;
+
+/***/ },
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(11);
+	var ReactDOM = __webpack_require__(6);
+	var Notification = __webpack_require__(11);
+
+	module.exports = {
+	    open: function open(opt) {
+	        // create Notification layer if not been created.
+	        var layer = document.getElementById('z-notification-layer');
+
+	        if (!layer) {
+	            layer = document.createElement('div');
+	            layer.id = 'z-notification-layer';
+	            document.body.appendChild(layer);
+	        }
+
+	        var container = document.createElement('div');
+
+	        container.addEventListener('transitionend', function (event) {
+	            ReactDOM.unmountComponentAtNode(container);
+	            layer.removeChild(container);
+	        });
+	        layer.appendChild(container);
+
+	        ReactDOM.render(React.createElement(Notification, {
+	            type: opt.type,
+	            autoClose: opt.autoClose,
+	            duration: opt.duration,
+	            icon: opt.icon,
+	            title: opt.title,
+	            content: opt.content
+	        }), container);
+	    }
+	};
 
 /***/ },
 /* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	// Notification
+	// ------------------------
+
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+
+	var Notification = React.createClass({
+	    displayName: 'Notification',
+
+
+	    propTypes: {
+	        type: React.PropTypes.string,
+	        duration: React.PropTypes.number,
+	        autoClose: React.PropTypes.bool,
+	        icon: React.PropTypes.node,
+	        title: React.PropTypes.node,
+	        content: React.PropTypes.node
+	    },
+
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            duration: 4000,
+	            autoClose: true
+	        };
+	    },
+	    getInitialState: function getInitialState() {
+	        return {
+	            exiting: false
+	        };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        if (this.props.autoClose) {
+	            this.exitTimeOut = setTimeout(this.close, this.props.duration);
+	        }
+	    },
+	    componentWillUnmount: function componentWillUnmount() {
+	        if (this.exitTimeOut) {
+	            clearTimeout(this.exitTimeOut);
+	            this.exitTimeOut = null;
+	        }
+	    },
+	    close: function close() {
+	        this.setState({
+	            exiting: true
+	        });
+	    },
+	    render: function render() {
+	        var _props = this.props,
+	            type = _props.type,
+	            title = _props.title,
+	            content = _props.content;
+
+
+	        var icon = void 0;
+	        var iconClass = '';
+
+	        if (type) {
+	            switch (type) {
+	                case 'success':
+	                    iconClass = 'fa fa-check-circle icon-success';
+	                    break;
+	                case 'info':
+	                    iconClass = 'fa fa-info-circle icon-info';
+	                    break;
+	                case 'warning':
+	                    iconClass = 'fa fa-warning icon-warning';
+	                    break;
+	                case 'error':
+	                    iconClass = 'fa fa-times-circle icon-error';
+	                    break;
+	                default:
+	            }
+	            icon = React.createElement('i', { className: iconClass });
+	        } else {
+	            icon = this.props.icon;
+	        }
+
+	        return React.createElement(
+	            'div',
+	            { className: cx('z-notification', {
+	                    'exit': this.state.exiting
+	                }) },
+	            React.createElement('i', { className: 'fa fa-close z-notification-close', onClick: this.close }),
+	            icon && React.createElement(
+	                'div',
+	                { className: 'z-notification-icon' },
+	                icon
+	            ),
+	            React.createElement(
+	                'div',
+	                { className: cx('z-notification-body', {
+	                        'with-icon': !!icon
+	                    }) },
+	                React.createElement(
+	                    'div',
+	                    { className: 'z-notification-title' },
+	                    title
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { className: 'z-notification-content' },
+	                    content
+	                )
+	            )
+	        );
+	    }
+	});
+
+	module.exports = Notification;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(13);
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -826,15 +1064,15 @@ var Z =
 	module.exports = Pagination;
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(13);
+	module.exports = __webpack_require__(15);
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -846,7 +1084,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var objectAssign = __webpack_require__(45);
+	var objectAssign = __webpack_require__(16);
 
 	var tabPressed = false;
 
@@ -1280,10 +1518,15 @@ var Z =
 	        }
 	    },
 	    handleKeyDown: function handleKeyDown(event) {
+	        event.preventDefault();
+
 	        switch (event.which) {
 	            case 27:
 	                // ESC
-	                this.hideAndRestore();
+	                if (this.state.isOpen) {
+	                    event.stopPropagation();
+	                    this.hideAndRestore();
+	                }
 	                break;
 
 	            case 37:
@@ -1778,15 +2021,104 @@ var Z =
 	module.exports = DatePicker;
 
 /***/ },
-/* 14 */
+/* 16 */
+/***/ function(module, exports) {
+
+	'use strict';
+	/* eslint-disable no-unused-vars */
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+	function toObject(val) {
+		if (val === null || val === undefined) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	function shouldUseNative() {
+		try {
+			if (!Object.assign) {
+				return false;
+			}
+
+			// Detect buggy property enumeration order in older V8 versions.
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+			var test1 = new String('abc');  // eslint-disable-line
+			test1[5] = 'de';
+			if (Object.getOwnPropertyNames(test1)[0] === '5') {
+				return false;
+			}
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test2 = {};
+			for (var i = 0; i < 10; i++) {
+				test2['_' + String.fromCharCode(i)] = i;
+			}
+			var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+				return test2[n];
+			});
+			if (order2.join('') !== '0123456789') {
+				return false;
+			}
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test3 = {};
+			'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+				test3[letter] = letter;
+			});
+			if (Object.keys(Object.assign({}, test3)).join('') !==
+					'abcdefghijklmnopqrst') {
+				return false;
+			}
+
+			return true;
+		} catch (e) {
+			// We don't expect any of the above to throw, but better to be safe.
+			return false;
+		}
+	}
+
+	module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+		var from;
+		var to = toObject(target);
+		var symbols;
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = Object(arguments[s]);
+
+			for (var key in from) {
+				if (hasOwnProperty.call(from, key)) {
+					to[key] = from[key];
+				}
+			}
+
+			if (Object.getOwnPropertySymbols) {
+				symbols = Object.getOwnPropertySymbols(from);
+				for (var i = 0; i < symbols.length; i++) {
+					if (propIsEnumerable.call(from, symbols[i])) {
+						to[symbols[i]] = from[symbols[i]];
+					}
+				}
+			}
+		}
+
+		return to;
+	};
+
+
+/***/ },
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(15);
+	module.exports = __webpack_require__(18);
 
 /***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1897,7 +2229,7 @@ var Z =
 	        };
 
 	        if (!this.isControlled()) {
-	            if (typeof this.props.defaultValue !== 'undefined') {
+	            if (this.props.defaultValue != undefined) {
 	                state.value = this.props.defaultValue;
 	            } else {
 	                state.value = this.props.multi ? [] : '';
@@ -1948,7 +2280,7 @@ var Z =
 	        }
 	    },
 	    isControlled: function isControlled() {
-	        return typeof this.props.value !== 'undefined';
+	        return this.props.value != undefined;
 	    },
 	    getValue: function getValue() {
 	        return this.isControlled() ? this.props.value : this.state.value;
@@ -2003,6 +2335,8 @@ var Z =
 	            isOpen = _state.isOpen,
 	            hoverIndex = _state.hoverIndex;
 
+
+	        event.preventDefault();
 
 	        switch (event.which) {
 	            case 27:
@@ -2233,15 +2567,15 @@ var Z =
 	module.exports = Select;
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(17);
+	module.exports = __webpack_require__(20);
 
 /***/ },
-/* 17 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2359,15 +2693,15 @@ var Z =
 	module.exports = Checkbox;
 
 /***/ },
-/* 18 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(19);
+	module.exports = __webpack_require__(22);
 
 /***/ },
-/* 19 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2523,15 +2857,15 @@ var Z =
 	module.exports = RadioGroup;
 
 /***/ },
-/* 20 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(21);
+	module.exports = __webpack_require__(24);
 
 /***/ },
-/* 21 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2541,7 +2875,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Checkbox = __webpack_require__(16);
+	var Checkbox = __webpack_require__(19);
 
 	var CheckboxGroup = React.createClass({
 	    displayName: 'CheckboxGroup',
@@ -2678,15 +3012,15 @@ var Z =
 	module.exports = CheckboxGroup;
 
 /***/ },
-/* 22 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(23);
+	module.exports = __webpack_require__(26);
 
 /***/ },
-/* 23 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2696,7 +3030,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Tab = __webpack_require__(24);
+	var Tab = __webpack_require__(27);
 
 	var Tabs = React.createClass({
 	    displayName: 'Tabs',
@@ -2756,7 +3090,7 @@ var Z =
 
 
 	    componentWillMount: function componentWillMount() {
-	        if (typeof this.props.value === 'undefined') {
+	        if (this.props.value == undefined) {
 	            this.setState({
 	                activeIndex: this.props.defaultActiveIndex
 	            });
@@ -2764,7 +3098,7 @@ var Z =
 	    },
 
 	    handleChange: function handleChange(tabIndex, value) {
-	        if (typeof this.props.value === 'undefined') {
+	        if (this.props.value == undefined) {
 	            this.setState({
 	                activeIndex: tabIndex
 	            });
@@ -2838,7 +3172,7 @@ var Z =
 	module.exports = Tabs;
 
 /***/ },
-/* 24 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2933,15 +3267,562 @@ var Z =
 	module.exports = Tab;
 
 /***/ },
-/* 25 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(26);
+	module.exports = __webpack_require__(29);
 
 /***/ },
-/* 26 */
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	// Menu
+	// ------------------------
+
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+	var SubMenu = __webpack_require__(30);
+	var MenuItem = __webpack_require__(31);
+
+	var Menu = React.createClass({
+	    displayName: 'Menu',
+
+
+	    propTypes: {
+	        /**
+	         * The css class name of the root element.
+	         */
+	        className: React.PropTypes.string,
+
+	        /**
+	         * The inline styles of the root element.
+	         */
+	        style: React.PropTypes.object,
+
+	        /**
+	         * The menu items.
+	         */
+	        children: React.PropTypes.node,
+
+	        /**
+	         * Fires when select a menu.
+	         * @param {string} `value`
+	         */
+	        onSelect: React.PropTypes.func
+	    },
+
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            onSelect: function onSelect() {}
+	        };
+	    },
+	    handleSelect: function handleSelect(value) {
+	        this.props.onSelect(value);
+	    },
+	    render: function render() {
+	        var _this = this;
+
+	        var _props = this.props,
+	            className = _props.className,
+	            style = _props.style,
+	            children = _props.children;
+
+
+	        return React.createElement(
+	            'div',
+	            {
+	                className: cx('menu', className),
+	                style: style
+	            },
+	            React.Children.map(children, function (item) {
+	                return React.cloneElement(item, {
+	                    onSelect: _this.handleSelect
+	                });
+	            })
+	        );
+	    }
+	});
+
+	Menu.SubMenu = SubMenu;
+	Menu.MenuItem = MenuItem;
+	module.exports = Menu;
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	// SubMenu
+	// ------------------------
+
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+
+	var SubMenu = React.createClass({
+	    displayName: 'SubMenu',
+
+
+	    propTypes: {
+	        /**
+	         * The css class name of the root element.
+	         */
+	        className: React.PropTypes.string,
+
+	        /**
+	         * The css class name of the menu element.
+	         */
+	        menuClassName: React.PropTypes.string,
+
+	        /**
+	         * The inline styles of root element.
+	         */
+	        style: React.PropTypes.object,
+
+	        /**
+	         * The inline styles of the menu element.
+	         */
+	        menuStyle: React.PropTypes.object,
+
+	        /**
+	         * Whether the `SubMenu` is disabled.
+	         */
+	        disabled: React.PropTypes.bool,
+
+	        /**
+	         * The sub menu items.
+	         */
+	        children: React.PropTypes.node,
+
+	        /**
+	         * The text of the `SubMenu`.
+	         */
+	        text: React.PropTypes.node,
+
+	        /**
+	         * The left icon.
+	         */
+	        leftIcon: React.PropTypes.node,
+
+	        /**
+	         * Replace default right icon with this prop.
+	         */
+	        rightIcon: React.PropTypes.node,
+
+	        /**
+	         * Fires when select a sub menu item.
+	         */
+	        onSelect: React.PropTypes.func
+	    },
+
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            rightIcon: React.createElement('i', { className: 'fa fa-chevron-right' }),
+	            onSelect: function onSelect() {}
+	        };
+	    },
+	    getInitialState: function getInitialState() {
+	        return {
+	            isOpen: false
+	        };
+	    },
+	    handleMouseEnter: function handleMouseEnter(event) {
+	        if (!this.props.disabled) {
+	            this.setState({ isOpen: true });
+	        }
+	    },
+	    handleMouseLeave: function handleMouseLeave(event) {
+	        if (this.state.isOpen) {
+	            this.setState({ isOpen: false });
+	        }
+	    },
+	    handleSelect: function handleSelect(value) {
+	        this.setState({ isOpen: false });
+	        this.props.onSelect(value);
+	    },
+	    render: function render() {
+	        var _this = this;
+
+	        var _props = this.props,
+	            className = _props.className,
+	            menuClassName = _props.menuClassName,
+	            style = _props.style,
+	            menuStyle = _props.menuStyle,
+	            disabled = _props.disabled,
+	            text = _props.text,
+	            leftIcon = _props.leftIcon,
+	            rightIcon = _props.rightIcon,
+	            children = _props.children;
+
+
+	        return React.createElement(
+	            'div',
+	            {
+	                className: cx('menu-item', className, {
+	                    'disabled': disabled
+	                }),
+	                style: style,
+	                onMouseEnter: this.handleMouseEnter,
+	                onMouseLeave: this.handleMouseLeave
+	            },
+	            leftIcon && React.createElement(
+	                'span',
+	                { className: 'left-icon' },
+	                leftIcon
+	            ),
+	            text && React.createElement(
+	                'span',
+	                null,
+	                text
+	            ),
+	            React.createElement(
+	                'span',
+	                { className: 'right-icon' },
+	                rightIcon
+	            ),
+	            React.createElement(
+	                'div',
+	                {
+	                    className: cx('sub-menu', menuClassName, {
+	                        'hide': !this.state.isOpen
+	                    }),
+	                    style: menuStyle
+	                },
+	                React.Children.map(children, function (item) {
+	                    return React.cloneElement(item, {
+	                        onSelect: _this.handleSelect
+	                    });
+	                })
+	            )
+	        );
+	    }
+	});
+
+	module.exports = SubMenu;
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	// MenuItem
+	// ------------------------
+
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+
+	var MenuItem = React.createClass({
+	    displayName: 'MenuItem',
+
+
+	    propTypes: {
+	        /**
+	         * The css class name of the root element.
+	         */
+	        className: React.PropTypes.string,
+
+	        /**
+	         * The inline styles of the root element.
+	         */
+	        style: React.PropTypes.object,
+
+	        /**
+	         * Whether the `MenuItem` is disabled.
+	         */
+	        disabled: React.PropTypes.bool,
+
+	        /**
+	         * The value of the `MenuItem`.
+	         */
+	        value: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]),
+
+	        /**
+	         * The text of the `MenuItem`.
+	         */
+	        text: React.PropTypes.node,
+
+	        /**
+	         * The secondary text that displayed on the right side.
+	         */
+	        secondaryText: React.PropTypes.node,
+
+	        /**
+	         * The left icon.
+	         */
+	        leftIcon: React.PropTypes.node,
+
+	        /**
+	         * The right icon.
+	         */
+	        rightIcon: React.PropTypes.node,
+
+	        /**
+	         * The click callback.
+	         */
+	        onSelect: React.PropTypes.func
+	    },
+
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            onSelect: function onSelect() {}
+	        };
+	    },
+	    handleClick: function handleClick(event) {
+	        if (!this.props.disabled) {
+	            this.props.onSelect(this.props.value);
+	        }
+	    },
+	    render: function render() {
+	        var _props = this.props,
+	            className = _props.className,
+	            style = _props.style,
+	            disabled = _props.disabled,
+	            text = _props.text,
+	            secondaryText = _props.secondaryText,
+	            leftIcon = _props.leftIcon,
+	            rightIcon = _props.rightIcon;
+
+
+	        return React.createElement(
+	            'div',
+	            {
+	                className: cx('menu-item', className, {
+	                    'disabled': disabled
+	                }),
+	                style: style,
+	                onClick: this.handleClick
+	            },
+	            leftIcon && React.createElement(
+	                'span',
+	                { className: 'left-icon' },
+	                leftIcon
+	            ),
+	            text && React.createElement(
+	                'span',
+	                null,
+	                text
+	            ),
+	            rightIcon && React.createElement(
+	                'span',
+	                { className: 'right-icon' },
+	                rightIcon
+	            ),
+	            !rightIcon && secondaryText && React.createElement(
+	                'span',
+	                { className: 'right-text' },
+	                secondaryText
+	            )
+	        );
+	    }
+	});
+
+	module.exports = MenuItem;
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(33);
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	// DropdownMenu
+	// ------------------------
+
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+	var ClickAwayListener = __webpack_require__(34);
+
+	var DropdownMenu = React.createClass({
+	    displayName: 'DropdownMenu',
+
+
+	    propTypes: {
+	        /**
+	         * The dropdown menu.
+	         */
+	        menu: React.PropTypes.node
+	    },
+
+	    getInitialState: function getInitialState() {
+	        return {
+	            isOpen: false
+	        };
+	    },
+	    handleClick: function handleClick() {
+	        this.setState({ isOpen: !this.state.isOpen });
+	    },
+	    handleClickAway: function handleClickAway() {
+	        this.setState({ isOpen: false });
+	    },
+	    render: function render() {
+	        var _this = this;
+
+	        var _props = this.props,
+	            menu = _props.menu,
+	            children = _props.children;
+	        var isOpen = this.state.isOpen;
+
+
+	        var processedChildren = React.cloneElement(children, {
+	            onClick: this.handleClick
+	        });
+	        var processedMenu = React.cloneElement(menu, {
+	            onSelect: function onSelect(value) {
+	                _this.setState({ isOpen: false });
+	                menu.props.onSelect(value);
+	            }
+	        });
+
+	        return React.createElement(
+	            ClickAwayListener,
+	            { onClickAway: this.handleClickAway },
+	            React.createElement(
+	                'div',
+	                { className: 'dropdown-wrapper' },
+	                processedChildren,
+	                React.createElement(
+	                    'div',
+	                    { className: cx('dropdown-no-border', {
+	                            'offscreen': !isOpen
+	                        }) },
+	                    processedMenu
+	                )
+	            )
+	        );
+	    }
+	});
+
+	module.exports = DropdownMenu;
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	// ClickAwayListener
+	// ------------------------
+
+	var React = __webpack_require__(3);
+
+	var isDescendant = function isDescendant(el, target) {
+	    if (target !== null) {
+	        return el === target || isDescendant(el, target.parentNode);
+	    }
+	    return false;
+	};
+
+	var ClickAwayListener = React.createClass({
+	    displayName: 'ClickAwayListener',
+
+
+	    propTypes: {
+	        children: React.PropTypes.node,
+	        onClickAway: React.PropTypes.func
+	    },
+
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            onClickAway: function onClickAway() {}
+	        };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        document.addEventListener('click', this.handleClickAway, false);
+	    },
+	    componentWillUnmount: function componentWillUnmount() {
+	        document.removeEventListener('click', this.handleClickAway, false);
+	    },
+	    handleClickAway: function handleClickAway(event) {
+	        if (event.defaultPrevented) {
+	            return;
+	        }
+
+	        var el = ReactDOM.findDOMNode(this);
+
+	        if (document.documentElement.contains(event.target) && !isDescendant(el, event.target)) {
+	            this.props.onClickAway(event);
+	        }
+	    },
+	    render: function render() {
+	        return this.props.children;
+	    }
+	});
+
+	module.exports = ClickAwayListener;
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(36);
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	// Divider
+	// ------------------------
+
+	var React = __webpack_require__(3);
+	var cx = __webpack_require__(4);
+
+	var Divider = React.createClass({
+	    displayName: 'Divider',
+
+
+	    propTypes: {
+	        /**
+	         * The css class name of the root element.
+	         */
+	        className: React.PropTypes.string,
+
+	        /**
+	         * The inline styles of the root element.
+	         */
+	        style: React.PropTypes.object
+	    },
+
+	    render: function render() {
+	        var _props = this.props,
+	            className = _props.className,
+	            style = _props.style;
+
+
+	        return React.createElement('div', {
+	            className: cx('divider', className),
+	            style: style
+	        });
+	    }
+	});
+
+	module.exports = Divider;
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(38);
+
+/***/ },
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2949,18 +3830,18 @@ var Z =
 	// Form
 	// ------------------------
 
-	var Formsy = __webpack_require__(27);
-	var validationRules = __webpack_require__(34);
+	var Formsy = __webpack_require__(39);
+	var validationRules = __webpack_require__(46);
 
-	Formsy.HiddenField = __webpack_require__(35);
-	Formsy.TextField = __webpack_require__(36);
-	Formsy.InputField = __webpack_require__(37);
-	Formsy.SelectField = __webpack_require__(38);
-	Formsy.DateField = __webpack_require__(39);
-	Formsy.RadioGroupField = __webpack_require__(40);
-	Formsy.CheckboxField = __webpack_require__(41);
-	Formsy.CheckboxGroupField = __webpack_require__(42);
-	Formsy.TextAreaField = __webpack_require__(43);
+	Formsy.HiddenField = __webpack_require__(47);
+	Formsy.TextField = __webpack_require__(48);
+	Formsy.InputField = __webpack_require__(49);
+	Formsy.SelectField = __webpack_require__(50);
+	Formsy.DateField = __webpack_require__(51);
+	Formsy.RadioGroupField = __webpack_require__(52);
+	Formsy.CheckboxField = __webpack_require__(53);
+	Formsy.CheckboxGroupField = __webpack_require__(54);
+	Formsy.TextAreaField = __webpack_require__(55);
 
 	for (var name in validationRules) {
 	    Formsy.addValidationRule(name, validationRules[name]);
@@ -2969,7 +3850,7 @@ var Z =
 	module.exports = Formsy;
 
 /***/ },
-/* 27 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -2982,12 +3863,12 @@ var Z =
 
 	var React = global.React || __webpack_require__(3);
 	var Formsy = {};
-	var validationRules = __webpack_require__(28);
-	var formDataToObject = __webpack_require__(29);
-	var utils = __webpack_require__(30);
-	var Mixin = __webpack_require__(31);
-	var HOC = __webpack_require__(32);
-	var Decorator = __webpack_require__(33);
+	var validationRules = __webpack_require__(40);
+	var formDataToObject = __webpack_require__(41);
+	var utils = __webpack_require__(42);
+	var Mixin = __webpack_require__(43);
+	var HOC = __webpack_require__(44);
+	var Decorator = __webpack_require__(45);
 	var options = {};
 	var emptyArray = [];
 
@@ -3435,7 +4316,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 28 */
+/* 40 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3520,7 +4401,7 @@ var Z =
 	module.exports = validations;
 
 /***/ },
-/* 29 */
+/* 41 */
 /***/ function(module, exports) {
 
 	function toObj(source) {
@@ -3571,7 +4452,7 @@ var Z =
 	}
 
 /***/ },
-/* 30 */
+/* 42 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3633,12 +4514,12 @@ var Z =
 	};
 
 /***/ },
-/* 31 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
-	var utils = __webpack_require__(30);
+	var utils = __webpack_require__(42);
 	var React = global.React || __webpack_require__(3);
 
 	var convertValidationsToObject = function convertValidationsToObject(validations) {
@@ -3813,7 +4694,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 32 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -3821,7 +4702,7 @@ var Z =
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = global.React || __webpack_require__(3);
-	var Mixin = __webpack_require__(31);
+	var Mixin = __webpack_require__(43);
 	module.exports = function (Component) {
 	  return React.createClass({
 	    displayName: 'Formsy(' + getDisplayName(Component) + ')',
@@ -3854,7 +4735,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 33 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -3862,7 +4743,7 @@ var Z =
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = global.React || __webpack_require__(3);
-	var Mixin = __webpack_require__(31);
+	var Mixin = __webpack_require__(43);
 	module.exports = function () {
 	  return function (Component) {
 	    return React.createClass({
@@ -3892,7 +4773,7 @@ var Z =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 34 */
+/* 46 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -3912,7 +4793,7 @@ var Z =
 	module.exports = validations;
 
 /***/ },
-/* 35 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3921,7 +4802,7 @@ var Z =
 	// ---------------------------
 
 	var React = __webpack_require__(3);
-	var Formsy = __webpack_require__(27);
+	var Formsy = __webpack_require__(39);
 
 	var HiddenField = React.createClass({
 	    displayName: 'HiddenField',
@@ -3944,7 +4825,7 @@ var Z =
 	module.exports = HiddenField;
 
 /***/ },
-/* 36 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3953,7 +4834,7 @@ var Z =
 	// ---------------------------
 
 	var React = __webpack_require__(3);
-	var Formsy = __webpack_require__(27);
+	var Formsy = __webpack_require__(39);
 	var cx = __webpack_require__(4);
 
 	var TextField = React.createClass({
@@ -3992,7 +4873,7 @@ var Z =
 	module.exports = TextField;
 
 /***/ },
-/* 37 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4006,7 +4887,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(27);
+	var Formsy = __webpack_require__(39);
 
 	var InputField = React.createClass({
 	    displayName: 'InputField',
@@ -4082,7 +4963,7 @@ var Z =
 	module.exports = InputField;
 
 /***/ },
-/* 38 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4096,8 +4977,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Select = __webpack_require__(14);
-	var Formsy = __webpack_require__(27);
+	var Select = __webpack_require__(17);
+	var Formsy = __webpack_require__(39);
 
 	var SelectField = React.createClass({
 	    displayName: 'SelectField',
@@ -4166,7 +5047,7 @@ var Z =
 	module.exports = SelectField;
 
 /***/ },
-/* 39 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4180,8 +5061,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var DatePicker = __webpack_require__(12);
-	var Formsy = __webpack_require__(27);
+	var DatePicker = __webpack_require__(14);
+	var Formsy = __webpack_require__(39);
 
 	var DateField = React.createClass({
 	    displayName: 'DateField',
@@ -4242,7 +5123,7 @@ var Z =
 	module.exports = DateField;
 
 /***/ },
-/* 40 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4256,8 +5137,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(27);
-	var RadioGroup = __webpack_require__(18);
+	var Formsy = __webpack_require__(39);
+	var RadioGroup = __webpack_require__(21);
 
 	var RadioGroupField = React.createClass({
 	    displayName: 'RadioGroupField',
@@ -4304,7 +5185,7 @@ var Z =
 	module.exports = RadioGroupField;
 
 /***/ },
-/* 41 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4318,8 +5199,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(27);
-	var Checkbox = __webpack_require__(16);
+	var Formsy = __webpack_require__(39);
+	var Checkbox = __webpack_require__(19);
 
 	var CheckboxField = React.createClass({
 	    displayName: 'CheckboxField',
@@ -4362,7 +5243,7 @@ var Z =
 	module.exports = CheckboxField;
 
 /***/ },
-/* 42 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4376,8 +5257,8 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(27);
-	var CheckboxGroup = __webpack_require__(20);
+	var Formsy = __webpack_require__(39);
+	var CheckboxGroup = __webpack_require__(23);
 
 	var CheckboxGroupField = React.createClass({
 	    displayName: 'CheckboxGroupField',
@@ -4425,7 +5306,7 @@ var Z =
 	module.exports = CheckboxGroupField;
 
 /***/ },
-/* 43 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4439,7 +5320,7 @@ var Z =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(27);
+	var Formsy = __webpack_require__(39);
 
 	var TextAreaField = React.createClass({
 	    displayName: 'TextAreaField',
@@ -4496,169 +5377,6 @@ var Z =
 	});
 
 	module.exports = TextAreaField;
-
-/***/ },
-/* 44 */,
-/* 45 */
-/***/ function(module, exports) {
-
-	'use strict';
-	/* eslint-disable no-unused-vars */
-	var hasOwnProperty = Object.prototype.hasOwnProperty;
-	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-	function toObject(val) {
-		if (val === null || val === undefined) {
-			throw new TypeError('Object.assign cannot be called with null or undefined');
-		}
-
-		return Object(val);
-	}
-
-	function shouldUseNative() {
-		try {
-			if (!Object.assign) {
-				return false;
-			}
-
-			// Detect buggy property enumeration order in older V8 versions.
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-			var test1 = new String('abc');  // eslint-disable-line
-			test1[5] = 'de';
-			if (Object.getOwnPropertyNames(test1)[0] === '5') {
-				return false;
-			}
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-			var test2 = {};
-			for (var i = 0; i < 10; i++) {
-				test2['_' + String.fromCharCode(i)] = i;
-			}
-			var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-				return test2[n];
-			});
-			if (order2.join('') !== '0123456789') {
-				return false;
-			}
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-			var test3 = {};
-			'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-				test3[letter] = letter;
-			});
-			if (Object.keys(Object.assign({}, test3)).join('') !==
-					'abcdefghijklmnopqrst') {
-				return false;
-			}
-
-			return true;
-		} catch (e) {
-			// We don't expect any of the above to throw, but better to be safe.
-			return false;
-		}
-	}
-
-	module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-		var from;
-		var to = toObject(target);
-		var symbols;
-
-		for (var s = 1; s < arguments.length; s++) {
-			from = Object(arguments[s]);
-
-			for (var key in from) {
-				if (hasOwnProperty.call(from, key)) {
-					to[key] = from[key];
-				}
-			}
-
-			if (Object.getOwnPropertySymbols) {
-				symbols = Object.getOwnPropertySymbols(from);
-				for (var i = 0; i < symbols.length; i++) {
-					if (propIsEnumerable.call(from, symbols[i])) {
-						to[symbols[i]] = from[symbols[i]];
-					}
-				}
-			}
-		}
-
-		return to;
-	};
-
-
-/***/ },
-/* 46 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	// Message
-	// ------------------------
-
-	var React = __webpack_require__(3);
-	var cx = __webpack_require__(4);
-
-	var Message = React.createClass({
-	    displayName: 'Message',
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            type: 'msg',
-	            duration: 4000
-	        };
-	    },
-	    getInitialState: function getInitialState() {
-	        return {
-	            exiting: false
-	        };
-	    },
-	    componentDidMount: function componentDidMount() {
-	        var _this = this;
-
-	        this.exitTimeOut = setTimeout(function () {
-	            _this.setState({
-	                exiting: true
-	            });
-	        }, this.props.duration);
-	    },
-	    componentWillUnmount: function componentWillUnmount() {
-	        clearTimeout(this.exitTimeOut);
-	    },
-	    render: function render() {
-	        var _props = this.props,
-	            type = _props.type,
-	            children = _props.children;
-
-	        var iconClass = '';
-
-	        switch (type) {
-	            case 'success':
-	                iconClass = 'fa fa-check-circle icon-success';
-	                break;
-	            case 'info':
-	                iconClass = 'fa fa-info-circle icon-info';
-	                break;
-	            case 'warning':
-	                iconClass = 'fa fa-warning icon-warning';
-	                break;
-	            case 'error':
-	                iconClass = 'fa fa-times-circle icon-error';
-	                break;
-	            default:
-	        }
-
-	        return React.createElement(
-	            'div',
-	            { className: cx('z-msg', {
-	                    'exit': this.state.exiting
-	                }) },
-	            type !== 'msg' && React.createElement('i', { className: iconClass }),
-	            children
-	        );
-	    }
-	});
-
-	module.exports = Message;
 
 /***/ }
 /******/ ]);

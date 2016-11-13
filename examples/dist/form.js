@@ -46,9 +46,9 @@
 
 	'use strict';
 
-	var _Z = Z,
-	    Button = _Z.Button,
-	    Formsy = _Z.Formsy;
+	var _zui = zui,
+	    Button = _zui.Button,
+	    Formsy = _zui.Formsy;
 
 	var TextField = Formsy.TextField;
 	var Input = Formsy.InputField;

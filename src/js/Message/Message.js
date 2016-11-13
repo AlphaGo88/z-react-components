@@ -6,6 +6,11 @@ const cx = require('classnames');
 
 const Message = React.createClass({
 
+    propTypes: {
+        type: React.PropTypes.string,
+        duration: React.PropTypes.number
+    },
+
     getDefaultProps() {
         return {
             type: 'msg',

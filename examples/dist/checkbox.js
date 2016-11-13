@@ -46,19 +46,29 @@
 
 	'use strict';
 
-	var _Z = Z,
-	    Checkbox = _Z.Checkbox,
-	    CheckboxGroup = _Z.CheckboxGroup;
+	var _zui = zui,
+	    Checkbox = _zui.Checkbox,
+	    CheckboxGroup = _zui.CheckboxGroup;
 
 	var fruits = [{
-	    value: '1',
+	    value: 'apple',
 	    text: 'apple'
 	}, {
-	    value: '2',
+	    value: 'banana',
 	    text: 'banana'
 	}, {
-	    value: '3',
+	    value: 'orange',
 	    text: 'orange'
+	}];
+	var sports = [{
+	    value: 'football',
+	    text: 'football'
+	}, {
+	    value: 'swimming',
+	    text: 'swimming'
+	}, {
+	    value: 'tennis',
+	    text: 'tennis'
 	}];
 
 	var App = React.createClass({
@@ -73,37 +83,52 @@
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(Checkbox, { label: 'checkbox' })
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Checkbox'
+	                ),
+	                React.createElement(Checkbox, { label: 'checkbox', defaultChecked: true })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(Checkbox, { label: 'Disabled checkbox', disabled: true })
-	            ),
-	            React.createElement(
-	                'section',
-	                null,
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Disabled Checkbox'
+	                ),
 	                React.createElement(Checkbox, { label: 'Disabled checkbox', disabled: true, defaultChecked: true })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(Checkbox, { label: 'default checked checkbox', defaultChecked: true })
-	            ),
-	            React.createElement(
-	                'section',
-	                null,
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Controlled Checkbox'
+	                ),
 	                React.createElement(Checkbox, { label: 'controlled checkbox', checked: true })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'CheckboxGroup'
+	                ),
 	                React.createElement(CheckboxGroup, { items: fruits, onChange: this.handleChange })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(CheckboxGroup, { align: 'y', items: fruits })
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Verticall CheckboxGroup'
+	                ),
+	                React.createElement(CheckboxGroup, { align: 'y', items: sports })
 	            )
 	        );
 	    }

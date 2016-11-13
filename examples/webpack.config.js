@@ -11,6 +11,8 @@ module.exports = {
         checkbox: './src/checkbox',
         select: './src/select',
         tabs: './src/tabs',
+        menu: './src/menu',
+        notification: './src/notification',
     },
     output: {
         path: './dist',

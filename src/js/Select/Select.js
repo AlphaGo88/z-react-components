@@ -109,7 +109,7 @@ const Select = React.createClass({
         };
 
         if (!this.isControlled()) {
-            if (typeof this.props.defaultValue !== 'undefined') {
+            if (this.props.defaultValue != undefined) {
                 state.value = this.props.defaultValue;
             } else {
                 state.value = this.props.multi ? [] : '';
@@ -165,7 +165,7 @@ const Select = React.createClass({
     },
 
     isControlled() {
-        return typeof this.props.value !== 'undefined';
+        return this.props.value != undefined;
     },
 
     getValue() {
@@ -225,6 +225,8 @@ const Select = React.createClass({
         const { options } = this.props;
         const { isOpen, hoverIndex } = this.state;
 
+        event.preventDefault();
+        
         switch (event.which) {
             case 27:
                 // ESC

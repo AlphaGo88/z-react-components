@@ -46,8 +46,8 @@
 
 	"use strict";
 
-	var _Z = Z,
-	    Button = _Z.Button;
+	var _zui = zui,
+	    Button = _zui.Button;
 
 
 	var App = React.createClass({
@@ -152,6 +152,33 @@
 	                    Button,
 	                    { type: "flat", link: "https://github.com/" },
 	                    "Github"
+	                ),
+	                "\xA0\xA0"
+	            ),
+	            React.createElement(
+	                "section",
+	                null,
+	                React.createElement(
+	                    "h4",
+	                    null,
+	                    "Icon Button"
+	                ),
+	                React.createElement(
+	                    Button,
+	                    { type: "float", primary: true, size: "small" },
+	                    React.createElement("i", { className: "fa fa-envelope" })
+	                ),
+	                "\xA0\xA0",
+	                React.createElement(
+	                    Button,
+	                    { type: "float", size: "small" },
+	                    React.createElement("i", { className: "fa fa-bell" })
+	                ),
+	                "\xA0\xA0",
+	                React.createElement(
+	                    Button,
+	                    { type: "flat", size: "small" },
+	                    React.createElement("i", { className: "fa fa-comment" })
 	                ),
 	                "\xA0\xA0"
 	            )

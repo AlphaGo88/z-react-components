@@ -1,5 +1,5 @@
 
-const { DatePicker } = Z;
+const { DatePicker } = zui;
 
 let App = React.createClass({
 
@@ -31,16 +31,8 @@ let App = React.createClass({
                 </section>
                 <section>
                     <h5>Controlled Date Picker</h5>
-                    <DatePicker value="2016-06-06"/>
-                </section>
-                <section>
-                    <h5>Controlled Date Picker</h5>
                     <DatePicker value={this.state.date} onChange={this.handleChange}/>
                     <button style={{marginLeft: 20}} onClick={this.handleClick}>现在</button>
-                </section>
-                <section>
-                    <h5>Controlled Date Picker</h5>
-                    <DatePicker value="2016-06-06" selectTime={true} onChange={(dateStr) => alert(dateStr)}/>
                 </section>
                 <section>
                     <h5>Date Picker with particular dates disabled</h5>

@@ -4,7 +4,7 @@ var gulp = require('gulp'),
     //uglify = require('gulp-uglify');
 
 gulp.task('less', function() {
-    gulp.src('src/less/z.less')
+    gulp.src('src/less/zui.less')
         .pipe(less())
         .pipe(gulp.dest('src/css'));
 });
@@ -14,7 +14,7 @@ gulp.task('less-watch', function() {
 });
 
 gulp.task('css', function() {
-    gulp.src('src/less/z.less')
+    gulp.src('src/less/zui.less')
         .pipe(less())
         .pipe(minify())
         .pipe(gulp.dest('dist/css'));

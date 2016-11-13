@@ -63,7 +63,7 @@ let Tabs = React.createClass({
     },
 
     componentWillMount: function() {
-        if (typeof this.props.value === 'undefined') {
+        if (this.props.value == undefined) {
             this.setState({
                 activeIndex: this.props.defaultActiveIndex
             });
@@ -71,7 +71,7 @@ let Tabs = React.createClass({
     },
 
     handleChange(tabIndex, value) {
-        if (typeof this.props.value === 'undefined') {
+        if (this.props.value == undefined) {
             this.setState({
                 activeIndex: tabIndex 
             });

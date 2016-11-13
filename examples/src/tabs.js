@@ -1,5 +1,5 @@
 
-const { Tabs } = Z;
+const { Tabs } = zui;
 
 let App = React.createClass({
 

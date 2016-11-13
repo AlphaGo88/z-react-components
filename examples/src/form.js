@@ -1,5 +1,5 @@
 
-const { Button, Formsy } = Z;
+const { Button, Formsy } = zui;
 const TextField = Formsy.TextField;
 const Input = Formsy.InputField;
 const Select = Formsy.SelectField;

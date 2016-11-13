@@ -1,5 +1,5 @@
 
-const { Button } = Z;
+const { Button } = zui;
 
 let App = React.createClass({
 
@@ -32,6 +32,18 @@ let App = React.createClass({
                 <section>
                     <h4>Link Button</h4>
                     <Button type="flat" link="https://github.com/">Github</Button>&nbsp;&nbsp;
+                </section>
+                <section>
+                    <h4>Icon Button</h4>
+                    <Button type="float" primary={true} size="small">
+                        <i className="fa fa-envelope"/>
+                    </Button>&nbsp;&nbsp;
+                    <Button type="float" size="small">
+                        <i className="fa fa-bell"/>
+                    </Button>&nbsp;&nbsp;
+                    <Button type="flat" size="small">
+                        <i className="fa fa-comment"/>
+                    </Button>&nbsp;&nbsp;
                 </section>
             </div>
         )

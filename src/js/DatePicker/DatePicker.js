@@ -422,10 +422,15 @@ const DatePicker = React.createClass({
     },
 
     handleKeyDown(event) {
+        event.preventDefault();
+
         switch (event.which) {
             case 27:
                 // ESC
-                this.hideAndRestore();
+                if (this.state.isOpen) {
+                    event.stopPropagation();
+                    this.hideAndRestore();
+                }
                 break;
 
             case 37:

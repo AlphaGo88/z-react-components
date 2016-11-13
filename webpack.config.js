@@ -2,12 +2,12 @@ var webpack = require('webpack');
 
 module.exports = {
     entry: {
-        z: './src/js/z'
+        zui: './src/js/zui'
     },
     output: {
         path: './dist/js',
-        filename: 'z.js',
-        library: 'Z'
+        filename: 'zui.js',
+        library: 'zui'
     },
     externals: [{
         'react': 'var React', 

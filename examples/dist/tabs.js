@@ -46,8 +46,8 @@
 
 	"use strict";
 
-	var _Z = Z,
-	    Tabs = _Z.Tabs;
+	var _zui = zui,
+	    Tabs = _zui.Tabs;
 
 
 	var App = React.createClass({

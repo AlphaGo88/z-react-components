@@ -1,5 +1,5 @@
 
-const { Message, Dialog, Form } = Z;
+const { Dialog, Form } = zui;
 
 const countries = [{
     value: 'usa',
@@ -25,22 +25,6 @@ let App = React.createClass({
             dlg2Open: false,
             dlg3Open: false
         };
-    },
-
-    msg1() {
-        Message.msg('This is some message.')
-    },
-
-    msg2() {
-        Message.success('This is a success message.')
-    },
-
-    msg3() {
-        Message.warning('This is a warning message.')
-    },
-
-    msg4() {
-        Message.error('This is an error message.')
     },
 
     openDialog() {
@@ -83,19 +67,6 @@ let App = React.createClass({
 
         return (
             <div>
-                <section>
-                    <a onClick={this.msg1}>Message</a>
-                </section>
-                <section>
-                    <a onClick={this.msg2}>Success message</a>
-                </section>
-                <section>
-                    <a onClick={this.msg3}>Warning message</a>
-                </section>
-                <section>
-                    <a onClick={this.msg4}>Error message</a>
-                </section>
-                <hr/>
                 <section>
                     <a onClick={this.openDialog}>Normal dialog</a>
                 </section>

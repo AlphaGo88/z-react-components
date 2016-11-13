@@ -46,8 +46,8 @@
 
 	'use strict';
 
-	var _Z = Z,
-	    Select = _Z.Select;
+	var _zui = zui,
+	    Select = _zui.Select;
 
 
 	var App = React.createClass({

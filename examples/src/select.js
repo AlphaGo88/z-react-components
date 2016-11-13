@@ -1,5 +1,5 @@
 
-const { Select } = Z;
+const { Select } = zui;
 
 let App = React.createClass({
 

@@ -46,8 +46,8 @@
 
 	'use strict';
 
-	var _Z = Z,
-	    RadioGroup = _Z.RadioGroup;
+	var _zui = zui,
+	    RadioGroup = _zui.RadioGroup;
 
 	var emps = [{
 	    value: 'emp1',
@@ -75,26 +75,51 @@
 	            React.createElement(
 	                'section',
 	                null,
-	                React.createElement(RadioGroup, { items: emps, onChange: this.handleEmpChange })
-	            ),
-	            React.createElement(
-	                'section',
-	                null,
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'RadioGroup'
+	                ),
 	                React.createElement(RadioGroup, { items: emps, defaultValue: 'emp1' })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Controlled RadioGroup'
+	                ),
+	                React.createElement(RadioGroup, { items: emps, onChange: this.handleEmpChange })
+	            ),
+	            React.createElement(
+	                'section',
+	                null,
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Disabled RadioGroup'
+	                ),
 	                React.createElement(RadioGroup, { items: emps, disabled: true })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Custom style'
+	                ),
 	                React.createElement(RadioGroup, { items: emps, itemStyle: { width: 140 } })
 	            ),
 	            React.createElement(
 	                'section',
 	                null,
+	                React.createElement(
+	                    'h4',
+	                    null,
+	                    'Align vertically'
+	                ),
 	                React.createElement(RadioGroup, { align: 'y', items: emps })
 	            )
 	        );

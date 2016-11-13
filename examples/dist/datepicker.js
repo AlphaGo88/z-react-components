@@ -46,8 +46,8 @@
 
 	'use strict';
 
-	var _Z = Z,
-	    DatePicker = _Z.DatePicker;
+	var _zui = zui,
+	    DatePicker = _zui.DatePicker;
 
 
 	var App = React.createClass({
@@ -90,34 +90,12 @@
 	                    null,
 	                    'Controlled Date Picker'
 	                ),
-	                React.createElement(DatePicker, { value: '2016-06-06' })
-	            ),
-	            React.createElement(
-	                'section',
-	                null,
-	                React.createElement(
-	                    'h5',
-	                    null,
-	                    'Controlled Date Picker'
-	                ),
 	                React.createElement(DatePicker, { value: this.state.date, onChange: this.handleChange }),
 	                React.createElement(
 	                    'button',
 	                    { style: { marginLeft: 20 }, onClick: this.handleClick },
 	                    '\u73B0\u5728'
 	                )
-	            ),
-	            React.createElement(
-	                'section',
-	                null,
-	                React.createElement(
-	                    'h5',
-	                    null,
-	                    'Controlled Date Picker'
-	                ),
-	                React.createElement(DatePicker, { value: '2016-06-06', selectTime: true, onChange: function onChange(dateStr) {
-	                        return alert(dateStr);
-	                    } })
 	            ),
 	            React.createElement(
 	                'section',
