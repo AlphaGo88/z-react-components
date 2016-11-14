@@ -495,13 +495,36 @@ var zui =
 	            onOK: function onOK() {}
 	        };
 	    },
-	    handleKeyDown: function handleKeyDown(event) {
+	    componentDidMount: function componentDidMount() {
+	        this.positionDialog();
+	        window.addEventListener('resize', this.positionDialog, false);
+	    },
+	    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+	        this.positionDialog();
+	    },
+	    componentWillUnmount: function componentWillUnmount() {
+	        window.removeEventListener('resize', this.positionDialog, false);
+	    },
+	    positionDialog: function positionDialog() {
+
+	        var clientHeight = this.container.offsetHeight;
+	        var dialogHeight = this.dialogElem.offsetHeight;
+	        var minPaddingTop = 12;
+
+	        var paddingTop = (clientHeight - dialogHeight) / 2;
+	        if (paddingTop < minPaddingTop) paddingTop = minPaddingTop;
+
+	        this.container.style.paddingTop = paddingTop + 'px';
+	    },
+	    handleKeyUp: function handleKeyUp(event) {
 	        // ESC
 	        if (event.which === 27) {
 	            this.props.onRequestClose();
 	        }
 	    },
 	    render: function render() {
+	        var _this = this;
+
 	        var _props = this.props,
 	            className = _props.className,
 	            titleClassName = _props.titleClassName,
@@ -542,41 +565,51 @@ var zui =
 	        return React.createElement(
 	            'div',
 	            {
+	                ref: function ref(el) {
+	                    return _this.container = el;
+	                },
 	                className: cx('z-dialog-mask', {
 	                    'offscreen': !isOpen
 	                })
 	            },
-	            isOpen && React.createElement(
+	            React.createElement(
 	                'div',
 	                {
+	                    ref: function ref(el) {
+	                        return _this.dialogElem = el;
+	                    },
 	                    tabIndex: '0',
 	                    style: style,
 	                    className: cx('z-dialog', className),
-	                    onKeyDown: this.handleKeyDown
+	                    onKeyUp: this.handleKeyUp
 	                },
-	                title && React.createElement(
-	                    'h3',
-	                    {
-	                        style: titleStyle,
-	                        className: cx('z-dialog-title', titleClassName)
-	                    },
-	                    title
-	                ),
-	                React.createElement(
+	                isOpen && React.createElement(
 	                    'div',
-	                    {
-	                        style: contentStyle,
-	                        className: cx('z-dialog-content', contentClassName)
-	                    },
-	                    children
-	                ),
-	                React.createElement(
-	                    'div',
-	                    {
-	                        style: actionsContainerStyle,
-	                        className: cx('z-dialog-action-container', actionsContainerClassName)
-	                    },
-	                    actions
+	                    null,
+	                    title && React.createElement(
+	                        'h3',
+	                        {
+	                            style: titleStyle,
+	                            className: cx('z-dialog-title', titleClassName)
+	                        },
+	                        title
+	                    ),
+	                    React.createElement(
+	                        'div',
+	                        {
+	                            style: contentStyle,
+	                            className: cx('z-dialog-content', contentClassName)
+	                        },
+	                        children
+	                    ),
+	                    React.createElement(
+	                        'div',
+	                        {
+	                            style: actionsContainerStyle,
+	                            className: cx('z-dialog-action-container', actionsContainerClassName)
+	                        },
+	                        actions
+	                    )
 	                )
 	            )
 	        );
@@ -1502,25 +1535,22 @@ var zui =
 	        return this.props.disableDates(new Date(year, month, date));
 	    },
 	    handleKeyUp: function handleKeyUp(event) {
-	        if (event.which === 13) {
-	            // Enter
-	            if (this.props.selectTime) {
-	                this.confirm();
-	            } else {
-	                if (this.state.view === 'date') {
-	                    this.setDate(this.state.date);
-	                } else if (this.state.view === 'year') {
-	                    this.setState({
-	                        view: 'date'
-	                    });
-	                }
-	            }
-	        }
-	    },
-	    handleKeyDown: function handleKeyDown(event) {
-	        event.preventDefault();
-
 	        switch (event.which) {
+	            case 13:
+	                // Enter
+	                if (this.props.selectTime) {
+	                    this.confirm();
+	                } else {
+	                    if (this.state.view === 'date') {
+	                        this.setDate(this.state.date);
+	                    } else if (this.state.view === 'year') {
+	                        this.setState({
+	                            view: 'date'
+	                        });
+	                    }
+	                }
+	                break;
+
 	            case 27:
 	                // ESC
 	                if (this.state.isOpen) {
@@ -1529,6 +1559,13 @@ var zui =
 	                }
 	                break;
 
+	            default:
+	        }
+	    },
+	    handleKeyDown: function handleKeyDown(event) {
+	        event.preventDefault();
+
+	        switch (event.which) {
 	            case 37:
 	                // Left Arrow
 	                this.state.view === 'date' && this.pressKeyToDate(-1);
@@ -2330,23 +2367,15 @@ var zui =
 	        this.props.onChange(value);
 	    },
 	    handleKeyDown: function handleKeyDown(event) {
+	        event.preventDefault();
+
 	        var options = this.props.options;
 	        var _state = this.state,
 	            isOpen = _state.isOpen,
 	            hoverIndex = _state.hoverIndex;
 
 
-	        event.preventDefault();
-
 	        switch (event.which) {
-	            case 27:
-	                // ESC
-	                if (isOpen === true) {
-	                    event.stopPropagation();
-	                    this.setState({ isOpen: false });
-	                }
-	                break;
-
 	            case 38:
 	                // Up Arrow
 	                this.setState({
@@ -2367,42 +2396,55 @@ var zui =
 	    handleKeyUp: function handleKeyUp(event) {
 	        var _this2 = this;
 
-	        // Enter
-	        // select or deselect the option.
-	        if (event.which === 13) {
-	            var _ret = function () {
-	                var _props = _this2.props,
-	                    multi = _props.multi,
-	                    options = _props.options;
-	                var hoverIndex = _this2.state.hoverIndex;
+	        var _ret = function () {
+	            switch (event.which) {
+	                case 13:
+	                    // Enter
+	                    // select or deselect the option.
+	                    var _props = _this2.props,
+	                        multi = _props.multi,
+	                        options = _props.options;
+	                    var hoverIndex = _this2.state.hoverIndex;
 
 
-	                if (hoverIndex < 0 || options[hoverIndex].disabled) {
-	                    return {
-	                        v: void 0
-	                    };
-	                }
-
-	                var optionValue = options[hoverIndex].value;
-	                var value = _this2.getValue();
-
-	                if (multi) {
-	                    var optionSelected = value.filter(function (it) {
-	                        return it === optionValue;
-	                    }).length > 0;
-
-	                    if (optionSelected) {
-	                        _this2.deSelectOption(optionValue);
-	                    } else {
-	                        _this2.selectOption(optionValue);
+	                    if (hoverIndex < 0 || options[hoverIndex].disabled) {
+	                        return {
+	                            v: void 0
+	                        };
 	                    }
-	                } else {
-	                    _this2.selectOption(optionValue, value === optionValue);
-	                }
-	            }();
 
-	            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-	        }
+	                    var optionValue = options[hoverIndex].value;
+	                    var value = _this2.getValue();
+
+	                    if (multi) {
+	                        var optionSelected = value.filter(function (it) {
+	                            return it === optionValue;
+	                        }).length > 0;
+
+	                        if (optionSelected) {
+	                            _this2.deSelectOption(optionValue);
+	                        } else {
+	                            _this2.selectOption(optionValue);
+	                        }
+	                    } else {
+	                        _this2.selectOption(optionValue, value === optionValue);
+	                    }
+
+	                    break;
+
+	                case 27:
+	                    // ESC
+	                    if (_this2.state.isOpen) {
+	                        event.stopPropagation();
+	                        _this2.setState({ isOpen: false });
+	                    }
+	                    break;
+
+	                default:
+	            }
+	        }();
+
+	        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	    },
 	    render: function render() {
 	        var _this3 = this;

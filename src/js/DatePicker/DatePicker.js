@@ -405,26 +405,22 @@ const DatePicker = React.createClass({
     },
 
     handleKeyUp(event) {
-        if (event.which === 13) {
-            // Enter
-            if (this.props.selectTime) {
-                this.confirm();
-            } else {
-                if (this.state.view === 'date') {
-                    this.setDate(this.state.date);
-                } else if (this.state.view === 'year') {
-                    this.setState({
-                        view: 'date'
-                    });
-                }
-            }
-        }
-    },
-
-    handleKeyDown(event) {
-        event.preventDefault();
-
         switch (event.which) {
+            case 13:
+                // Enter
+                if (this.props.selectTime) {
+                    this.confirm();
+                } else {
+                    if (this.state.view === 'date') {
+                        this.setDate(this.state.date);
+                    } else if (this.state.view === 'year') {
+                        this.setState({
+                            view: 'date'
+                        });
+                    }
+                }
+                break;
+
             case 27:
                 // ESC
                 if (this.state.isOpen) {
@@ -433,6 +429,14 @@ const DatePicker = React.createClass({
                 }
                 break;
 
+            default:
+        }
+    },
+
+    handleKeyDown(event) {
+        event.preventDefault();
+
+        switch (event.which) {
             case 37:
                 // Left Arrow
                 this.state.view === 'date' && this.pressKeyToDate(-1);

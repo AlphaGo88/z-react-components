@@ -222,20 +222,12 @@ const Select = React.createClass({
     },
 
     handleKeyDown(event) {
+        event.preventDefault();
+        
         const { options } = this.props;
         const { isOpen, hoverIndex } = this.state;
 
-        event.preventDefault();
-        
         switch (event.which) {
-            case 27:
-                // ESC
-                if (isOpen === true) {
-                    event.stopPropagation();
-                    this.setState({ isOpen: false });
-                }
-                break;
-
             case 38:
                 // Up Arrow
                 this.setState({ 
@@ -257,30 +249,43 @@ const Select = React.createClass({
     },
 
     handleKeyUp(event) {
-        // Enter
-        // select or deselect the option.
-        if (event.which === 13) {
-            const { multi, options } = this.props;
-            const { hoverIndex } = this.state;
+        switch (event.which) {
+            case 13:
+                // Enter
+                // select or deselect the option.
+                const { multi, options } = this.props;
+                const { hoverIndex } = this.state;
 
-            if (hoverIndex < 0 || options[hoverIndex].disabled) {
-                return;
-            }
-
-            const optionValue = options[hoverIndex].value;
-            const value = this.getValue();
-
-            if (multi) {
-                const optionSelected = value.filter(it => it === optionValue).length > 0;
-
-                if (optionSelected) {
-                    this.deSelectOption(optionValue);
-                } else {
-                    this.selectOption(optionValue);
+                if (hoverIndex < 0 || options[hoverIndex].disabled) {
+                    return;
                 }
-            } else {
-                this.selectOption(optionValue, value === optionValue);
-            }
+
+                const optionValue = options[hoverIndex].value;
+                const value = this.getValue();
+
+                if (multi) {
+                    const optionSelected = value.filter(it => it === optionValue).length > 0;
+
+                    if (optionSelected) {
+                        this.deSelectOption(optionValue);
+                    } else {
+                        this.selectOption(optionValue);
+                    }
+                } else {
+                    this.selectOption(optionValue, value === optionValue);
+                }
+
+                break;
+
+            case 27:
+                // ESC
+                if (this.state.isOpen) {
+                    event.stopPropagation();
+                    this.setState({ isOpen: false });
+                }
+                break;
+
+            default:
         }
     },
 
@@ -305,7 +310,7 @@ const Select = React.createClass({
         let triggerContent;
 
         if (multi) {
-            // get selected options when `multi` is true
+             // get selected options when `multi` is true
             if (value && value.length > 0) {
                 let k, idx;
                 for (k = 0; k < options.length; k++) {

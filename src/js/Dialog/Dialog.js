@@ -88,7 +88,32 @@ const Dialog = React.createClass({
         };
     },
 
-    handleKeyDown(event) {
+    componentDidMount() {
+        this.positionDialog();
+        window.addEventListener('resize', this.positionDialog, false);
+    },
+
+    componentDidUpdate(prevProps, prevState) {
+        this.positionDialog();
+    },
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.positionDialog, false);
+    },
+
+    positionDialog() {
+
+        const clientHeight = this.container.offsetHeight;
+        const dialogHeight = this.dialogElem.offsetHeight;
+        const minPaddingTop = 12;
+
+        let paddingTop = ((clientHeight - dialogHeight) / 2);
+        if (paddingTop < minPaddingTop) paddingTop = minPaddingTop;
+
+        this.container.style.paddingTop = `${paddingTop}px`;
+    },
+
+    handleKeyUp(event) {
         // ESC
         if (event.which === 27) {
             this.props.onRequestClose();
@@ -135,39 +160,43 @@ const Dialog = React.createClass({
 
         return (
             <div 
+                ref={(el) => this.container = el}
                 className={cx('z-dialog-mask', { 
                     'offscreen': !isOpen 
                 })}
             >
-                {isOpen &&
-                    <div 
-                        tabIndex="0"
-                        style={style} 
-                        className={cx('z-dialog', className)}
-                        onKeyDown={this.handleKeyDown}
-                    >
-                        {title && 
-                            <h3 
-                                style={titleStyle}
-                                className={cx('z-dialog-title', titleClassName)}
+                <div 
+                    ref={(el) => this.dialogElem = el}
+                    tabIndex="0"
+                    style={style} 
+                    className={cx('z-dialog', className)}
+                    onKeyUp={this.handleKeyUp}
+                >
+                    {isOpen &&
+                        <div>
+                            {title && 
+                                <h3 
+                                    style={titleStyle}
+                                    className={cx('z-dialog-title', titleClassName)}
+                                >
+                                    {title}
+                                </h3>
+                            }
+                            <div 
+                                style={contentStyle}
+                                className={cx('z-dialog-content', contentClassName)}
                             >
-                                {title}
-                            </h3>
-                        }
-                        <div 
-                            style={contentStyle}
-                            className={cx('z-dialog-content', contentClassName)}
-                        >
-                            {children}
+                                {children}
+                            </div>
+                            <div 
+                                style={actionsContainerStyle}
+                                className={cx('z-dialog-action-container', actionsContainerClassName)}
+                            >
+                                {actions}
+                            </div>
                         </div>
-                        <div 
-                            style={actionsContainerStyle}
-                            className={cx('z-dialog-action-container', actionsContainerClassName)}
-                        >
-                            {actions}
-                        </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
         );
     }
