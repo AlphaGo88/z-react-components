@@ -128,6 +128,24 @@
 	                        "\u4E0B\u62C9\u83DC\u5355"
 	                    )
 	                )
+	            ),
+	            React.createElement(
+	                "section",
+	                null,
+	                React.createElement(
+	                    "h4",
+	                    null,
+	                    "Dropdown Menu"
+	                ),
+	                React.createElement(
+	                    DropdownMenu,
+	                    { menu: menu },
+	                    React.createElement(
+	                        "a",
+	                        null,
+	                        "\u4E0B\u62C9\u83DC\u5355"
+	                    )
+	                )
 	            )
 	        );
 	    }

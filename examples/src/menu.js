@@ -52,6 +52,12 @@ let App = React.createClass({
                         </Button>
                     </DropdownMenu>
                 </section>
+                <section>
+                    <h4>Dropdown Menu</h4>
+                    <DropdownMenu menu={menu}>
+                        <a>下拉菜单</a>
+                    </DropdownMenu>
+                </section>
             </div>
         );
     }
