@@ -1,6 +1,6 @@
 @charset "UTF-8";
 /*!
- * zui v1.0.0
+ * zui css v1.0.0
  *
  * Author: Zhao Xin
  *
@@ -1133,7 +1133,7 @@ textarea {
 }
 #z-msg-layer {
   position: fixed;
-  top: 5%;
+  top: 20px;
   left: 50%;
   max-width: 400px;
   height: 0;
@@ -1158,7 +1158,7 @@ textarea {
 }
 #z-msg-layer .z-msg.exit {
   opacity: 0;
-  transform: translateY(-50px);
+  transform: translateY(-35px);
 }
 #z-msg-layer .z-msg .icon-success,
 #z-msg-layer .z-msg .icon-info,
@@ -1193,7 +1193,7 @@ textarea {
 #z-notification-layer {
   position: fixed;
   width: 388px;
-  top: 5%;
+  top: 20px;
   right: 0;
   padding-right: 20px;
   z-index: 1500;
