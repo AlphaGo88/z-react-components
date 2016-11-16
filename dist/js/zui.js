@@ -2213,6 +2213,11 @@ var zui =
 	        dropdownClassName: React.PropTypes.string,
 
 	        /**
+	         * The css class name of the option element.
+	         */
+	        optionClassName: React.PropTypes.string,
+
+	        /**
 	         * Overwrite the inline styles of the root element.
 	         */
 	        style: React.PropTypes.object,
@@ -2228,6 +2233,11 @@ var zui =
 	        dropdownStyle: React.PropTypes.object,
 
 	        /**
+	         * Overwrite the inline styles of the option element.
+	         */
+	        optionStyle: React.PropTypes.object,
+
+	        /**
 	         * Whether multi-selection is enabled.
 	         */
 	        multi: React.PropTypes.bool,
@@ -2241,6 +2251,11 @@ var zui =
 	         * Whether the component is disabled.
 	         */
 	        disabled: React.PropTypes.bool,
+
+	        /**
+	         * The options for the `Select`.
+	         */
+	        options: React.PropTypes.array,
 
 	        /**
 	         * The selected value.
@@ -2266,6 +2281,7 @@ var zui =
 	        return {
 	            multi: false,
 	            disabled: false,
+	            options: [],
 	            placeholder: '请选择',
 	            onChange: function onChange() {}
 	        };
@@ -2284,12 +2300,6 @@ var zui =
 	            }
 	        }
 	        return state;
-	    },
-	    cancelFocusTimeout: function cancelFocusTimeout() {
-	        if (this.focusTimeout) {
-	            clearTimeout(this.focusTimeout);
-	            this.focusTimeout = null;
-	        }
 	    },
 	    handleClickAway: function handleClickAway() {
 	        if (this.state.isOpen) {
@@ -2312,17 +2322,19 @@ var zui =
 	    handleMouseLeave: function handleMouseLeave(event) {
 	        this.setState({ hoverIndex: -1 });
 	    },
-	    handleOptionHover: function handleOptionHover(index) {
+	    handleOptionHover: function handleOptionHover(event, index) {
 	        this.setState({ hoverIndex: index });
 	    },
-	    handleOptionClick: function handleOptionClick(value, optionSelected) {
-	        if (this.props.multi && optionSelected) {
-	            this.deSelectOption(value);
-	        } else {
-	            this.selectOption(value, optionSelected);
+	    handleOptionClick: function handleOptionClick(event, option, isSelected) {
+	        if (!option.disabled) {
+	            if (this.props.multi && isSelected) {
+	                this.deSelectOption(option.value);
+	            } else {
+	                this.selectOption(option.value, isSelected);
+	            }
 	        }
 	    },
-	    selectOption: function selectOption(optionValue, selected) {
+	    selectOption: function selectOption(optionValue, isSelected) {
 	        if (this.props.multi) {
 	            var value = this.getValue().concat([optionValue]);
 
@@ -2333,7 +2345,7 @@ var zui =
 	        } else {
 	            var newState = { isOpen: false };
 
-	            if (!selected) {
+	            if (!isSelected) {
 	                if (!this.isControlled()) {
 	                    newState.value = optionValue;
 	                }
@@ -2354,6 +2366,7 @@ var zui =
 	    handleKeyDown: function handleKeyDown(event) {
 	        event.preventDefault();
 
+	        var options = this.props.options;
 	        var _state = this.state,
 	            isOpen = _state.isOpen,
 	            hoverIndex = _state.hoverIndex;
@@ -2363,14 +2376,14 @@ var zui =
 	            case 38:
 	                // Up Arrow
 	                this.setState({
-	                    hoverIndex: hoverIndex === 0 ? this.data.length - 1 : hoverIndex - 1
+	                    hoverIndex: hoverIndex === 0 ? options.length - 1 : hoverIndex - 1
 	                });
 	                break;
 
 	            case 40:
 	                // Down Arrow
 	                this.setState({
-	                    hoverIndex: hoverIndex === this.data.length - 1 ? 0 : hoverIndex + 1
+	                    hoverIndex: hoverIndex === options.length - 1 ? 0 : hoverIndex + 1
 	                });
 	                break;
 
@@ -2385,25 +2398,27 @@ var zui =
 	                case 13:
 	                    // Enter
 	                    // select or deselect the option.
-	                    var multi = _this.props.multi;
+	                    var _props = _this.props,
+	                        multi = _props.multi,
+	                        options = _props.options;
 	                    var hoverIndex = _this.state.hoverIndex;
 
 
-	                    if (hoverIndex < 0 || _this.data[hoverIndex].disabled) {
+	                    if (hoverIndex < 0 || options[hoverIndex].disabled) {
 	                        return {
 	                            v: void 0
 	                        };
 	                    }
 
-	                    var optionValue = _this.data[hoverIndex].value;
+	                    var optionValue = options[hoverIndex].value;
 	                    var value = _this.getValue();
 
 	                    if (multi) {
-	                        var optionSelected = value.filter(function (it) {
+	                        var isOptionSelected = value.filter(function (it) {
 	                            return it === optionValue;
 	                        }).length > 0;
 
-	                        if (optionSelected) {
+	                        if (isOptionSelected) {
 	                            _this.deSelectOption(optionValue);
 	                        } else {
 	                            _this.selectOption(optionValue);
@@ -2431,79 +2446,73 @@ var zui =
 	    render: function render() {
 	        var _this2 = this;
 
-	        var _props = this.props,
-	            className = _props.className,
-	            selectClassName = _props.selectClassName,
-	            dropdownClassName = _props.dropdownClassName,
-	            style = _props.style,
-	            selectStyle = _props.selectStyle,
-	            dropdownStyle = _props.dropdownStyle,
-	            placeholder = _props.placeholder,
-	            multi = _props.multi,
-	            disabled = _props.disabled,
-	            children = _props.children;
+	        var _props2 = this.props,
+	            className = _props2.className,
+	            selectClassName = _props2.selectClassName,
+	            dropdownClassName = _props2.dropdownClassName,
+	            optionClassName = _props2.optionClassName,
+	            style = _props2.style,
+	            selectStyle = _props2.selectStyle,
+	            dropdownStyle = _props2.dropdownStyle,
+	            optionStyle = _props2.optionStyle,
+	            placeholder = _props2.placeholder,
+	            multi = _props2.multi,
+	            disabled = _props2.disabled,
+	            options = _props2.options;
 	        var _state2 = this.state,
 	            isOpen = _state2.isOpen,
 	            hoverIndex = _state2.hoverIndex;
 
 	        var value = this.getValue();
 
-	        this.data = [];
-	        var curIndex = -1;
 	        var selectedText = '';
 	        var selectedItems = [];
-	        var processedChildren = [];
+	        var renderedOptions = [];
 
-	        React.Children.forEach(children, function (child) {
-	            if (child.props.onClick) {
-	                (function () {
-	                    curIndex++;
-	                    var optionIndex = curIndex;
+	        options.forEach(function (option, i) {
+	            var selected = false;
 
-	                    _this2.data.push({
-	                        value: child.props.value,
-	                        text: child.props.text,
-	                        disabled: !!child.props.disabled
-	                    });
-
-	                    var selected = false;
-
-	                    if (multi && value && value.length) {
-	                        var idx = value.indexOf(child.props.value);
-	                        if (idx > -1) {
-	                            selected = true;
-	                            selectedItems[idx] = React.createElement(
-	                                'li',
-	                                {
-	                                    key: idx,
-	                                    onClick: function onClick(e) {
-	                                        e.stopPropagation();
-	                                        _this2.deSelectOption(child.props.value);
-	                                    }
-	                                },
-	                                child.props.text,
-	                                React.createElement('i', { className: 'fa fa-close' })
-	                            );
-	                        }
-	                    } else if (value || value === 0) {
-	                        if (value === child.props.value) {
-	                            selected = true;
-	                            selectedText = child.props.text;
-	                        }
-	                    }
-
-	                    processedChildren.push(React.cloneElement(child, {
-	                        hover: optionIndex === hoverIndex,
-	                        selected: selected,
-	                        onMouseOver: function onMouseOver(e) {
-	                            return _this2.handleOptionHover(optionIndex);
+	            if (multi && value && value.length) {
+	                var idx = value.indexOf(option.value);
+	                if (idx > -1) {
+	                    selected = true;
+	                    selectedItems[idx] = React.createElement(
+	                        'li',
+	                        {
+	                            key: idx,
+	                            onClick: function onClick(e) {
+	                                e.stopPropagation();
+	                                _this2.deSelectOption(option.value);
+	                            }
 	                        },
-	                        onClick: _this2.handleOptionClick
-	                    }));
-	                })();
-	            } else {
-	                processedChildren.push(child);
+	                        option.text,
+	                        React.createElement('i', { className: 'fa fa-close' })
+	                    );
+	                }
+	            } else if (value === option.value) {
+	                selected = true;
+	                selectedText = option.text;
 	            }
+
+	            renderedOptions.push(React.createElement(
+	                'li',
+	                {
+	                    key: i,
+	                    className: cx('select-option', optionClassName, {
+	                        'hover': hoverIndex === i,
+	                        'disabled': option.disabled,
+	                        'selected': selected
+	                    }),
+	                    style: optionStyle,
+	                    onMouseEnter: function onMouseEnter(e) {
+	                        return _this2.handleOptionHover(e, i);
+	                    },
+	                    onClick: function onClick(e) {
+	                        return _this2.handleOptionClick(e, option, selected);
+	                    }
+	                },
+	                option.text
+	            ));
 	        });
 
 	        return React.createElement(
@@ -2565,9 +2574,9 @@ var zui =
 	                        style: dropdownStyle
 	                    },
 	                    React.createElement(
-	                        'div',
+	                        'ul',
 	                        { onMouseLeave: this.handleMouseLeave },
-	                        processedChildren
+	                        renderedOptions
 	                    )
 	                )
 	            )
@@ -2575,133 +2584,11 @@ var zui =
 	    }
 	});
 
-	Select.Option = __webpack_require__(20);
-	Select.OptGroup = __webpack_require__(21);;
 	module.exports = Select;
 
 /***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	// Option
-	// ------------------------
-
-	var React = __webpack_require__(3);
-	var cx = __webpack_require__(4);
-
-	var Option = React.createClass({
-	    displayName: 'Option',
-
-
-	    propTypes: {
-	        /**
-	         * Whether the Option is disabled.
-	         */
-	        disabled: React.PropTypes.bool,
-
-	        /**
-	         * Whether the Option is selected.
-	         */
-	        selected: React.PropTypes.bool,
-
-	        /**
-	         * The hover status of the Option.
-	         */
-	        hover: React.PropTypes.bool,
-
-	        /**
-	         * The value of the Option.
-	         */
-	        value: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]),
-
-	        /**
-	         * The text of the Option.
-	         */
-	        text: React.PropTypes.string,
-
-	        /**
-	         * Fires when the option is hovered.
-	         */
-	        onMouseOver: React.PropTypes.func,
-
-	        /**
-	         * Fires when the option is clicked.
-	         */
-	        onClick: React.PropTypes.func
-	    },
-
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            disabled: false,
-	            selected: false,
-	            hover: false,
-	            onClick: function onClick() {}
-	        };
-	    },
-	    handleMouseOver: function handleMouseOver(event) {
-	        if (!this.props.disabled) {
-	            this.props.onMouseOver(event);
-	        }
-	    },
-	    handleClick: function handleClick(event) {
-	        if (!this.props.disabled) {
-	            this.props.onClick(this.props.value, this.props.selected);
-	        }
-	    },
-	    render: function render() {
-	        var _props = this.props,
-	            disabled = _props.disabled,
-	            selected = _props.selected,
-	            hover = _props.hover,
-	            text = _props.text;
-
-
-	        return React.createElement(
-	            'div',
-	            {
-	                className: cx('select-option', {
-	                    'disabled': disabled,
-	                    'selected': selected,
-	                    'hover': hover
-	                }),
-	                onMouseOver: this.handleMouseOver,
-	                onClick: this.handleClick
-	            },
-	            text
-	        );
-	    }
-	});
-
-	module.exports = Option;
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	// OptGroup
-	// ------------------------
-
-	var React = __webpack_require__(3);
-	var cx = __webpack_require__(4);
-
-	var OptGroup = React.createClass({
-	    displayName: 'OptGroup',
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            { className: 'select-optgroup' },
-	            children
-	        );
-	    }
-	});
-
-	module.exports = OptGroup;
-
-/***/ },
+/* 20 */,
+/* 21 */,
 /* 22 */
 /***/ function(module, exports, __webpack_require__) {
 

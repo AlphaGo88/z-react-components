@@ -77,31 +77,19 @@ let App = React.createClass({
             <div>
                 <section>
                     <h5>Select</h5>
-                    <Select value={fruit} onChange={this.changeFruit}>
-                        {fruits.map((fruit, i) => (
-                            <Select.Option key={i} value={fruit.value} text={fruit.text}/>
-                        ))}
-                    </Select>
+                    <Select options={fruits} value={fruit} onChange={this.changeFruit}/>
                 </section>
                 <section>
                     <h5>Select with default Value</h5>
-                    <Select defaultValue={2}>
-                        {fruits.map((fruit, i) => (
-                            <Select.Option key={i} value={fruit.value} text={fruit.text}/>
-                        ))}
-                    </Select>
+                    <Select defaultValue={2} options={fruits}/>
                 </section>
                 <section>
                     <h5>Disabled</h5>
-                    <Select disabled/>
+                    <Select disabled options={fruits}/>
                 </section>
                 <section>
                     <h5>Multi Select</h5>
-                    <Select multi={true} style={{width: 300}}>
-                        {emps.map((emp, i) => (
-                            <Select.Option key={i} value={emp.value} text={emp.text}/>
-                        ))}
-                    </Select>
+                    <Select multi={true} style={{width: 300}} options={emps}/>
                 </section>
             </div>
         )
