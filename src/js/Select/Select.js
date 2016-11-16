@@ -3,14 +3,9 @@
 
 const React = require('react');
 const cx = require('classnames');
+const ClickAwayListener = require('../internal/ClickAwayListener');
 
-let tabPressed = false;
-
-function handleTabPress(event) {
-    tabPressed = event.which === 9;
-}
-
-const Select = React.createClass({
+let Select = React.createClass({
 
     propTypes: {
         /**
@@ -47,12 +42,6 @@ const Select = React.createClass({
          * Whether multi-selection is enabled.
          */
         multi: React.PropTypes.bool,
-
-        /**
-         * The select's options.
-         * Each option has a `value` prop and a `text` prop.
-         */
-        options: React.PropTypes.array,
 
         /**
          * The placeholder text.
@@ -95,7 +84,6 @@ const Select = React.createClass({
     getDefaultProps() {
         return {
             multi: false,
-            options: [],
             disabled: false,
             placeholder: '请选择',
             onChange() {}
@@ -118,38 +106,7 @@ const Select = React.createClass({
         return state;
     },
 
-    componentDidMount() {
-        // Listen to tab pressing so that we know when it's a keyboard focus. 
-        document.addEventListener('keydown', handleTabPress, false);
-    },
-
-    componentWillUnmount() {
-        this.cancelFocusTimeout();
-        document.removeEventListener('keydown', handleTabPress, false);
-    },
-
-    cancelFocusTimeout() {
-        if (this.focusTimeout) {
-            clearTimeout(this.focusTimeout);
-            this.focusTimeout = null;
-        }
-    },
-
-    handleFocus(event) {
-        if (event) event.persist();
-        if (!this.props.disabled) {
-            // setTimeout is needed because the focus event fires first
-            // Wait so that we can capture if this was a keyboard focus
-            this.focusTimeout = setTimeout(() => {
-                if (tabPressed) {
-                    this.setState({ isOpen: true });
-                }
-            }, 150);
-        }
-    },
-
-    handleBlur(event) {
-        this.cancelFocusTimeout();
+    handleClickAway() {
         if (this.state.isOpen) {
             this.setState({ isOpen: false });
         }
@@ -157,7 +114,6 @@ const Select = React.createClass({
 
     handleTriggerClick(event) {
         if (!this.props.disabled) {
-            tabPressed = false;
             this.setState({ 
                 isOpen: !this.state.isOpen 
             });
@@ -176,17 +132,15 @@ const Select = React.createClass({
         this.setState({ hoverIndex: -1 });
     },
 
-    handleOptionHover(event, index) {
+    handleOptionHover(index) {
         this.setState({ hoverIndex: index });
     },
 
-    handleOptionClick(event, item, selected) {
-        if (!item.disabled) {
-            if (this.props.multi && selected) {
-                this.deSelectOption(item.value);
-            } else {
-                this.selectOption(item.value, selected);
-            }
+    handleOptionClick(value, optionSelected) {
+        if (this.props.multi && optionSelected) {
+            this.deSelectOption(value);
+        } else {
+            this.selectOption(value, optionSelected);
         }
     },
 
@@ -224,7 +178,6 @@ const Select = React.createClass({
     handleKeyDown(event) {
         event.preventDefault();
         
-        const { options } = this.props;
         const { isOpen, hoverIndex } = this.state;
 
         switch (event.which) {
@@ -232,14 +185,14 @@ const Select = React.createClass({
                 // Up Arrow
                 this.setState({ 
                     hoverIndex: (hoverIndex === 0) ? 
-                        (options.length - 1) : (hoverIndex - 1)
+                        (this.data.length - 1) : (hoverIndex - 1)
                 });
                 break;
 
             case 40:
                 // Down Arrow
                 this.setState({ 
-                    hoverIndex: (hoverIndex === options.length - 1) ? 
+                    hoverIndex: (hoverIndex === this.data.length - 1) ? 
                         0 : (hoverIndex + 1)
                 });
                 break;
@@ -253,14 +206,14 @@ const Select = React.createClass({
             case 13:
                 // Enter
                 // select or deselect the option.
-                const { multi, options } = this.props;
+                const { multi } = this.props;
                 const { hoverIndex } = this.state;
 
-                if (hoverIndex < 0 || options[hoverIndex].disabled) {
+                if (hoverIndex < 0 || this.data[hoverIndex].disabled) {
                     return;
                 }
 
-                const optionValue = options[hoverIndex].value;
+                const optionValue = this.data[hoverIndex].value;
                 const value = this.getValue();
 
                 if (multi) {
@@ -300,131 +253,120 @@ const Select = React.createClass({
             placeholder, 
             multi, 
             disabled,
-            options
+            children
         } = this.props;
         const { isOpen, hoverIndex } = this.state;
-        const value = this.getValue();
+        const value = this.getValue();        
 
-        let selectedOptionText = '';    // the selected option's text when `multi` is false
-        let selectedOptions = [];       // the selected options when `multi` is true
-        let triggerContent;
+        this.data = [];
+        let curIndex = -1;
+        let selectedText = '';
+        let selectedItems = [];
+        let processedChildren = [];
 
-        if (multi) {
-             // get selected options when `multi` is true
-            if (value && value.length > 0) {
-                let k, idx;
-                for (k = 0; k < options.length; k++) {
-                    idx = value.indexOf(options[k].value);
+        React.Children.forEach(children, (child) => {
+            if (child.props.onClick) {
+                curIndex ++;
+                const optionIndex = curIndex;
+
+                this.data.push({
+                    value: child.props.value,
+                    text: child.props.text,
+                    disabled: !!child.props.disabled
+                });
+
+                let selected = false;
+
+                if (multi && value && value.length) {
+                    const idx = value.indexOf(child.props.value);
                     if (idx > -1) {
-                        selectedOptions[idx] = options[k];
+                        selected = true;
+                        selectedItems[idx] = (
+                            <li
+                                key={idx}
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    this.deSelectOption(child.props.value);
+                                }}
+                            >
+                                {child.props.text}
+                                <i className="fa fa-close"/>
+                            </li>
+                        );
+                    }
+                } else if (value || value === 0) {
+                    if (value === child.props.value) {
+                        selected = true;
+                        selectedText = child.props.text;
                     }
                 }
-                if (selectedOptions.length < 1) {
-                    console.warn('The `value` prop of `Select` does not match any of its options.');
-                }
-            }
-        } else {
-            // when `multi` is false, get the selected item's text.
-            if (value || value === 0) {
-                const selectedOption = options.filter(item => 
-                    item.value === value
-                );
-                if (selectedOption.length) {
-                    selectedOptionText = selectedOption[0].text;
-                } else {
-                    console.warn('The `value` prop of `Select` does not match any of its options.');
-                }
-            }
-        }
 
-        if (multi) {
-            triggerContent = (selectedOptions.length ?
-                <ul>
-                    {selectedOptions.map((option, i) => (
-                        <li
-                            key={i}
-                            onClick={e => {
-                                e.stopPropagation();
-                                this.deSelectOption(option.value);
-                            }}
-                        >
-                            {option.text}
-                            <i className="fa fa-close"/>
-                        </li>
-                    ))}
-                </ul>
-                :
-                <span className="placeholder">{placeholder}</span>
-            );
-        } else {
-            triggerContent = (
-                <div>
-                    {selectedOptionText ||
-                        <span className="placeholder">{placeholder}</span>
-                    }
-                    <span className={cx({
-                        'caret-down': !isOpen,
-                        'caret-up': isOpen
-                    })}>
-                        <b></b>
-                    </span>
-                </div>
-            );
-        }
-
-        const renderedOptions = options.map((option, i) => {
-            const selected = multi ? value.indexOf(option.value) > -1 : 
-                value === option.value;
-            return (
-                <li 
-                    key={i}
-                    className={cx('select-option', {
-                        'disabled': option.disabled,
-                        'selected': selected,
-                        'hover': i === hoverIndex
-                    })}
-                    onMouseOver={e => this.handleOptionHover(e, i)}
-                    onClick={e => this.handleOptionClick(e, option, selected)}
-                >
-                    {option.text}
-                </li>
-            );
+                processedChildren.push(React.cloneElement(child, {
+                    hover: optionIndex === hoverIndex,
+                    selected,
+                    onMouseOver: e => this.handleOptionHover(optionIndex),
+                    onClick: this.handleOptionClick
+                }));
+            } else {
+                processedChildren.push(child);
+            }
         });
 
         return (
-            <div 
-                className={cx('dropdown-wrapper select-wrapper', className)}
-                style={style}
-                tabIndex={disabled ? undefined : '0'}
-                onFocus={this.handleFocus}
-                onBlur={this.handleBlur}
-                onKeyDown={this.handleKeyDown}
-                onKeyUp={this.handleKeyUp}
-            >
-                <div
-                    className={cx('dropdown-trigger', selectClassName, {
-                        'select-trigger-single': !multi,
-                        'select-trigger-multi': multi,
-                        'disabled': disabled
-                    })}  
-                    style={selectStyle}
-                    onClick={this.handleTriggerClick}
-                >
-                    {triggerContent}
-                </div>
+            <ClickAwayListener onClickAway={this.handleClickAway}>
                 <div 
-                    className={cx('dropdown select-dropdown', dropdownClassName, {
-                        'offscreen': !isOpen 
-                    })}
-                    style={dropdownStyle}
+                    className={cx('dropdown-wrapper select-wrapper', className)}
+                    style={style}
+                    tabIndex={disabled ? undefined : '0'}
+                    onKeyDown={this.handleKeyDown}
+                    onKeyUp={this.handleKeyUp}
                 >
-                    <ul onMouseLeave={this.handleMouseLeave}>
-                        {renderedOptions}
-                    </ul>
+                    <div
+                        className={cx('dropdown-trigger', selectClassName, {
+                            'select-trigger-single': !multi,
+                            'select-trigger-multi': multi,
+                            'open': isOpen,
+                            'disabled': disabled
+                        })}  
+                        style={selectStyle}
+                        onClick={this.handleTriggerClick}
+                    >
+                        {multi ?
+                            (selectedItems.length > 0 ?
+                                <ul>{selectedItems}</ul>
+                                :
+                                <span className="placeholder">{placeholder}</span>
+                            )
+                            :
+                            <div>
+                                {selectedText ||
+                                    <span className="placeholder">{placeholder}</span>
+                                }
+                                <span className={cx({
+                                    'caret-down': !isOpen,
+                                    'caret-up': isOpen
+                                })}>
+                                    <b></b>
+                                </span>
+                            </div>
+                        }
+                    </div>
+                    <div 
+                        className={cx('dropdown select-dropdown', dropdownClassName, {
+                            'offscreen': !isOpen 
+                        })}
+                        style={dropdownStyle}
+                    >
+                        <div onMouseLeave={this.handleMouseLeave}>
+                            {processedChildren}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </ClickAwayListener>
         );
     }
 });
 
+Select.Option = require('./Option');
+Select.OptGroup = require('./OptGroup');;
 module.exports = Select;

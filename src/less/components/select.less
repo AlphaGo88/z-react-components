@@ -4,11 +4,6 @@
 
 .select-wrapper {
     width: 200px;
-
-    &:focus > .select-trigger-single,
-    &:focus > .select-trigger-multi {
-        border-color: darken(@border-color-base, 18%);
-    }
 }
 
 .select-trigger-single,
@@ -16,6 +11,9 @@
     min-height: @input-height;
     border: 1px solid @border-color-base;
 
+    &.open {
+        border-color: darken(@border-color-base, 18%);
+    }
     &.required {
         border-color: @color-warning !important;
     }

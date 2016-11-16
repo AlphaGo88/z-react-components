@@ -4,12 +4,7 @@
 const React = require('react');
 const cx = require('classnames');
 const objectAssign = require('object-assign');
-
-let tabPressed = false;
-
-function handleTabPress(event) {
-    tabPressed = event.which === 9;
-}
+const ClickAwayListener = require('../internal/ClickAwayListener');
 
 // Whether the year is a leap year
 function isLeapYear(year) {
@@ -180,38 +175,7 @@ const DatePicker = React.createClass({
         return state;
     },
 
-    componentDidMount() {
-        // Listen to tab pressing so that we know when it's a keyboard focus. 
-        document.addEventListener('keydown', handleTabPress, false);
-    },
-
-    componentWillUnmount() {
-        this.cancelFocusTimeout();
-        document.removeEventListener('keydown', handleTabPress, false);
-    },
-
-    cancelFocusTimeout() {
-        if (this.focusTimeout) {
-            clearTimeout(this.focusTimeout);
-            this.focusTimeout = null;
-        }
-    },
-
-    handleFocus(event) {
-        if (event) event.persist();
-        if (!this.props.disabled) {
-            // setTimeout is needed because the focus event fires first
-            // Wait so that we can capture if this was a keyboard focus
-            this.focusTimeout = setTimeout(() => {
-                if (tabPressed) {
-                    this.setState({ isOpen: true });
-                }
-            }, 150);
-        }
-    },
-
-    handleBlur(event) {
-        this.cancelFocusTimeout();
+    handleClickAway() {
         if (this.state.isOpen) {
             this.hideAndRestore();
         }
@@ -219,7 +183,6 @@ const DatePicker = React.createClass({
 
     handleTriggerClick(event) {
         if (!this.props.disabled) {
-            tabPressed = false;
             if (this.state.isOpen) {
                 this.hideAndRestore();
             } else {
@@ -761,38 +724,38 @@ const DatePicker = React.createClass({
         const panelFoot = this.renderPanelFoot();
 
         return (
-            <div 
-                className={cx('dropdown-wrapper datepicker-wrapper', className)}
-                style={style}
-                tabIndex={disabled ? undefined : '0'}
-                onFocus={this.handleFocus}
-                onBlur={this.handleBlur}
-                onKeyDown={this.handleKeyDown}
-                onKeyUp={this.handleKeyUp}
-            >
-                <div
-                    className={cx('dropdown-trigger datepicker-trigger', inputClassName, {
-                        'disabled': disabled
-                    })}  
-                    style={inputStyle}
-                    onClick={this.handleTriggerClick}
-                >
-                    {dateStr ||
-                        <span className="placeholder">{placeholder}</span>
-                    }
-                    <i className="fa fa-calendar icon"></i>
-                </div>
+            <ClickAwayListener onClickAway={this.handleClickAway}>
                 <div 
-                    className={cx('dropdown datepicker-panel', dropdownClassName, {
-                        'offscreen': !isOpen
-                    })}
-                    style={dropdownStyle}
+                    className={cx('dropdown-wrapper datepicker-wrapper', className)}
+                    style={style}
+                    tabIndex={disabled ? undefined : '0'}
+                    onKeyDown={this.handleKeyDown}
+                    onKeyUp={this.handleKeyUp}
                 >
-                    {panelHead}
-                    {panelBody}
-                    {panelFoot}
+                    <div
+                        className={cx('dropdown-trigger datepicker-trigger', inputClassName, {
+                            'disabled': disabled
+                        })}  
+                        style={inputStyle}
+                        onClick={this.handleTriggerClick}
+                    >
+                        {dateStr ||
+                            <span className="placeholder">{placeholder}</span>
+                        }
+                        <i className="fa fa-calendar icon"></i>
+                    </div>
+                    <div 
+                        className={cx('dropdown datepicker-panel', dropdownClassName, {
+                            'offscreen': !isOpen
+                        })}
+                        style={dropdownStyle}
+                    >
+                        {panelHead}
+                        {panelBody}
+                        {panelFoot}
+                    </div>
                 </div>
-            </div>
+            </ClickAwayListener>
         );
     }
 });

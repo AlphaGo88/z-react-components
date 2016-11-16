@@ -138,7 +138,13 @@
 	                    null,
 	                    'Select'
 	                ),
-	                React.createElement(Select, { options: fruits, value: fruit, onChange: this.changeFruit })
+	                React.createElement(
+	                    Select,
+	                    { value: fruit, onChange: this.changeFruit },
+	                    fruits.map(function (fruit, i) {
+	                        return React.createElement(Select.Option, { key: i, value: fruit.value, text: fruit.text });
+	                    })
+	                )
 	            ),
 	            React.createElement(
 	                'section',
@@ -148,7 +154,13 @@
 	                    null,
 	                    'Select with default Value'
 	                ),
-	                React.createElement(Select, { options: fruits, defaultValue: 2 })
+	                React.createElement(
+	                    Select,
+	                    { defaultValue: 2 },
+	                    fruits.map(function (fruit, i) {
+	                        return React.createElement(Select.Option, { key: i, value: fruit.value, text: fruit.text });
+	                    })
+	                )
 	            ),
 	            React.createElement(
 	                'section',
@@ -158,7 +170,7 @@
 	                    null,
 	                    'Disabled'
 	                ),
-	                React.createElement(Select, { options: fruits, disabled: true })
+	                React.createElement(Select, { disabled: true })
 	            ),
 	            React.createElement(
 	                'section',
@@ -168,7 +180,13 @@
 	                    null,
 	                    'Multi Select'
 	                ),
-	                React.createElement(Select, { multi: true, options: emps, style: { width: 300 } })
+	                React.createElement(
+	                    Select,
+	                    { multi: true, style: { width: 300 } },
+	                    emps.map(function (emp, i) {
+	                        return React.createElement(Select.Option, { key: i, value: emp.value, text: emp.text });
+	                    })
+	                )
 	            )
 	        );
 	    }

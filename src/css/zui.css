@@ -1396,14 +1396,14 @@ table th[class*="col-"] {
 .select-wrapper {
   width: 200px;
 }
-.select-wrapper:focus > .select-trigger-single,
-.select-wrapper:focus > .select-trigger-multi {
-  border-color: #9e9e9e;
-}
 .select-trigger-single,
 .select-trigger-multi {
   min-height: 36px;
   border: 1px solid #ccc;
+}
+.select-trigger-single.open,
+.select-trigger-multi.open {
+  border-color: #9e9e9e;
 }
 .select-trigger-single.required,
 .select-trigger-multi.required {
