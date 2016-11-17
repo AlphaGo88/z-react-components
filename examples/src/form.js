@@ -76,7 +76,7 @@ const MyAppForm = React.createClass({
             <div style={{padding: 20}}>
               <Formsy.Form style={{width: 400}} onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
                 <TextField className="col-6" name="id" title="id" value="111">330234</TextField>
-                <Input className="col-6" name="name" title="name" />
+                <Input className="col-6" name="name" title="name" required/>
                 <Date className="col-6" name="birth" title="birth"/>
                 <Date className="col-6" name="birth" title="graduate" selectTime={true}/>
                 <Checkbox className="col-6" name="cb1" title="是否已婚"/>

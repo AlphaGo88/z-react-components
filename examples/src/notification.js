@@ -23,6 +23,10 @@ let App = React.createClass({
         Message.error('This is an error message.')
     },
 
+    msg6() {
+        Message.info('This is a long message. SSSSSSSSSSSS SSSSSSS, dDDDDDDDDDD DDDDDDDDD, JJJJJJJJJJJJJ JJJJJJJJJJ JJJJJJJJJJJJJJ JJJJJJJJJ')
+    },
+
     notice1() {
         Notification.open({
             title: 'notificatoin title',
@@ -81,6 +85,9 @@ let App = React.createClass({
                 </section>
                 <section>
                     <a onClick={this.msg5}>Error message</a>
+                </section>
+                <section>
+                    <a onClick={this.msg6}>Long message</a>
                 </section>
                 <hr/>
                 <section>

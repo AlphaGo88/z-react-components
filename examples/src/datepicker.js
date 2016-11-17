@@ -35,17 +35,17 @@ let App = React.createClass({
                     <button style={{marginLeft: 20}} onClick={this.handleClick}>现在</button>
                 </section>
                 <section>
+                    <h5>Date Picker with time selection</h5>
+                    <DatePicker 
+                        selectTime={true}
+                    />
+                </section>
+                <section>
                     <h5>Date Picker with particular dates disabled</h5>
                     <DatePicker 
                         disableDates={date => {
                             return date.getDay() === 4
                         }}
-                    />
-                </section>
-                <section>
-                    <h5>Date Picker with time selection</h5>
-                    <DatePicker 
-                        selectTime={true}
                     />
                 </section>
                 <section>

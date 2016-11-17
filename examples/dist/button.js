@@ -181,6 +181,27 @@
 	                    React.createElement("i", { className: "fa fa-comment" })
 	                ),
 	                "\xA0\xA0"
+	            ),
+	            React.createElement(
+	                "section",
+	                null,
+	                React.createElement(
+	                    "h4",
+	                    null,
+	                    "Custom style"
+	                ),
+	                React.createElement(
+	                    Button,
+	                    { type: "float", primary: true, style: { width: 200 } },
+	                    "custom"
+	                ),
+	                "\xA0\xA0",
+	                React.createElement(
+	                    Button,
+	                    { type: "float", style: { backgroundColor: 'red', color: '#fff' } },
+	                    "custom"
+	                ),
+	                "\xA0\xA0"
 	            )
 	        );
 	    }

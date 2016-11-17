@@ -103,12 +103,10 @@
 	                React.createElement(
 	                    'h5',
 	                    null,
-	                    'Date Picker with particular dates disabled'
+	                    'Date Picker with time selection'
 	                ),
 	                React.createElement(DatePicker, {
-	                    disableDates: function disableDates(date) {
-	                        return date.getDay() === 4;
-	                    }
+	                    selectTime: true
 	                })
 	            ),
 	            React.createElement(
@@ -117,10 +115,12 @@
 	                React.createElement(
 	                    'h5',
 	                    null,
-	                    'Date Picker with time selection'
+	                    'Date Picker with particular dates disabled'
 	                ),
 	                React.createElement(DatePicker, {
-	                    selectTime: true
+	                    disableDates: function disableDates(date) {
+	                        return date.getDay() === 4;
+	                    }
 	                })
 	            ),
 	            React.createElement(

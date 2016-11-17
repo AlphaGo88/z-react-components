@@ -138,7 +138,7 @@
 	                    { className: 'col-6', name: 'id', title: 'id', value: '111' },
 	                    '330234'
 	                ),
-	                React.createElement(Input, { className: 'col-6', name: 'name', title: 'name' }),
+	                React.createElement(Input, { className: 'col-6', name: 'name', title: 'name', required: true }),
 	                React.createElement(Date, { className: 'col-6', name: 'birth', title: 'birth' }),
 	                React.createElement(Date, { className: 'col-6', name: 'birth', title: 'graduate', selectTime: true }),
 	                React.createElement(Checkbox, { className: 'col-6', name: 'cb1', title: '\u662F\u5426\u5DF2\u5A5A' }),

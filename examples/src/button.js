@@ -45,6 +45,11 @@ let App = React.createClass({
                         <i className="fa fa-comment"/>
                     </Button>&nbsp;&nbsp;
                 </section>
+                <section>
+                    <h4>Custom style</h4>
+                    <Button type="float" primary={true} style={{width: 200}}>custom</Button>&nbsp;&nbsp;
+                    <Button type="float" style={{backgroundColor: 'red', color: '#fff'}}>custom</Button>&nbsp;&nbsp;
+                </section>
             </div>
         )
     }

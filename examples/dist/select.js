@@ -156,9 +156,9 @@
 	                React.createElement(
 	                    'h5',
 	                    null,
-	                    'Disabled'
+	                    'Multi Select'
 	                ),
-	                React.createElement(Select, { disabled: true, options: fruits })
+	                React.createElement(Select, { multi: true, style: { width: 300 }, options: emps })
 	            ),
 	            React.createElement(
 	                'section',
@@ -166,9 +166,9 @@
 	                React.createElement(
 	                    'h5',
 	                    null,
-	                    'Multi Select'
+	                    'Disabled'
 	                ),
-	                React.createElement(Select, { multi: true, style: { width: 300 }, options: emps })
+	                React.createElement(Select, { disabled: true, options: fruits })
 	            )
 	        );
 	    }

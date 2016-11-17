@@ -84,12 +84,12 @@ let App = React.createClass({
                     <Select defaultValue={2} options={fruits}/>
                 </section>
                 <section>
-                    <h5>Disabled</h5>
-                    <Select disabled options={fruits}/>
-                </section>
-                <section>
                     <h5>Multi Select</h5>
                     <Select multi={true} style={{width: 300}} options={emps}/>
+                </section>
+                <section>
+                    <h5>Disabled</h5>
+                    <Select disabled options={fruits}/>
                 </section>
             </div>
         )
