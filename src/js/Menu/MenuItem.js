@@ -81,7 +81,7 @@ const MenuItem = React.createClass({
 
         return (
             <div 
-                className={cx('menu-item', className, {
+                className={cx('z-menu-item', className, {
                     'disabled': disabled
                 })}
                 style={style}

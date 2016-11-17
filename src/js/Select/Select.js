@@ -309,7 +309,7 @@ const Select = React.createClass({
             }
 
             renderedOptions.push(
-                <li
+                <div
                     key={i}
                     className={cx('select-option', optionClassName, {
                         'hover': hoverIndex === i,
@@ -321,7 +321,7 @@ const Select = React.createClass({
                     onClick={e => this.handleOptionClick(e, option, selected)}
                 >
                     {option.text}
-                </li>
+                </div>
             );
         });
 
@@ -370,9 +370,11 @@ const Select = React.createClass({
                         })}
                         style={dropdownStyle}
                     >
-                        <ul onMouseLeave={this.handleMouseLeave}>
-                            {renderedOptions}
-                        </ul>
+                        {renderedOptions.length &&
+                            <div onMouseLeave={this.handleMouseLeave}>
+                                {renderedOptions}
+                            </div>
+                        }
                     </div>
                 </div>
             </ClickAwayListener>

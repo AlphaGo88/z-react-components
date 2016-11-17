@@ -34,6 +34,7 @@ const InputField = React.createClass({
             validationError, 
             validationErrors, 
             validations,
+            required,
             type, 
             title, 
             name,

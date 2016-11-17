@@ -17,25 +17,30 @@ function getMonthDays(year, month) {
 }
 
 function getDateStr(year, month, date) {
-    const monthStr = month > 8 ? month + 1 : '0' + (month + 1);
-    const dateStr = date > 9 ? date : '0' + date;
+    const mm = month > 8 ? month + 1 : `0${month + 1}`;
+    const dd = date > 9 ? date : `0${date}`;
 
-    return `${year}-${monthStr}-${dateStr}`;
+    return `${year}-${mm}-${dd}`;
 }
 
 function getDateTimeStr(year, month, date, hours, minutes, seconds) {
-    const hoursStr = hours > 9 ? hours : '0' + hours;
-    const minutesStr = minutes > 9 ? minutes : '0' + minutes;
-    const secondsStr = seconds > 9 ? seconds : '0' + seconds;
+    const hh = hours > 9 ? hours : `0${hours}`;
+    const mm = minutes > 9 ? minutes : `0${minutes}`;
+    const ss = seconds > 9 ? seconds : `0${seconds}`;
     const dateStr = getDateStr(year, month, date);
 
-    return `${dateStr} ${hoursStr}:${minutesStr}:${secondsStr}`;
+    return `${dateStr} ${hh}:${mm}:${ss}`;
 }
 
-function getDateProps(date) {
+function getDateFields(date) {
     if (date) {
         if (typeof date === 'string') {
-            date = new Date(date);
+            // IE or firefox may not be able to initialize date with the '-' splitter.
+            date = new Date(date.replace(/-/g, '/'));
+
+            if (isNaN(date.getFullYear())) {
+                console.error('Invalid date string: check the props of DatePicker.');
+            }
         }
         return {
             year: date.getFullYear(),
@@ -140,7 +145,7 @@ const DatePicker = React.createClass({
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.value) {
-            this.setState(getDateProps(nextProps.value));
+            this.setState(getDateFields(nextProps.value));
         }
     },
 
@@ -148,8 +153,7 @@ const DatePicker = React.createClass({
         const { defaultValue, value, disableDates } = this.props;
         let initialDate;
 
-        // If neither `value` nor `defaultValue` is provided,
-        // select today defaultly.
+        // If neither `value` nor `defaultValue` is provided, select today defaultly.
         // And do not select any date if today is disabled.
         if (value) {
             initialDate = value;
@@ -162,17 +166,23 @@ const DatePicker = React.createClass({
             }
         }
 
-        const dateProps = getDateProps(initialDate);
+        const dateFields = getDateFields(initialDate);
         let state = {
             isOpen: false,
             view: 'date',
-            ...dateProps
+            ...dateFields
         };
 
         if (!value) {
             state.value = defaultValue || '';
         }
         return state;
+    },
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.view === 'year') {
+            this.yearSelect.scrollTop = 2310;
+        }
     },
 
     handleClickAway() {
@@ -191,12 +201,6 @@ const DatePicker = React.createClass({
         }
     },
 
-    componentDidUpdate(prevProps, prevState) {
-        if (this.state.view === 'year') {
-            this.yearSelect.scrollTop = 2310;
-        }
-    },
-
     getValue() {
         return this.props.value || this.state.value;
     },
@@ -209,7 +213,7 @@ const DatePicker = React.createClass({
         };
 
         if (this.getValue()) {
-            objectAssign(newState, getDateProps(this.getValue()))
+            objectAssign(newState, getDateFields(this.getValue()))
         }
         this.setState(newState);
     },
@@ -238,8 +242,7 @@ const DatePicker = React.createClass({
 
         this.setState({ 
             year: year - 1,
-            date: month === 1 && date === 29 ? 
-                28 : date
+            date: (month === 1 && date === 29) ? 28 : date
         });
     },
 
@@ -248,8 +251,7 @@ const DatePicker = React.createClass({
 
         this.setState({ 
             year: year + 1,
-            date: month === 1 && date === 29 ? 
-                28 : date
+            date: (month === 1 && date === 29) ? 28 : date
         });
     },
 
@@ -287,7 +289,7 @@ const DatePicker = React.createClass({
 
     // Select a date.
     // If `selectTime` is true, just select it.
-    // Other wise update the component's value.
+    // Otherwise update the component's value.
     setDate(date) {
         if (this.props.selectTime) {
             if (date !== this.state.date) {
@@ -295,9 +297,7 @@ const DatePicker = React.createClass({
             }
         } else {
             const dateStr = getDateStr(this.state.year, this.state.month, date);
-            let newState = {
-                isOpen: false
-            };
+            let newState = { isOpen: false };
 
             if (!this.props.value) {
                 objectAssign(newState, {
@@ -335,10 +335,11 @@ const DatePicker = React.createClass({
         };
 
         if (!this.props.value) {
-            const dateProps = getDateProps(this.initialSelectedDate);
+            const dateFields = getDateFields();
+
             objectAssign(newState, {
                 value: '',
-                ...dateProps
+                ...dateFields
             });
         }
         this.setState(newState);
@@ -377,9 +378,7 @@ const DatePicker = React.createClass({
                     if (this.state.view === 'date') {
                         this.setDate(this.state.date);
                     } else if (this.state.view === 'year') {
-                        this.setState({
-                            view: 'date'
-                        });
+                        this.setState({ view: 'date' });
                     }
                 }
                 break;
@@ -467,7 +466,7 @@ const DatePicker = React.createClass({
 
         return (
             <div className="datepicker-head">
-                <div className={cx({'hide': this.state.view === 'time'})}>
+                <div className={cx({'hide': view === 'time'})}>
                     <a 
                         className="fa fa-angle-double-left datepicker-prev-year-btn"
                         onClick={this.prevYear}>
@@ -505,20 +504,15 @@ const DatePicker = React.createClass({
     },
 
     renderPanelBody() {
-        const { selectTime, value} = this.props;
-        const { view, year, month, date } = this.state;
-
         /* Generates dates Start */
-
         let dates = [], i;
         let renderedDates = [];
-
-        const dayCount = getMonthDays(year, month);
+        const dayCount = getMonthDays(this.state.year, this.state.month);
         
         // What day is the first date of the month.
-        const offset = new Date(year, month, 1).getDay() || 7;   
+        const offset = new Date(this.state.year, this.state.month, 1).getDay() || 7;   
 
-        // Empty dates before the first date.
+        // Empty dates before the 1st date.
         for (i = 1; i < offset; i++) {
             dates.push({ value: 0 });
         }
@@ -527,11 +521,12 @@ const DatePicker = React.createClass({
         for (i = 1; i <= dayCount; i++) {
             dates.push({
                 value: i,
-                active: i === date,
-                disabled: this.isDateDisabled(year, month, i)
+                active: i === this.state.date,
+                disabled: this.isDateDisabled(this.state.year, this.state.month, i)
             });
         }
 
+        // Split dates into rows.
         for (i = 0; i <= dates.length; i += 7) {
             renderedDates.push(
                 <tr key={i}>
@@ -555,82 +550,73 @@ const DatePicker = React.createClass({
                 </tr>
             );
         }
-
         /* Generates dates End */
 
         // Years
-        let years = [];
         let renderedYears = [];
 
-        for (i = year - 100; i <= year + 100; i++) {
-            years.push(i);
+        for (i = this.state.year - 100; i <= this.state.year + 100; i++) {
+            const year = i;
+
+            renderedYears.push(
+                <li 
+                    key={year + 100}
+                    className={cx({
+                        'active': year === this.state.year
+                    })}
+                    onClick={e => this.setYear(year)}
+                >
+                    {year}
+                </li>
+            );
         }
-        renderedYears = years.map((year, i) => (
-            <li 
-                key={i}
-                className={cx({
-                    'active': year === this.state.year
-                })}
-                onClick={e => this.setYear(year)}
-            >
-                {year}
-            </li>
-        ));
 
         // Hours, minutes and seconds.
-        let renderedTimeSelect = null;
+        let renderedHours = [];
+        let renderedMinutes = [];
+        let renderedSeconds = [];
 
-        if (selectTime) {
-            let timeArr = [];
-
+        if (this.props.selectTime) {
             for (i = 0; i <= 59; i++) {
-                timeArr.push(i < 10 ? ('0' + i) : i);
+                const timeValue = i;
+                const timeStr = i < 10 ? `0${i}` : i;
+
+                if (i < 24) {
+                    renderedHours.push(
+                        <li 
+                            key={timeValue} 
+                            onClick={e => this.setHours(timeValue)} 
+                            className={cx({'active': timeValue === this.state.hours})}
+                        >
+                            {`${timeStr}时`}
+                        </li>
+                    );
+                }
+                renderedMinutes.push(
+                    <li 
+                        key={timeValue} 
+                        onClick={e => this.setMinutes(timeValue)} 
+                        className={cx({'active': timeValue === this.state.minutes})}
+                    >
+                        {`${timeStr}分`}
+                    </li>
+                );
+                renderedSeconds.push(
+                    <li 
+                        key={timeValue} 
+                        onClick={e => this.setSeconds(timeValue)} 
+                        className={cx({'active': timeValue === this.state.seconds})}
+                    >
+                        {`${timeStr}秒`}
+                    </li>
+                );
             }
-            renderedTimeSelect = (
-                <div className={cx('clearfix', {
-                    'hide': view !== 'time'
-                })}>
-                    <ul className="datepicker-time-col">
-                        {timeArr.slice(0, 24).map((hour, i) => (
-                            <li 
-                                key={i} 
-                                onClick={e => this.setHours(i)} 
-                                className={cx({'active': i === this.state.hours})}
-                            >
-                                {`${hour}时`}
-                            </li>
-                        ))}
-                    </ul>
-                    <ul className="datepicker-time-col">
-                        {timeArr.map((minute, i) => (
-                            <li 
-                                key={i} 
-                                onClick={e => this.setMinutes(i)} 
-                                className={cx({'active': i === this.state.minutes})}
-                            >
-                                {`${minute}分`}
-                            </li>
-                        ))}
-                    </ul>
-                    <ul className="datepicker-time-col">
-                        {timeArr.map((second, i) => (
-                            <li 
-                                key={i} 
-                                onClick={e => this.setSeconds(i)} 
-                                className={cx({'active': i === this.state.seconds})}
-                            >
-                                {`${second}秒`}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            );
         }
 
         return (
             <div className="datepicker-body">
                 <table className={cx('datepicker-table', {
-                    'hide': view !== 'date'
+                    'hide': this.state.view !== 'date'
                 })}>
                     <thead>
                         <tr>
@@ -647,15 +633,29 @@ const DatePicker = React.createClass({
                         {renderedDates}
                     </tbody>
                 </table>
-                {view === 'year' &&
+                {this.state.view === 'year' &&
                     <ul 
-                        ref={(ul) => this.yearSelect = ul}
+                        ref={(el) => this.yearSelect = el}
                         className="datepicker-year-select"
                     >
                         {renderedYears}
                     </ul>
                 }
-                {selectTime && renderedTimeSelect}
+                {this.props.selectTime && 
+                    <div className={cx('clearfix', {
+                        'hide': this.state.view !== 'time'
+                    })}>
+                        <ul className="datepicker-time-col">
+                            {renderedHours}
+                        </ul>
+                        <ul className="datepicker-time-col">
+                            {renderedMinutes}
+                        </ul>
+                        <ul className="datepicker-time-col">
+                            {renderedSeconds}
+                        </ul>
+                    </div>
+                }
             </div>
         );
     },
@@ -734,6 +734,7 @@ const DatePicker = React.createClass({
                 >
                     <div
                         className={cx('dropdown-trigger datepicker-trigger', inputClassName, {
+                            'open': isOpen,
                             'disabled': disabled
                         })}  
                         style={inputStyle}

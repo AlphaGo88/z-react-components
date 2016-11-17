@@ -24,6 +24,7 @@ const TextAreaField = React.createClass({
             validationError, 
             validationErrors, 
             validations,
+            required,
             title, 
             name, 
             className, 

@@ -50,7 +50,7 @@ let Menu = React.createClass({
 
         return (
             <div 
-                className={cx('menu', className)}
+                className={cx('z-menu', className)}
                 style={style}
             >
                 {React.Children.map(children, (item) => {

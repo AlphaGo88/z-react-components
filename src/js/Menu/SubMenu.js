@@ -103,7 +103,7 @@ const SubMenu = React.createClass({
 
         return (
             <div 
-                className={cx('menu-item', className, {
+                className={cx('z-menu-item', className, {
                     'disabled': disabled
                 })}
                 style={style}
@@ -118,7 +118,7 @@ const SubMenu = React.createClass({
                 }
                 <span className="right-icon">{rightIcon}</span>
                 <div 
-                    className={cx('sub-menu', menuClassName, {
+                    className={cx('z-sub-menu', menuClassName, {
                         'hide': !this.state.isOpen
                     })}
                     style={menuStyle}

@@ -4,10 +4,6 @@
 
 .datepicker-wrapper {
     width: 180px;
-
-    &:focus > .datepicker-trigger {
-        border-color: darken(@border-color-base, 18%);
-    }
 }
 
 .datepicker-trigger {
@@ -17,6 +13,9 @@
     padding: 0 22px 0 10px;
     border: 1px solid @border-color-base;
 
+    &.open {
+        border-color: darken(@border-color-base, 18%);
+    }
     &.required {
         border-color: @color-warning !important;
     }
