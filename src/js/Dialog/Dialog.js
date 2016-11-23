@@ -74,6 +74,11 @@ const Dialog = React.createClass({
         onRequestClose: React.PropTypes.func,
 
         /**
+         * Set true so that the content is scrollable to fit the viewport.
+         */
+        autoScrollContent: React.PropTypes.bool,
+
+        /**
          * Callback when the ok button is clicked.
          * Won't work when `actions` is customed.
          */
@@ -83,6 +88,7 @@ const Dialog = React.createClass({
     getDefaultProps() {
         return {
             isOpen: false,
+            autoScrollContent: false,
             onRequestClose: () => {},
             onOK: () => {},
         };
@@ -102,10 +108,25 @@ const Dialog = React.createClass({
     },
 
     positionDialog() {
+        if (!this.props.isOpen) return;
 
         const clientHeight = this.container.offsetHeight;
-        const dialogHeight = this.dialogElem.offsetHeight;
         const minPaddingTop = 12;
+        
+        // It `autoScrollContent` is true,
+        // Calculate the content's max height according to the client height.
+        if (this.props.autoScrollContent) {
+            const titleHeight = this.titleElem ? this.titleElem.offsetHeight : 0;
+            const actionsHeight = this.actionsElem ? this.actionsElem.offsetHeight : 0;
+            const minContentHeight = 10;
+
+            let maxContentHeight = clientHeight - minPaddingTop * 2 - titleHeight - actionsHeight;
+            if (maxContentHeight < minContentHeight) maxContentHeight = minContentHeight;
+
+            this.contentElem.style.maxHeight = `${maxContentHeight}px`;
+        }
+
+        const dialogHeight = this.dialogElem.offsetHeight;
 
         let paddingTop = ((clientHeight - dialogHeight) / 2);
         if (paddingTop < minPaddingTop) paddingTop = minPaddingTop;
@@ -133,6 +154,7 @@ const Dialog = React.createClass({
             title, 
             children,  
             isOpen, 
+            autoScrollContent,
             onRequestClose,
             onOK 
         } = this.props;
@@ -176,6 +198,7 @@ const Dialog = React.createClass({
                         <div>
                             {title && 
                                 <h3 
+                                    ref={(el) => this.titleElem = el}
                                     style={titleStyle}
                                     className={cx('z-dialog-title', titleClassName)}
                                 >
@@ -183,12 +206,18 @@ const Dialog = React.createClass({
                                 </h3>
                             }
                             <div 
+                                ref={(el) => this.contentElem = el}
                                 style={contentStyle}
-                                className={cx('z-dialog-content', contentClassName)}
+                                className={cx(contentClassName, {
+                                    'z-dialog-content': !autoScrollContent,
+                                    'z-dialog-content-scrollable': autoScrollContent,
+                                    'z-dialog-content-no-title': !title
+                                })}
                             >
                                 {children}
                             </div>
                             <div 
+                                ref={(el) => this.actionsElem = el}
                                 style={actionsContainerStyle}
                                 className={cx('z-dialog-action-container', actionsContainerClassName)}
                             >

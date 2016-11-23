@@ -7,7 +7,6 @@
 
 #z-notification-layer {
     position: fixed;
-    width: 388px;
     top: 20px;
     right: 0;
     padding-right: 20px;
@@ -17,7 +16,7 @@
 .z-notification {
     display: inline-block;
     position: relative;
-    width: auto;
+    width: 356px;
     margin-top: 15px;
     padding: 15px 18px;
     border: 1px solid #ccc;
@@ -25,12 +24,12 @@
     background-color: #fff;
     opacity: 1;
     box-shadow: @box-shadow-base;
-    transition: transform 400ms;
+    transition-duration: 240ms;
     transform: translateX(0px);
-    animation: z-notification-enter 400ms;
+    animation: z-notification-enter 240ms;
 
     &.exit {
-        transform: translateX(150%);
+        transform: translateX(500px);
     }
 }
 
@@ -84,9 +83,9 @@
 
 @keyframes z-notification-enter {
     from {
-        transform: translateX(150%);
+        transform: translateX(500px);
     }
     to {
-        transform: translateX(0%);
+        transform: translateX(0px);
     }
 }

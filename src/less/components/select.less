@@ -2,46 +2,80 @@
 // Select
 // --------------------------------------------------
 
-.select-wrapper {
+.z-select-wrapper {
     width: 200px;
 }
 
-.select-trigger-single,
-.select-trigger-multi {
-    min-height: @input-height;
+.z-select-trigger-single,
+.z-select-trigger-multi {
+    padding: 0 20px 0 @input-padding-horizonal;
     border: 1px solid @border-color-base;
 
     &.open {
         border-color: darken(@border-color-base, 18%);
     }
     &.required {
-        border-color: @color-warning !important;
+        border-color: @color-warning;
     }
     &.error {
-        border-color: @color-danger !important;
+        border-color: @color-danger;
     }
     &.disabled {
         background-color: #efefef;
         cursor: @cursor-disabled;
     }
-    .placeholder {
-        color: @text-color-lighter;
+}
+
+.z-select-trigger-single {
+    height: @input-height;
+    line-height: @input-height - 2;
+    overflow: hidden;
+}
+
+.z-select-trigger-multi {
+    min-height: @input-height;
+
+    > ul {
+        margin: 0 0 4px -2px;
+
+        > li {
+            display: inline-block;
+            height: 24px;
+            margin: 4px 4px 0 0;
+            padding: 0px 4px;
+            line-height: 22px;
+            border: 1px solid @border-color-base;
+            border-radius: 2px;
+            background-color: #eee;
+            cursor: pointer;
+
+            > i {
+                margin-left: 4px;
+                font-size: 12px;
+                color: #777;
+            }
+        }
     }
 }
 
-.select-trigger-single {
-    padding: 0 20px 0 @input-padding-horizonal;
+.z-select-selected-text,
+.z-select-placeholder {
     line-height: @input-height - 2;
+}
 
-    .caret-up,
-    .caret-down {
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 100%;
-        width: 20px;
-    }
-    b {
+.z-select-placeholder {
+    color: #999;
+}
+
+.z-select-caret-up,
+.z-select-caret-down {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 20px;
+
+    > b {
         position: absolute;
         top: 0;
         right: 0;
@@ -52,76 +86,61 @@
         height: 0;
         border-style: solid;
     }
-    &.disabled b {
-        border-color: @text-color-lighter transparent transparent;
-    }
-    .caret-up > b {
-        border-color: transparent transparent @text-color-light;
-        border-width: 0 4px 6px;
-    }
-    .caret-down > b {
-        border-color: @text-color-light transparent transparent;
-        border-width: 6px 4px 0;
-    }
 }
 
-.select-trigger-multi {
-    padding: 0 4px 0 8px;
-
-    .placeholder {
-        display: inline-block;
-        height: @input-height - 2;
-        line-height: @input-height - 2;
-    }
-    > ul {
-        padding-bottom: 4px;
-
-        > li {
-            display: inline-block;
-            line-height: 24px;
-            margin: 4px 4px 0 0;
-            padding: 0px 4px;
-            border: 1px solid @border-color-base;
-            border-radius: 2px;
-            background-color: #eee;
-            cursor: pointer;
-
-            > i {
-                margin-left: 4px;
-                color: #757575;
-            }
-        }
-    }
+.z-select-caret-up > b {
+    border-color: transparent transparent @text-color-light;
+    border-width: 0 4px 6px;
 }
 
-.select-dropdown {
-    padding: 10px 0;
+.z-select-caret-down > b {
+    border-color: @text-color-light transparent transparent;
+    border-width: 6px 4px 0;
+}
+
+.z-select-dropdown {
     width: 100%;
     max-height: 288px;
+    overflow: auto;
+}
 
-    .select-option {
-        display: block;
-        padding: 7px 18px;
-        line-height: normal;
-        white-space: nowrap;
-        cursor: pointer;
+.z-select-actions {
+    height: 32px;
+    line-height: 32px;
+    padding: 0 18px;
+    border-bottom: 1px solid @border-color-base;
+}
 
-        &.hover {
-            background-color: #e0e0e0;
-        }
-        &.selected {
-            color: @primary-color;
-        }
-        &.disabled {
-            color: @text-color-lighter;
-            cursor: @cursor-disabled;
-        }
-        &.group-label {
-            font-weight: bold;
-            cursor: default;
-        }
-        &.group-option {
-            padding: 0 30px;
-        }
+.z-select-action {
+    margin-right: 10px;
+    color: @primary-color;
+    cursor: pointer;
+
+    &:hover {
+        color: @primary-color-dark;
+    }
+}
+
+.z-select-options {
+    padding: 10px 0;
+}
+
+.z-select-option {
+    display: block;
+    padding: 7px 18px;
+    line-height: normal;
+    white-space: nowrap;
+    cursor: pointer;
+    transition-duration: .2s;
+
+    &.hover {
+        background-color: #e0e0e0;
+    }
+    &.selected {
+        color: @primary-color;
+    }
+    &.disabled {
+        color: @text-color-lighter;
+        cursor: @cursor-disabled;
     }
 }

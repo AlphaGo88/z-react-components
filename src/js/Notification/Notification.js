@@ -17,7 +17,7 @@ const Notification = React.createClass({
 
     getDefaultProps() {
         return {
-            duration: 4000,
+            duration: 5000,
             autoClose: true
         };
     },

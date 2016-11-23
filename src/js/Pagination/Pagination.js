@@ -119,7 +119,7 @@ const Pagination = React.createClass({
                 className={cx('z-pagination', className)}
             >
                 <span 
-                    className={cx('page-btn fa fa-angle-double-left', {
+                    className={cx('z-page-btn fa fa-angle-double-left', {
                         'disabled': activePage === 1
                     })}
                     onClick={e => {
@@ -127,7 +127,7 @@ const Pagination = React.createClass({
                     }}
                 />
                 <span 
-                    className={cx('page-btn fa fa-angle-left', {
+                    className={cx('z-page-btn fa fa-angle-left', {
                         'disabled': activePage === 1
                     })}
                     onClick={e => {
@@ -138,9 +138,9 @@ const Pagination = React.createClass({
                     <span 
                         key={pageNo}
                         style={pageStyle} 
-                        className={cx('page', pageClassName, {
-                            'page-small': pageNo < 100,
-                            'page-big': pageNo >= 100,
+                        className={cx('z-page-no', pageClassName, {
+                            'z-page-no-small': pageNo < 100,
+                            'z-page-no-big': pageNo >= 100,
                             'active': pageNo === activePage
                         })} 
                         onClick={e => {
@@ -151,7 +151,7 @@ const Pagination = React.createClass({
                     </span>
                 ))}
                 <span 
-                    className={cx('page-btn fa fa-angle-right', {
+                    className={cx('z-page-btn fa fa-angle-right', {
                         'disabled': activePage === pageCount
                     })}
                     onClick={e => {
@@ -159,7 +159,7 @@ const Pagination = React.createClass({
                     }}
                 />
                 <span 
-                    className={cx('page-btn fa fa-angle-double-right', {
+                    className={cx('z-page-btn fa fa-angle-double-right', {
                         'disabled': activePage === pageCount
                     })}
                     onClick={e => {

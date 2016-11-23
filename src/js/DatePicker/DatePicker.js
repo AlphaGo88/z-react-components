@@ -4,7 +4,12 @@
 const React = require('react');
 const cx = require('classnames');
 const objectAssign = require('object-assign');
-const ClickAwayListener = require('../internal/ClickAwayListener');
+
+let tabPressed = false;
+
+function handleTabPress(event) {
+    tabPressed = event.which === 9;
+}
 
 // Whether the year is a leap year
 function isLeapYear(year) {
@@ -95,6 +100,11 @@ const DatePicker = React.createClass({
         dropdownStyle: React.PropTypes.object,
 
         /**
+         * The locale of the DatePicker.
+         */
+        locale: React.PropTypes.string,
+
+        /**
          * The placeholder of the trigger element.
          */
         placeholder: React.PropTypes.string,
@@ -108,6 +118,11 @@ const DatePicker = React.createClass({
          * Whether time selection is enabled.
          */
         selectTime: React.PropTypes.bool,
+
+        /**
+         * The start day of a week.
+         */
+        weekStart: React.PropTypes.oneOf([0, 1, 2, 3, 4, 5, 6]),
 
         /**
          * Default value of the component.
@@ -131,11 +146,13 @@ const DatePicker = React.createClass({
          * Callback when the component's value changes.
          * @param {string} dateStr
          */
-        onChange: React.PropTypes.func,
+        onChange: React.PropTypes.func
     },
 
     getDefaultProps() {
         return {
+            locale: 'zh_cn',
+            weekStart: 1,
             disabled: false,
             selectTime: false,
             disableDates: () => false,
@@ -179,20 +196,53 @@ const DatePicker = React.createClass({
         return state;
     },
 
+    componentDidMount() {
+        // Listen to tab pressing so that we know when it's a keyboard focus. 
+        document.addEventListener('keydown', handleTabPress, false);
+    },
+
     componentDidUpdate(prevProps, prevState) {
         if (this.state.view === 'year') {
             this.yearSelect.scrollTop = 2310;
         }
     },
 
-    handleClickAway() {
-        if (this.state.isOpen) {
+    componentWillUnmount() {
+        this.cancelFocusTimeout();
+        document.removeEventListener('keydown', handleTabPress, false);
+    },
+
+    cancelFocusTimeout() {
+        if (this.focusTimeout) {
+            clearTimeout(this.focusTimeout);
+            this.focusTimeout = null;
+        }
+    },
+
+    handleFocus(event) {
+        if (event) event.persist();
+        if (!this.props.disabled && !this.hover) {
+            // setTimeout is needed because the focus event fires first
+            // Wait so that we can capture if this was a keyboard focus
+            this.focusTimeout = setTimeout(() => {
+                if (tabPressed) {
+                    this.setState({ isOpen: true });
+                }
+            }, 150);
+        }
+    },
+
+    handleBlur(event) {
+        // Because the blur event bubbles in IE.
+        if (!this.hover || this.hover && tabPressed) {
+            this.cancelFocusTimeout();
             this.hideAndRestore();
         }
     },
 
     handleTriggerClick(event) {
         if (!this.props.disabled) {
+            tabPressed = false;
             if (this.state.isOpen) {
                 this.hideAndRestore();
             } else {
@@ -202,7 +252,7 @@ const DatePicker = React.createClass({
     },
 
     getValue() {
-        return this.props.value || this.state.value;
+        return this.props.value == undefined ? this.state.value : this.props.value;
     },
 
     // Restore the original state when no date is selected.
@@ -212,17 +262,13 @@ const DatePicker = React.createClass({
             view: 'date'
         };
 
-        if (this.getValue()) {
-            objectAssign(newState, getDateFields(this.getValue()))
-        }
+        objectAssign(newState, getDateFields(this.getValue()))
         this.setState(newState);
     },
 
     // Switch to year selection.
     selectYear() {
-        if (this.state.date) {
-            this.setState({ view: 'year' });
-        }
+        this.setState({ view: 'year' });
     },
 
     // Switch to time selection.
@@ -299,7 +345,7 @@ const DatePicker = React.createClass({
             const dateStr = getDateStr(this.state.year, this.state.month, date);
             let newState = { isOpen: false };
 
-            if (!this.props.value) {
+            if (this.props.value == undefined) {
                 objectAssign(newState, {
                     value: dateStr,
                     date
@@ -334,7 +380,7 @@ const DatePicker = React.createClass({
             view: 'date'
         };
 
-        if (!this.props.value) {
+        if (this.props.value == undefined) {
             const dateFields = getDateFields();
 
             objectAssign(newState, {
@@ -356,7 +402,7 @@ const DatePicker = React.createClass({
                 view: 'date'
             };
 
-            if (!this.props.value) {
+            if (this.props.value == undefined) {
                 newState.value = dateStr;
             }
             this.setState(newState);
@@ -396,16 +442,17 @@ const DatePicker = React.createClass({
     },
 
     handleKeyDown(event) {
-        event.preventDefault();
 
         switch (event.which) {
             case 37:
                 // Left Arrow
+                event.preventDefault();
                 this.state.view === 'date' && this.pressKeyToDate(-1);
                 break;
 
             case 38:
                 // Up Arrow
+                event.preventDefault();
                 if (this.state.view === 'date') {
                     this.pressKeyToDate(-7);
                 } else if (this.state.view === 'year') {
@@ -417,11 +464,13 @@ const DatePicker = React.createClass({
 
             case 39:
                 // Right Arrow
+                event.preventDefault();
                 this.state.view === 'date' && this.pressKeyToDate(1);
                 break;
 
             case 40:
                 // Down Arrow
+                event.preventDefault();
                 if (this.state.view === 'date') {
                     this.pressKeyToDate(7);
                 } else if (this.state.view === 'year') {
@@ -508,12 +557,24 @@ const DatePicker = React.createClass({
         let dates = [], i;
         let renderedDates = [];
         const dayCount = getMonthDays(this.state.year, this.state.month);
+
+        let weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+        if (this.props.weekStart !== 0) {
+            weekDays = weekDays.slice(this.props.weekStart).concat(weekDays.slice(0, this.props.weekStart));
+        }
         
         // What day is the first date of the month.
-        const offset = new Date(this.state.year, this.state.month, 1).getDay() || 7;   
+        let offset = 0;
+        let firstDay = new Date(this.state.year, this.state.month, 1).getDay() || 7;
+        let weekStart = this.props.weekStart || 7;
+        if (firstDay >= weekStart) {
+            offset = firstDay - weekStart;
+        } else {
+            offset = 7 - weekStart + firstDay;
+        }
 
         // Empty dates before the 1st date.
-        for (i = 1; i < offset; i++) {
+        for (i = 1; i <= offset; i++) {
             dates.push({ value: 0 });
         }
 
@@ -620,13 +681,11 @@ const DatePicker = React.createClass({
                 })}>
                     <thead>
                         <tr>
-                            <th><span>一</span></th>
-                            <th><span>二</span></th>
-                            <th><span>三</span></th>
-                            <th><span>四</span></th>
-                            <th><span>五</span></th>
-                            <th><span>六</span></th>
-                            <th><span>日</span></th>
+                            {weekDays.map(day => (
+                                <th key={day}>
+                                    <span>{day}</span>
+                                </th>
+                            ))}
                         </tr>
                     </thead>
                     <tbody>
@@ -724,39 +783,41 @@ const DatePicker = React.createClass({
         const panelFoot = this.renderPanelFoot();
 
         return (
-            <ClickAwayListener onClickAway={this.handleClickAway}>
-                <div 
-                    className={cx('dropdown-wrapper datepicker-wrapper', className)}
-                    style={style}
-                    tabIndex={disabled ? undefined : '0'}
-                    onKeyDown={this.handleKeyDown}
-                    onKeyUp={this.handleKeyUp}
+            <div 
+                className={cx('dropdown-wrapper datepicker-wrapper', className)}
+                style={style}
+                tabIndex={disabled ? undefined : '0'}
+                onKeyDown={this.handleKeyDown}
+                onKeyUp={this.handleKeyUp}
+                onMouseEnter={e => this.hover = true}
+                onMouseLeave={e => this.hover = false}
+                onFocus={this.handleFocus}
+                onBlur={this.handleBlur}
+            >
+                <div
+                    className={cx('dropdown-trigger datepicker-trigger', inputClassName, {
+                        'open': isOpen,
+                        'disabled': disabled
+                    })}  
+                    style={inputStyle}
+                    onClick={this.handleTriggerClick}
                 >
-                    <div
-                        className={cx('dropdown-trigger datepicker-trigger', inputClassName, {
-                            'open': isOpen,
-                            'disabled': disabled
-                        })}  
-                        style={inputStyle}
-                        onClick={this.handleTriggerClick}
-                    >
-                        {dateStr ||
-                            <span className="placeholder">{placeholder}</span>
-                        }
-                        <i className="fa fa-calendar icon"></i>
-                    </div>
-                    <div 
-                        className={cx('dropdown datepicker-panel', dropdownClassName, {
-                            'offscreen': !isOpen
-                        })}
-                        style={dropdownStyle}
-                    >
-                        {panelHead}
-                        {panelBody}
-                        {panelFoot}
-                    </div>
+                    {dateStr ||
+                        <span className="placeholder">{placeholder}</span>
+                    }
+                    <i className="fa fa-calendar icon"></i>
                 </div>
-            </ClickAwayListener>
+                <div 
+                    className={cx('dropdown datepicker-panel', dropdownClassName, {
+                        'offscreen': !isOpen
+                    })}
+                    style={dropdownStyle}
+                >
+                    {panelHead}
+                    {panelBody}
+                    {panelFoot}
+                </div>
+            </div>
         );
     }
 });

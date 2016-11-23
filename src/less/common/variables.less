@@ -16,14 +16,20 @@
 @primary-color-dark: darken(@primary-color, 12%);
 @primary-color-darker: darken(@primary-color, 20%);
 
+@secondary-color: #ad5888;
+@secondary-color-light: lighten(@secondary-color, 12%);
+@secondary-color-lighter: lighten(@secondary-color, 20%);
+@secondary-color-dark: darken(@secondary-color, 12%);
+@secondary-color-darker: darken(@secondary-color, 20%);
+
 @color-success: #5cb85c;
 @color-info: #5bc0de;
 @color-warning: #f0ad4e;
 @color-danger: #d9534f;
 
-@link-color: #2599f2;
-@link-color-hover: darken(@link-color, 12%);
-@link-color-visited: darken(@link-color, 12%);
+@link-color: @primary-color;
+@link-color-hover: @primary-color-dark;
+@link-color-visited: @primary-color-dark;
 
 @border-color-base: #ccc;
 @border-color-light: lighten(@border-color-base, 12%);
@@ -34,11 +40,10 @@
 @text-color-base: #333;
 @text-color-light: #666;
 @text-color-lighter: #999;
-@text-color-dark: #000;
 
 @font-size-base: 14px;
 
-@font-family-base: "Microsoft YaHei", "微软雅黑", "simsun", "宋体";
+@font-family-base: "Open Sans", Tahoma, Arial, "WenQuanYi Micro Hei", "Microsoft YaHei", "微软雅黑", "宋体", "sans-serif";
 
 
 // Basic line height
@@ -51,5 +56,5 @@
 @box-shadow-base: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 
 // Basic input style
-@input-height: 36px;
+@input-height: 34px;
 @input-padding-horizonal: 10px;

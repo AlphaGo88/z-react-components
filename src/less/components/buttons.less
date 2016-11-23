@@ -44,6 +44,7 @@
     text-decoration: none;
     cursor: pointer;
     overflow: hidden;
+    transition-duration: .3s;
     .user-select(none);
 
     &:hover {
@@ -72,8 +73,8 @@
     &.btn-focus .ripple {
         height: 300%;
         top: -100%;
-        opacity: 1;
         border-radius: 50%;
+        opacity: 1;
         animation: z-focus-ripple 1.4s ease-in-out infinite;
     }
     &.btn-block.btn-focus .ripple {
@@ -84,7 +85,6 @@
 
 .btn-float {
     box-shadow: @box-shadow-base;
-    transition-duration: .3s;
 
     &[disabled],
     &.btn-disabled {
@@ -109,17 +109,6 @@
 .btn-flat {
     background-color: transparent;
 
-    // .ripple {
-    //     border-radius: 2px;
-    //     background-color: @default-button-hover-bg;
-    //     transform: scaleX(0.2);
-    //     opacity: 0;
-    //     transition: transform 400ms, opacity 400ms;
-    // }
-    // &:hover .ripple {
-    //     transform: scaleX(1);
-    //     opacity: 1;
-    // }
     &:hover,
     &.btn-focus {
         background-color: @default-button-hover-bg;

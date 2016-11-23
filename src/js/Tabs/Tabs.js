@@ -125,7 +125,7 @@ let Tabs = React.createClass({
 
         return (
             <div 
-                className={className}
+                className={cx('z-tab-container', className)}
                 style={style}
             >
                 <div className="z-tabs">

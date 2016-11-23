@@ -46,9 +46,12 @@ let DropdownMenu = React.createClass({
             <ClickAwayListener onClickAway={this.handleClickAway}>
                 <div className="dropdown-wrapper">
                     {processedChildren}
-                    <div className={cx('dropdown-no-border', {
-                        'offscreen': !isOpen
-                    })}>
+                    <div 
+                        className={cx('dropdown-no-border', {
+                            'offscreen': !isOpen
+                        })}
+                        style={{boxShadow: 'none'}}
+                    >
                         {processedMenu}
                     </div>
                 </div>

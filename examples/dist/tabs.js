@@ -121,7 +121,7 @@
 	                    { defaultActiveIndex: 1, tabStyle: { width: 200 } },
 	                    React.createElement(
 	                        Tabs.Tab,
-	                        { label: "tab1", contentStyle: { backgroundColor: 'yellow' } },
+	                        { label: "tab1" },
 	                        "jdsifojflsmfd"
 	                    ),
 	                    React.createElement(

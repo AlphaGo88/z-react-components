@@ -3,7 +3,12 @@
 
 const React = require('react');
 const cx = require('classnames');
-const ClickAwayListener = require('../internal/ClickAwayListener');
+
+let tabPressed = false;
+
+function handleTabPress(event) {
+    tabPressed = event.which === 9;
+}
 
 const Select = React.createClass({
 
@@ -109,7 +114,8 @@ const Select = React.createClass({
     getInitialState() {
         let state = {
             isOpen: false,
-            hoverIndex: -1
+            hoverIndex: -1,
+            searchText: ''
         };
 
         if (!this.isControlled()) {
@@ -122,14 +128,47 @@ const Select = React.createClass({
         return state;
     },
 
-    handleClickAway() {
-        if (this.state.isOpen) {
+    componentDidMount() {
+        // Listen to tab pressing so that we know when it's a keyboard focus. 
+        document.addEventListener('keydown', handleTabPress, false);
+    },
+
+    componentWillUnmount() {
+        this.cancelFocusTimeout();
+        document.removeEventListener('keydown', handleTabPress, false);
+    },
+
+    cancelFocusTimeout() {
+        if (this.focusTimeout) {
+            clearTimeout(this.focusTimeout);
+            this.focusTimeout = null;
+        }
+    },
+
+    handleFocus(event) {
+        if (event) event.persist();
+        if (!this.props.disabled && !this.hover) {
+            // setTimeout is needed because the focus event fires first
+            // Wait so that we can capture if this was a keyboard focus
+            this.focusTimeout = setTimeout(() => {
+                if (tabPressed) {
+                    this.setState({ isOpen: true });
+                }
+            }, 150);
+        }
+    },
+
+    handleBlur(event) {
+        // Because the blur event bubbles in IE.
+        if (!this.hover || this.hover && tabPressed) {
+            this.cancelFocusTimeout();
             this.setState({ isOpen: false });
         }
     },
 
     handleTriggerClick(event) {
         if (!this.props.disabled) {
+            tabPressed = false;
             this.setState({ 
                 isOpen: !this.state.isOpen 
             });
@@ -142,6 +181,12 @@ const Select = React.createClass({
 
     getValue() {
         return this.isControlled() ? this.props.value : this.state.value;
+    },
+
+    handleInputChange(event) {
+        this.setState({
+            searchText: event.target.value 
+        });
     },
 
     handleMouseLeave(event) {
@@ -183,25 +228,46 @@ const Select = React.createClass({
         }
     },
 
+    // only `multi` is true.
     deSelectOption(optionValue) {
         let value = this.getValue().slice();
 
         value.splice(value.indexOf(optionValue), 1);
+        this.updateValue(value);
+    },
+
+    // only `multi` is true.
+    selectAll(event) {
+        let value = [];
+
+        this.props.options.forEach(option => {
+            if (!option.disabled) {
+                value.push(option.value);
+            }
+        });
+        this.updateValue(value);
+    },
+
+    selectNone(event) {
+        let value = this.props.multi ? [] : '';
+        this.updateValue(value);
+    },
+
+    updateValue(value) {
         if (!this.isControlled()) {
             this.setState({ value });
         }
         this.props.onChange(value);
     },
 
-    handleKeyDown(event) {
-        event.preventDefault();
-        
+    handleKeyDown(event) {        
         const { options } = this.props;
         const { isOpen, hoverIndex } = this.state;
 
         switch (event.which) {
             case 38:
                 // Up Arrow
+                event.preventDefault();
                 this.setState({ 
                     hoverIndex: (hoverIndex === 0) ? 
                         (options.length - 1) : (hoverIndex - 1)
@@ -210,6 +276,7 @@ const Select = React.createClass({
 
             case 40:
                 // Down Arrow
+                event.preventDefault();
                 this.setState({ 
                     hoverIndex: (hoverIndex === options.length - 1) ? 
                         0 : (hoverIndex + 1)
@@ -311,7 +378,7 @@ const Select = React.createClass({
             renderedOptions.push(
                 <div
                     key={i}
-                    className={cx('select-option', optionClassName, {
+                    className={cx('z-select-option', optionClassName, {
                         'hover': hoverIndex === i,
                         'disabled': option.disabled,
                         'selected': selected
@@ -326,58 +393,82 @@ const Select = React.createClass({
         });
 
         return (
-            <ClickAwayListener onClickAway={this.handleClickAway}>
-                <div 
-                    className={cx('dropdown-wrapper select-wrapper', className)}
-                    style={style}
-                    tabIndex={disabled ? undefined : '0'}
-                    onKeyDown={this.handleKeyDown}
-                    onKeyUp={this.handleKeyUp}
+            <div 
+                className={cx('dropdown-wrapper z-select-wrapper', className)}
+                style={style}
+                tabIndex={disabled ? undefined : 0}
+                onMouseEnter={e => this.hover = true}
+                onMouseLeave={e => this.hover = false}
+                onFocus={this.handleFocus}
+                onBlur={this.handleBlur}
+                onKeyDown={this.handleKeyDown}
+                onKeyUp={this.handleKeyUp}
+            >
+                <div
+                    className={cx('dropdown-trigger', selectClassName, {
+                        'z-select-trigger-single': !multi,
+                        'z-select-trigger-multi': multi,
+                        'open': isOpen,
+                        'disabled': disabled
+                    })}  
+                    style={selectStyle}
+                    onClick={this.handleTriggerClick}
                 >
-                    <div
-                        className={cx('dropdown-trigger', selectClassName, {
-                            'select-trigger-single': !multi,
-                            'select-trigger-multi': multi,
-                            'open': isOpen,
-                            'disabled': disabled
-                        })}  
-                        style={selectStyle}
-                        onClick={this.handleTriggerClick}
-                    >
-                        {multi ?
-                            (selectedItems.length > 0 ?
-                                <ul>{selectedItems}</ul>
-                                :
-                                <span className="placeholder">{placeholder}</span>
-                            )
+                    {multi ?
+                        (selectedItems.length > 0 ?
+                            <ul>{selectedItems}</ul>
                             :
-                            <div>
-                                {selectedText ||
-                                    <span className="placeholder">{placeholder}</span>
-                                }
-                                <span className={cx({
-                                    'caret-down': !isOpen,
-                                    'caret-up': isOpen
-                                })}>
-                                    <b></b>
-                                </span>
+                            <div className="z-select-placeholder">{placeholder}</div>
+                        )
+                        :
+                        <div>
+                            <div className={cx({
+                                'z-select-selected-text': selectedText,
+                                'z-select-placeholder': !selectedText   
+                            })}>
+                                {selectedText || placeholder}
                             </div>
-                        }
-                    </div>
-                    <div 
-                        className={cx('dropdown select-dropdown', dropdownClassName, {
-                            'offscreen': !isOpen 
-                        })}
-                        style={dropdownStyle}
-                    >
-                        {renderedOptions.length &&
-                            <div onMouseLeave={this.handleMouseLeave}>
-                                {renderedOptions}
-                            </div>
-                        }
-                    </div>
+                            <span className={cx({
+                                'z-select-caret-down': !isOpen,
+                                'z-select-caret-up': isOpen
+                            })}>
+                                <b></b>
+                            </span>
+                        </div>
+                    }
                 </div>
-            </ClickAwayListener>
+                <div 
+                    className={cx('dropdown z-select-dropdown', dropdownClassName, {
+                        'offscreen': !isOpen 
+                    })}
+                    style={dropdownStyle}
+                >
+                    {multi &&
+                        <div className="z-select-actions">
+                            <span 
+                                className="z-select-action" 
+                                onClick={this.selectAll}
+                            >
+                                全选
+                            </span>
+                            <span 
+                                className="z-select-action"
+                                onClick={this.selectNone}
+                            >
+                                清空
+                            </span>
+                        </div>
+                    }
+                    {renderedOptions.length &&
+                        <div 
+                            className="z-select-options"
+                            onMouseLeave={this.handleMouseLeave}
+                        >
+                            {renderedOptions}
+                        </div>
+                    }
+                </div>
+            </div>
         );
     }
 });

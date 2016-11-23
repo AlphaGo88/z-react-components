@@ -57,15 +57,15 @@ var zui =
 	    Notification: __webpack_require__(10),
 	    Pagination: __webpack_require__(12),
 	    DatePicker: __webpack_require__(14),
-	    Select: __webpack_require__(16),
+	    Select: __webpack_require__(17),
 	    Checkbox: __webpack_require__(19),
 	    RadioGroup: __webpack_require__(21),
 	    CheckboxGroup: __webpack_require__(23),
 	    Tabs: __webpack_require__(25),
 	    Menu: __webpack_require__(28),
 	    DropdownMenu: __webpack_require__(32),
-	    Divider: __webpack_require__(34),
-	    Formsy: __webpack_require__(36)
+	    Divider: __webpack_require__(35),
+	    Formsy: __webpack_require__(37)
 	};
 
 /***/ },
@@ -482,6 +482,11 @@ var zui =
 	        onRequestClose: React.PropTypes.func,
 
 	        /**
+	         * Set true so that the content is scrollable to fit the viewport.
+	         */
+	        autoScrollContent: React.PropTypes.bool,
+
+	        /**
 	         * Callback when the ok button is clicked.
 	         * Won't work when `actions` is customed.
 	         */
@@ -491,6 +496,7 @@ var zui =
 	    getDefaultProps: function getDefaultProps() {
 	        return {
 	            isOpen: false,
+	            autoScrollContent: false,
 	            onRequestClose: function onRequestClose() {},
 	            onOK: function onOK() {}
 	        };
@@ -506,10 +512,25 @@ var zui =
 	        window.removeEventListener('resize', this.positionDialog, false);
 	    },
 	    positionDialog: function positionDialog() {
+	        if (!this.props.isOpen) return;
 
 	        var clientHeight = this.container.offsetHeight;
-	        var dialogHeight = this.dialogElem.offsetHeight;
 	        var minPaddingTop = 12;
+
+	        // It `autoScrollContent` is true,
+	        // Calculate the content's max height according to the client height.
+	        if (this.props.autoScrollContent) {
+	            var titleHeight = this.titleElem ? this.titleElem.offsetHeight : 0;
+	            var actionsHeight = this.actionsElem ? this.actionsElem.offsetHeight : 0;
+	            var minContentHeight = 10;
+
+	            var maxContentHeight = clientHeight - minPaddingTop * 2 - titleHeight - actionsHeight;
+	            if (maxContentHeight < minContentHeight) maxContentHeight = minContentHeight;
+
+	            this.contentElem.style.maxHeight = maxContentHeight + 'px';
+	        }
+
+	        var dialogHeight = this.dialogElem.offsetHeight;
 
 	        var paddingTop = (clientHeight - dialogHeight) / 2;
 	        if (paddingTop < minPaddingTop) paddingTop = minPaddingTop;
@@ -537,6 +558,7 @@ var zui =
 	            title = _props.title,
 	            children = _props.children,
 	            isOpen = _props.isOpen,
+	            autoScrollContent = _props.autoScrollContent,
 	            onRequestClose = _props.onRequestClose,
 	            onOK = _props.onOK;
 
@@ -589,6 +611,9 @@ var zui =
 	                    title && React.createElement(
 	                        'h3',
 	                        {
+	                            ref: function ref(el) {
+	                                return _this.titleElem = el;
+	                            },
 	                            style: titleStyle,
 	                            className: cx('z-dialog-title', titleClassName)
 	                        },
@@ -597,14 +622,24 @@ var zui =
 	                    React.createElement(
 	                        'div',
 	                        {
+	                            ref: function ref(el) {
+	                                return _this.contentElem = el;
+	                            },
 	                            style: contentStyle,
-	                            className: cx('z-dialog-content', contentClassName)
+	                            className: cx(contentClassName, {
+	                                'z-dialog-content': !autoScrollContent,
+	                                'z-dialog-content-scrollable': autoScrollContent,
+	                                'z-dialog-content-no-title': !title
+	                            })
 	                        },
 	                        children
 	                    ),
 	                    React.createElement(
 	                        'div',
 	                        {
+	                            ref: function ref(el) {
+	                                return _this.actionsElem = el;
+	                            },
 	                            style: actionsContainerStyle,
 	                            className: cx('z-dialog-action-container', actionsContainerClassName)
 	                        },
@@ -815,7 +850,7 @@ var zui =
 
 	    getDefaultProps: function getDefaultProps() {
 	        return {
-	            duration: 4000,
+	            duration: 5000,
 	            autoClose: true
 	        };
 	    },
@@ -1041,7 +1076,7 @@ var zui =
 	                className: cx('z-pagination', className)
 	            },
 	            React.createElement('span', {
-	                className: cx('page-btn fa fa-angle-double-left', {
+	                className: cx('z-page-btn fa fa-angle-double-left', {
 	                    'disabled': activePage === 1
 	                }),
 	                onClick: function onClick(e) {
@@ -1049,7 +1084,7 @@ var zui =
 	                }
 	            }),
 	            React.createElement('span', {
-	                className: cx('page-btn fa fa-angle-left', {
+	                className: cx('z-page-btn fa fa-angle-left', {
 	                    'disabled': activePage === 1
 	                }),
 	                onClick: function onClick(e) {
@@ -1062,9 +1097,9 @@ var zui =
 	                    {
 	                        key: pageNo,
 	                        style: pageStyle,
-	                        className: cx('page', pageClassName, {
-	                            'page-small': pageNo < 100,
-	                            'page-big': pageNo >= 100,
+	                        className: cx('z-page-no', pageClassName, {
+	                            'z-page-no-small': pageNo < 100,
+	                            'z-page-no-big': pageNo >= 100,
 	                            'active': pageNo === activePage
 	                        }),
 	                        onClick: function onClick(e) {
@@ -1075,7 +1110,7 @@ var zui =
 	                );
 	            }),
 	            React.createElement('span', {
-	                className: cx('page-btn fa fa-angle-right', {
+	                className: cx('z-page-btn fa fa-angle-right', {
 	                    'disabled': activePage === pageCount
 	                }),
 	                onClick: function onClick(e) {
@@ -1083,7 +1118,7 @@ var zui =
 	                }
 	            }),
 	            React.createElement('span', {
-	                className: cx('page-btn fa fa-angle-double-right', {
+	                className: cx('z-page-btn fa fa-angle-double-right', {
 	                    'disabled': activePage === pageCount
 	                }),
 	                onClick: function onClick(e) {
@@ -1117,8 +1152,13 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var objectAssign = __webpack_require__(55);
-	var ClickAwayListener = __webpack_require__(18);
+	var objectAssign = __webpack_require__(16);
+
+	var tabPressed = false;
+
+	function handleTabPress(event) {
+	    tabPressed = event.which === 9;
+	}
 
 	// Whether the year is a leap year
 	function isLeapYear(year) {
@@ -1211,6 +1251,11 @@ var zui =
 	        dropdownStyle: React.PropTypes.object,
 
 	        /**
+	         * The locale of the DatePicker.
+	         */
+	        locale: React.PropTypes.string,
+
+	        /**
 	         * The placeholder of the trigger element.
 	         */
 	        placeholder: React.PropTypes.string,
@@ -1224,6 +1269,11 @@ var zui =
 	         * Whether time selection is enabled.
 	         */
 	        selectTime: React.PropTypes.bool,
+
+	        /**
+	         * The start day of a week.
+	         */
+	        weekStart: React.PropTypes.oneOf([0, 1, 2, 3, 4, 5, 6]),
 
 	        /**
 	         * Default value of the component.
@@ -1252,6 +1302,8 @@ var zui =
 
 	    getDefaultProps: function getDefaultProps() {
 	        return {
+	            locale: 'zh_cn',
+	            weekStart: 1,
 	            disabled: false,
 	            selectTime: false,
 	            disableDates: function disableDates() {
@@ -1297,18 +1349,49 @@ var zui =
 	        }
 	        return state;
 	    },
+	    componentDidMount: function componentDidMount() {
+	        // Listen to tab pressing so that we know when it's a keyboard focus. 
+	        document.addEventListener('keydown', handleTabPress, false);
+	    },
 	    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
 	        if (this.state.view === 'year') {
 	            this.yearSelect.scrollTop = 2310;
 	        }
 	    },
-	    handleClickAway: function handleClickAway() {
-	        if (this.state.isOpen) {
+	    componentWillUnmount: function componentWillUnmount() {
+	        this.cancelFocusTimeout();
+	        document.removeEventListener('keydown', handleTabPress, false);
+	    },
+	    cancelFocusTimeout: function cancelFocusTimeout() {
+	        if (this.focusTimeout) {
+	            clearTimeout(this.focusTimeout);
+	            this.focusTimeout = null;
+	        }
+	    },
+	    handleFocus: function handleFocus(event) {
+	        var _this = this;
+
+	        if (event) event.persist();
+	        if (!this.props.disabled && !this.hover) {
+	            // setTimeout is needed because the focus event fires first
+	            // Wait so that we can capture if this was a keyboard focus
+	            this.focusTimeout = setTimeout(function () {
+	                if (tabPressed) {
+	                    _this.setState({ isOpen: true });
+	                }
+	            }, 150);
+	        }
+	    },
+	    handleBlur: function handleBlur(event) {
+	        // Because the blur event bubbles in IE.
+	        if (!this.hover || this.hover && tabPressed) {
+	            this.cancelFocusTimeout();
 	            this.hideAndRestore();
 	        }
 	    },
 	    handleTriggerClick: function handleTriggerClick(event) {
 	        if (!this.props.disabled) {
+	            tabPressed = false;
 	            if (this.state.isOpen) {
 	                this.hideAndRestore();
 	            } else {
@@ -1317,7 +1400,7 @@ var zui =
 	        }
 	    },
 	    getValue: function getValue() {
-	        return this.props.value || this.state.value;
+	        return this.props.value == undefined ? this.state.value : this.props.value;
 	    },
 
 
@@ -1328,18 +1411,14 @@ var zui =
 	            view: 'date'
 	        };
 
-	        if (this.getValue()) {
-	            objectAssign(newState, getDateFields(this.getValue()));
-	        }
+	        objectAssign(newState, getDateFields(this.getValue()));
 	        this.setState(newState);
 	    },
 
 
 	    // Switch to year selection.
 	    selectYear: function selectYear() {
-	        if (this.state.date) {
-	            this.setState({ view: 'year' });
-	        }
+	        this.setState({ view: 'year' });
 	    },
 
 
@@ -1432,7 +1511,7 @@ var zui =
 	            var dateStr = getDateStr(this.state.year, this.state.month, date);
 	            var newState = { isOpen: false };
 
-	            if (!this.props.value) {
+	            if (this.props.value == undefined) {
 	                objectAssign(newState, {
 	                    value: dateStr,
 	                    date: date
@@ -1463,7 +1542,7 @@ var zui =
 	            view: 'date'
 	        };
 
-	        if (!this.props.value) {
+	        if (this.props.value == undefined) {
 	            var dateFields = getDateFields();
 
 	            objectAssign(newState, _extends({
@@ -1492,7 +1571,7 @@ var zui =
 	                view: 'date'
 	            };
 
-	            if (!this.props.value) {
+	            if (this.props.value == undefined) {
 	                newState.value = dateStr;
 	            }
 	            this.setState(newState);
@@ -1529,16 +1608,17 @@ var zui =
 	        }
 	    },
 	    handleKeyDown: function handleKeyDown(event) {
-	        event.preventDefault();
 
 	        switch (event.which) {
 	            case 37:
 	                // Left Arrow
+	                event.preventDefault();
 	                this.state.view === 'date' && this.pressKeyToDate(-1);
 	                break;
 
 	            case 38:
 	                // Up Arrow
+	                event.preventDefault();
 	                if (this.state.view === 'date') {
 	                    this.pressKeyToDate(-7);
 	                } else if (this.state.view === 'year') {
@@ -1550,11 +1630,13 @@ var zui =
 
 	            case 39:
 	                // Right Arrow
+	                event.preventDefault();
 	                this.state.view === 'date' && this.pressKeyToDate(1);
 	                break;
 
 	            case 40:
 	                // Down Arrow
+	                event.preventDefault();
 	                if (this.state.view === 'date') {
 	                    this.pressKeyToDate(7);
 	                } else if (this.state.view === 'year') {
@@ -1654,7 +1736,7 @@ var zui =
 	        );
 	    },
 	    renderPanelBody: function renderPanelBody() {
-	        var _this = this;
+	        var _this2 = this;
 
 	        /* Generates dates Start */
 	        var dates = [],
@@ -1662,11 +1744,23 @@ var zui =
 	        var renderedDates = [];
 	        var dayCount = getMonthDays(this.state.year, this.state.month);
 
+	        var weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+	        if (this.props.weekStart !== 0) {
+	            weekDays = weekDays.slice(this.props.weekStart).concat(weekDays.slice(0, this.props.weekStart));
+	        }
+
 	        // What day is the first date of the month.
-	        var offset = new Date(this.state.year, this.state.month, 1).getDay() || 7;
+	        var offset = 0;
+	        var firstDay = new Date(this.state.year, this.state.month, 1).getDay() || 7;
+	        var weekStart = this.props.weekStart || 7;
+	        if (firstDay >= weekStart) {
+	            offset = firstDay - weekStart;
+	        } else {
+	            offset = 7 - weekStart + firstDay;
+	        }
 
 	        // Empty dates before the 1st date.
-	        for (i = 1; i < offset; i++) {
+	        for (i = 1; i <= offset; i++) {
 	            dates.push({ value: 0 });
 	        }
 
@@ -1696,7 +1790,7 @@ var zui =
 	                                    'active': date.active
 	                                }),
 	                                onClick: function onClick(e) {
-	                                    !date.disabled && _this.setDate(date.value);
+	                                    !date.disabled && _this2.setDate(date.value);
 	                                }
 	                            },
 	                            date.value
@@ -1718,10 +1812,10 @@ var zui =
 	                {
 	                    key: year + 100,
 	                    className: cx({
-	                        'active': year === _this.state.year
+	                        'active': year === _this2.state.year
 	                    }),
 	                    onClick: function onClick(e) {
-	                        return _this.setYear(year);
+	                        return _this2.setYear(year);
 	                    }
 	                },
 	                year
@@ -1748,9 +1842,9 @@ var zui =
 	                        {
 	                            key: timeValue,
 	                            onClick: function onClick(e) {
-	                                return _this.setHours(timeValue);
+	                                return _this2.setHours(timeValue);
 	                            },
-	                            className: cx({ 'active': timeValue === _this.state.hours })
+	                            className: cx({ 'active': timeValue === _this2.state.hours })
 	                        },
 	                        timeStr + '\u65F6'
 	                    ));
@@ -1760,9 +1854,9 @@ var zui =
 	                    {
 	                        key: timeValue,
 	                        onClick: function onClick(e) {
-	                            return _this.setMinutes(timeValue);
+	                            return _this2.setMinutes(timeValue);
 	                        },
-	                        className: cx({ 'active': timeValue === _this.state.minutes })
+	                        className: cx({ 'active': timeValue === _this2.state.minutes })
 	                    },
 	                    timeStr + '\u5206'
 	                ));
@@ -1771,9 +1865,9 @@ var zui =
 	                    {
 	                        key: timeValue,
 	                        onClick: function onClick(e) {
-	                            return _this.setSeconds(timeValue);
+	                            return _this2.setSeconds(timeValue);
 	                        },
-	                        className: cx({ 'active': timeValue === _this.state.seconds })
+	                        className: cx({ 'active': timeValue === _this2.state.seconds })
 	                    },
 	                    timeStr + '\u79D2'
 	                ));
@@ -1798,69 +1892,17 @@ var zui =
 	                    React.createElement(
 	                        'tr',
 	                        null,
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            React.createElement(
-	                                'span',
-	                                null,
-	                                '\u4E00'
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            React.createElement(
-	                                'span',
-	                                null,
-	                                '\u4E8C'
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            React.createElement(
-	                                'span',
-	                                null,
-	                                '\u4E09'
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            React.createElement(
-	                                'span',
-	                                null,
-	                                '\u56DB'
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            React.createElement(
-	                                'span',
-	                                null,
-	                                '\u4E94'
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            React.createElement(
-	                                'span',
-	                                null,
-	                                '\u516D'
-	                            )
-	                        ),
-	                        React.createElement(
-	                            'th',
-	                            null,
-	                            React.createElement(
-	                                'span',
-	                                null,
-	                                '\u65E5'
-	                            )
-	                        )
+	                        weekDays.map(function (day) {
+	                            return React.createElement(
+	                                'th',
+	                                { key: day },
+	                                React.createElement(
+	                                    'span',
+	                                    null,
+	                                    day
+	                                )
+	                            );
+	                        })
 	                    )
 	                ),
 	                React.createElement(
@@ -1873,7 +1915,7 @@ var zui =
 	                'ul',
 	                {
 	                    ref: function ref(el) {
-	                        return _this.yearSelect = el;
+	                        return _this2.yearSelect = el;
 	                    },
 	                    className: 'datepicker-year-select'
 	                },
@@ -1956,6 +1998,8 @@ var zui =
 	        );
 	    },
 	    render: function render() {
+	        var _this3 = this;
+
 	        var _props2 = this.props,
 	            className = _props2.className,
 	            inputClassName = _props2.inputClassName,
@@ -1974,46 +2018,50 @@ var zui =
 	        var panelFoot = this.renderPanelFoot();
 
 	        return React.createElement(
-	            ClickAwayListener,
-	            { onClickAway: this.handleClickAway },
+	            'div',
+	            {
+	                className: cx('dropdown-wrapper datepicker-wrapper', className),
+	                style: style,
+	                tabIndex: disabled ? undefined : '0',
+	                onKeyDown: this.handleKeyDown,
+	                onKeyUp: this.handleKeyUp,
+	                onMouseEnter: function onMouseEnter(e) {
+	                    return _this3.hover = true;
+	                },
+	                onMouseLeave: function onMouseLeave(e) {
+	                    return _this3.hover = false;
+	                },
+	                onFocus: this.handleFocus,
+	                onBlur: this.handleBlur
+	            },
 	            React.createElement(
 	                'div',
 	                {
-	                    className: cx('dropdown-wrapper datepicker-wrapper', className),
-	                    style: style,
-	                    tabIndex: disabled ? undefined : '0',
-	                    onKeyDown: this.handleKeyDown,
-	                    onKeyUp: this.handleKeyUp
+	                    className: cx('dropdown-trigger datepicker-trigger', inputClassName, {
+	                        'open': isOpen,
+	                        'disabled': disabled
+	                    }),
+	                    style: inputStyle,
+	                    onClick: this.handleTriggerClick
 	                },
-	                React.createElement(
-	                    'div',
-	                    {
-	                        className: cx('dropdown-trigger datepicker-trigger', inputClassName, {
-	                            'open': isOpen,
-	                            'disabled': disabled
-	                        }),
-	                        style: inputStyle,
-	                        onClick: this.handleTriggerClick
-	                    },
-	                    dateStr || React.createElement(
-	                        'span',
-	                        { className: 'placeholder' },
-	                        placeholder
-	                    ),
-	                    React.createElement('i', { className: 'fa fa-calendar icon' })
+	                dateStr || React.createElement(
+	                    'span',
+	                    { className: 'placeholder' },
+	                    placeholder
 	                ),
-	                React.createElement(
-	                    'div',
-	                    {
-	                        className: cx('dropdown datepicker-panel', dropdownClassName, {
-	                            'offscreen': !isOpen
-	                        }),
-	                        style: dropdownStyle
-	                    },
-	                    panelHead,
-	                    panelBody,
-	                    panelFoot
-	                )
+	                React.createElement('i', { className: 'fa fa-calendar icon' })
+	            ),
+	            React.createElement(
+	                'div',
+	                {
+	                    className: cx('dropdown datepicker-panel', dropdownClassName, {
+	                        'offscreen': !isOpen
+	                    }),
+	                    style: dropdownStyle
+	                },
+	                panelHead,
+	                panelBody,
+	                panelFoot
 	            )
 	        );
 	    }
@@ -2023,14 +2071,103 @@ var zui =
 
 /***/ },
 /* 16 */
+/***/ function(module, exports) {
+
+	'use strict';
+	/* eslint-disable no-unused-vars */
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+	function toObject(val) {
+		if (val === null || val === undefined) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	function shouldUseNative() {
+		try {
+			if (!Object.assign) {
+				return false;
+			}
+
+			// Detect buggy property enumeration order in older V8 versions.
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+			var test1 = new String('abc');  // eslint-disable-line
+			test1[5] = 'de';
+			if (Object.getOwnPropertyNames(test1)[0] === '5') {
+				return false;
+			}
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test2 = {};
+			for (var i = 0; i < 10; i++) {
+				test2['_' + String.fromCharCode(i)] = i;
+			}
+			var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+				return test2[n];
+			});
+			if (order2.join('') !== '0123456789') {
+				return false;
+			}
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test3 = {};
+			'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+				test3[letter] = letter;
+			});
+			if (Object.keys(Object.assign({}, test3)).join('') !==
+					'abcdefghijklmnopqrst') {
+				return false;
+			}
+
+			return true;
+		} catch (e) {
+			// We don't expect any of the above to throw, but better to be safe.
+			return false;
+		}
+	}
+
+	module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+		var from;
+		var to = toObject(target);
+		var symbols;
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = Object(arguments[s]);
+
+			for (var key in from) {
+				if (hasOwnProperty.call(from, key)) {
+					to[key] = from[key];
+				}
+			}
+
+			if (Object.getOwnPropertySymbols) {
+				symbols = Object.getOwnPropertySymbols(from);
+				for (var i = 0; i < symbols.length; i++) {
+					if (propIsEnumerable.call(from, symbols[i])) {
+						to[symbols[i]] = from[symbols[i]];
+					}
+				}
+			}
+		}
+
+		return to;
+	};
+
+
+/***/ },
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(17);
+	module.exports = __webpack_require__(18);
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2042,7 +2179,12 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var ClickAwayListener = __webpack_require__(18);
+
+	var tabPressed = false;
+
+	function handleTabPress(event) {
+	    tabPressed = event.which === 9;
+	}
 
 	var Select = React.createClass({
 	    displayName: 'Select',
@@ -2141,7 +2283,8 @@ var zui =
 	    getInitialState: function getInitialState() {
 	        var state = {
 	            isOpen: false,
-	            hoverIndex: -1
+	            hoverIndex: -1,
+	            searchText: ''
 	        };
 
 	        if (!this.isControlled()) {
@@ -2153,13 +2296,44 @@ var zui =
 	        }
 	        return state;
 	    },
-	    handleClickAway: function handleClickAway() {
-	        if (this.state.isOpen) {
+	    componentDidMount: function componentDidMount() {
+	        // Listen to tab pressing so that we know when it's a keyboard focus. 
+	        document.addEventListener('keydown', handleTabPress, false);
+	    },
+	    componentWillUnmount: function componentWillUnmount() {
+	        this.cancelFocusTimeout();
+	        document.removeEventListener('keydown', handleTabPress, false);
+	    },
+	    cancelFocusTimeout: function cancelFocusTimeout() {
+	        if (this.focusTimeout) {
+	            clearTimeout(this.focusTimeout);
+	            this.focusTimeout = null;
+	        }
+	    },
+	    handleFocus: function handleFocus(event) {
+	        var _this = this;
+
+	        if (event) event.persist();
+	        if (!this.props.disabled && !this.hover) {
+	            // setTimeout is needed because the focus event fires first
+	            // Wait so that we can capture if this was a keyboard focus
+	            this.focusTimeout = setTimeout(function () {
+	                if (tabPressed) {
+	                    _this.setState({ isOpen: true });
+	                }
+	            }, 150);
+	        }
+	    },
+	    handleBlur: function handleBlur(event) {
+	        // Because the blur event bubbles in IE.
+	        if (!this.hover || this.hover && tabPressed) {
+	            this.cancelFocusTimeout();
 	            this.setState({ isOpen: false });
 	        }
 	    },
 	    handleTriggerClick: function handleTriggerClick(event) {
 	        if (!this.props.disabled) {
+	            tabPressed = false;
 	            this.setState({
 	                isOpen: !this.state.isOpen
 	            });
@@ -2170,6 +2344,11 @@ var zui =
 	    },
 	    getValue: function getValue() {
 	        return this.isControlled() ? this.props.value : this.state.value;
+	    },
+	    handleInputChange: function handleInputChange(event) {
+	        this.setState({
+	            searchText: event.target.value
+	        });
 	    },
 	    handleMouseLeave: function handleMouseLeave(event) {
 	        this.setState({ hoverIndex: -1 });
@@ -2206,18 +2385,39 @@ var zui =
 	            this.setState(newState);
 	        }
 	    },
+
+
+	    // only `multi` is true.
 	    deSelectOption: function deSelectOption(optionValue) {
 	        var value = this.getValue().slice();
 
 	        value.splice(value.indexOf(optionValue), 1);
+	        this.updateValue(value);
+	    },
+
+
+	    // only `multi` is true.
+	    selectAll: function selectAll(event) {
+	        var value = [];
+
+	        this.props.options.forEach(function (option) {
+	            if (!option.disabled) {
+	                value.push(option.value);
+	            }
+	        });
+	        this.updateValue(value);
+	    },
+	    selectNone: function selectNone(event) {
+	        var value = this.props.multi ? [] : '';
+	        this.updateValue(value);
+	    },
+	    updateValue: function updateValue(value) {
 	        if (!this.isControlled()) {
 	            this.setState({ value: value });
 	        }
 	        this.props.onChange(value);
 	    },
 	    handleKeyDown: function handleKeyDown(event) {
-	        event.preventDefault();
-
 	        var options = this.props.options;
 	        var _state = this.state,
 	            isOpen = _state.isOpen,
@@ -2227,6 +2427,7 @@ var zui =
 	        switch (event.which) {
 	            case 38:
 	                // Up Arrow
+	                event.preventDefault();
 	                this.setState({
 	                    hoverIndex: hoverIndex === 0 ? options.length - 1 : hoverIndex - 1
 	                });
@@ -2234,6 +2435,7 @@ var zui =
 
 	            case 40:
 	                // Down Arrow
+	                event.preventDefault();
 	                this.setState({
 	                    hoverIndex: hoverIndex === options.length - 1 ? 0 : hoverIndex + 1
 	                });
@@ -2243,17 +2445,17 @@ var zui =
 	        }
 	    },
 	    handleKeyUp: function handleKeyUp(event) {
-	        var _this = this;
+	        var _this2 = this;
 
 	        var _ret = function () {
 	            switch (event.which) {
 	                case 13:
 	                    // Enter
 	                    // select or deselect the option.
-	                    var _props = _this.props,
+	                    var _props = _this2.props,
 	                        multi = _props.multi,
 	                        options = _props.options;
-	                    var hoverIndex = _this.state.hoverIndex;
+	                    var hoverIndex = _this2.state.hoverIndex;
 
 
 	                    if (hoverIndex < 0 || options[hoverIndex].disabled) {
@@ -2263,7 +2465,7 @@ var zui =
 	                    }
 
 	                    var optionValue = options[hoverIndex].value;
-	                    var value = _this.getValue();
+	                    var value = _this2.getValue();
 
 	                    if (multi) {
 	                        var isOptionSelected = value.filter(function (it) {
@@ -2271,21 +2473,21 @@ var zui =
 	                        }).length > 0;
 
 	                        if (isOptionSelected) {
-	                            _this.deSelectOption(optionValue);
+	                            _this2.deSelectOption(optionValue);
 	                        } else {
-	                            _this.selectOption(optionValue);
+	                            _this2.selectOption(optionValue);
 	                        }
 	                    } else {
-	                        _this.selectOption(optionValue, value === optionValue);
+	                        _this2.selectOption(optionValue, value === optionValue);
 	                    }
 
 	                    break;
 
 	                case 27:
 	                    // ESC
-	                    if (_this.state.isOpen) {
+	                    if (_this2.state.isOpen) {
 	                        event.stopPropagation();
-	                        _this.setState({ isOpen: false });
+	                        _this2.setState({ isOpen: false });
 	                    }
 	                    break;
 
@@ -2296,7 +2498,7 @@ var zui =
 	        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	    },
 	    render: function render() {
-	        var _this2 = this;
+	        var _this3 = this;
 
 	        var _props2 = this.props,
 	            className = _props2.className,
@@ -2334,7 +2536,7 @@ var zui =
 	                            key: idx,
 	                            onClick: function onClick(e) {
 	                                e.stopPropagation();
-	                                _this2.deSelectOption(option.value);
+	                                _this3.deSelectOption(option.value);
 	                            }
 	                        },
 	                        option.text,
@@ -2350,17 +2552,17 @@ var zui =
 	                'div',
 	                {
 	                    key: i,
-	                    className: cx('select-option', optionClassName, {
+	                    className: cx('z-select-option', optionClassName, {
 	                        'hover': hoverIndex === i,
 	                        'disabled': option.disabled,
 	                        'selected': selected
 	                    }),
 	                    style: optionStyle,
 	                    onMouseEnter: function onMouseEnter(e) {
-	                        return _this2.handleOptionHover(e, i);
+	                        return _this3.handleOptionHover(e, i);
 	                    },
 	                    onClick: function onClick(e) {
-	                        return _this2.handleOptionClick(e, option, selected);
+	                        return _this3.handleOptionClick(e, option, selected);
 	                    }
 	                },
 	                option.text
@@ -2368,68 +2570,98 @@ var zui =
 	        });
 
 	        return React.createElement(
-	            ClickAwayListener,
-	            { onClickAway: this.handleClickAway },
+	            'div',
+	            {
+	                className: cx('dropdown-wrapper z-select-wrapper', className),
+	                style: style,
+	                tabIndex: disabled ? undefined : 0,
+	                onMouseEnter: function onMouseEnter(e) {
+	                    return _this3.hover = true;
+	                },
+	                onMouseLeave: function onMouseLeave(e) {
+	                    return _this3.hover = false;
+	                },
+	                onFocus: this.handleFocus,
+	                onBlur: this.handleBlur,
+	                onKeyDown: this.handleKeyDown,
+	                onKeyUp: this.handleKeyUp
+	            },
 	            React.createElement(
 	                'div',
 	                {
-	                    className: cx('dropdown-wrapper select-wrapper', className),
-	                    style: style,
-	                    tabIndex: disabled ? undefined : '0',
-	                    onKeyDown: this.handleKeyDown,
-	                    onKeyUp: this.handleKeyUp
+	                    className: cx('dropdown-trigger', selectClassName, {
+	                        'z-select-trigger-single': !multi,
+	                        'z-select-trigger-multi': multi,
+	                        'open': isOpen,
+	                        'disabled': disabled
+	                    }),
+	                    style: selectStyle,
+	                    onClick: this.handleTriggerClick
 	                },
-	                React.createElement(
+	                multi ? selectedItems.length > 0 ? React.createElement(
+	                    'ul',
+	                    null,
+	                    selectedItems
+	                ) : React.createElement(
 	                    'div',
-	                    {
-	                        className: cx('dropdown-trigger', selectClassName, {
-	                            'select-trigger-single': !multi,
-	                            'select-trigger-multi': multi,
-	                            'open': isOpen,
-	                            'disabled': disabled
-	                        }),
-	                        style: selectStyle,
-	                        onClick: this.handleTriggerClick
-	                    },
-	                    multi ? selectedItems.length > 0 ? React.createElement(
-	                        'ul',
-	                        null,
-	                        selectedItems
-	                    ) : React.createElement(
-	                        'span',
-	                        { className: 'placeholder' },
-	                        placeholder
-	                    ) : React.createElement(
+	                    { className: 'z-select-placeholder' },
+	                    placeholder
+	                ) : React.createElement(
+	                    'div',
+	                    null,
+	                    React.createElement(
 	                        'div',
-	                        null,
-	                        selectedText || React.createElement(
-	                            'span',
-	                            { className: 'placeholder' },
-	                            placeholder
-	                        ),
-	                        React.createElement(
-	                            'span',
-	                            { className: cx({
-	                                    'caret-down': !isOpen,
-	                                    'caret-up': isOpen
-	                                }) },
-	                            React.createElement('b', null)
-	                        )
+	                        { className: cx({
+	                                'z-select-selected-text': selectedText,
+	                                'z-select-placeholder': !selectedText
+	                            }) },
+	                        selectedText || placeholder
+	                    ),
+	                    React.createElement(
+	                        'span',
+	                        { className: cx({
+	                                'z-select-caret-down': !isOpen,
+	                                'z-select-caret-up': isOpen
+	                            }) },
+	                        React.createElement('b', null)
+	                    )
+	                )
+	            ),
+	            React.createElement(
+	                'div',
+	                {
+	                    className: cx('dropdown z-select-dropdown', dropdownClassName, {
+	                        'offscreen': !isOpen
+	                    }),
+	                    style: dropdownStyle
+	                },
+	                multi && React.createElement(
+	                    'div',
+	                    { className: 'z-select-actions' },
+	                    React.createElement(
+	                        'span',
+	                        {
+	                            className: 'z-select-action',
+	                            onClick: this.selectAll
+	                        },
+	                        '\u5168\u9009'
+	                    ),
+	                    React.createElement(
+	                        'span',
+	                        {
+	                            className: 'z-select-action',
+	                            onClick: this.selectNone
+	                        },
+	                        '\u6E05\u7A7A'
 	                    )
 	                ),
-	                React.createElement(
+	                renderedOptions.length && React.createElement(
 	                    'div',
 	                    {
-	                        className: cx('dropdown select-dropdown', dropdownClassName, {
-	                            'offscreen': !isOpen
-	                        }),
-	                        style: dropdownStyle
+	                        className: 'z-select-options',
+	                        onMouseLeave: this.handleMouseLeave
 	                    },
-	                    renderedOptions.length && React.createElement(
-	                        'div',
-	                        { onMouseLeave: this.handleMouseLeave },
-	                        renderedOptions
-	                    )
+	                    renderedOptions
 	                )
 	            )
 	        );
@@ -2437,62 +2669,6 @@ var zui =
 	});
 
 	module.exports = Select;
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	// ClickAwayListener
-	// ------------------------
-
-	var React = __webpack_require__(3);
-
-	var isDescendant = function isDescendant(el, target) {
-	    if (target !== null) {
-	        return el === target || isDescendant(el, target.parentNode);
-	    }
-	    return false;
-	};
-
-	var ClickAwayListener = React.createClass({
-	    displayName: 'ClickAwayListener',
-
-
-	    propTypes: {
-	        children: React.PropTypes.node,
-	        onClickAway: React.PropTypes.func
-	    },
-
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            onClickAway: function onClickAway() {}
-	        };
-	    },
-	    componentDidMount: function componentDidMount() {
-	        document.addEventListener('click', this.handleClickAway, false);
-	    },
-	    componentWillUnmount: function componentWillUnmount() {
-	        document.removeEventListener('click', this.handleClickAway, false);
-	    },
-	    handleClickAway: function handleClickAway(event) {
-	        if (event.defaultPrevented) {
-	            return;
-	        }
-
-	        var el = ReactDOM.findDOMNode(this);
-
-	        if (document.documentElement.contains(event.target) && !isDescendant(el, event.target)) {
-	            this.props.onClickAway(event);
-	        }
-	    },
-	    render: function render() {
-	        return this.props.children;
-	    }
-	});
-
-	module.exports = ClickAwayListener;
 
 /***/ },
 /* 19 */
@@ -3079,7 +3255,7 @@ var zui =
 	        return React.createElement(
 	            'div',
 	            {
-	                className: className,
+	                className: cx('z-tab-container', className),
 	                style: style
 	            },
 	            React.createElement(
@@ -3570,7 +3746,7 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var ClickAwayListener = __webpack_require__(18);
+	var ClickAwayListener = __webpack_require__(34);
 
 	var DropdownMenu = React.createClass({
 	    displayName: 'DropdownMenu',
@@ -3622,9 +3798,12 @@ var zui =
 	                processedChildren,
 	                React.createElement(
 	                    'div',
-	                    { className: cx('dropdown-no-border', {
+	                    {
+	                        className: cx('dropdown-no-border', {
 	                            'offscreen': !isOpen
-	                        }) },
+	                        }),
+	                        style: { boxShadow: 'none' }
+	                    },
 	                    processedMenu
 	                )
 	            )
@@ -3640,10 +3819,66 @@ var zui =
 
 	'use strict';
 
-	module.exports = __webpack_require__(35);
+	// ClickAwayListener
+	// ------------------------
+
+	var React = __webpack_require__(3);
+
+	var isDescendant = function isDescendant(el, target) {
+	    if (target !== null) {
+	        return el === target || isDescendant(el, target.parentNode);
+	    }
+	    return false;
+	};
+
+	var ClickAwayListener = React.createClass({
+	    displayName: 'ClickAwayListener',
+
+
+	    propTypes: {
+	        children: React.PropTypes.node,
+	        onClickAway: React.PropTypes.func
+	    },
+
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            onClickAway: function onClickAway() {}
+	        };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        document.addEventListener('click', this.handleClickAway, false);
+	    },
+	    componentWillUnmount: function componentWillUnmount() {
+	        document.removeEventListener('click', this.handleClickAway, false);
+	    },
+	    handleClickAway: function handleClickAway(event) {
+	        if (event.defaultPrevented) {
+	            return;
+	        }
+
+	        var el = ReactDOM.findDOMNode(this);
+
+	        if (document.documentElement.contains(event.target) && !isDescendant(el, event.target)) {
+	            this.props.onClickAway(event);
+	        }
+	    },
+	    render: function render() {
+	        return this.props.children;
+	    }
+	});
+
+	module.exports = ClickAwayListener;
 
 /***/ },
 /* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(36);
+
+/***/ },
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3686,15 +3921,15 @@ var zui =
 	module.exports = Divider;
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(37);
+	module.exports = __webpack_require__(38);
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3702,18 +3937,18 @@ var zui =
 	// Form
 	// ------------------------
 
-	var Formsy = __webpack_require__(38);
-	var validationRules = __webpack_require__(45);
+	var Formsy = __webpack_require__(39);
+	var validationRules = __webpack_require__(46);
 
-	Formsy.HiddenField = __webpack_require__(46);
-	Formsy.TextField = __webpack_require__(47);
-	Formsy.InputField = __webpack_require__(48);
-	Formsy.SelectField = __webpack_require__(49);
-	Formsy.DateField = __webpack_require__(50);
-	Formsy.RadioGroupField = __webpack_require__(51);
-	Formsy.CheckboxField = __webpack_require__(52);
-	Formsy.CheckboxGroupField = __webpack_require__(53);
-	Formsy.TextAreaField = __webpack_require__(54);
+	Formsy.HiddenField = __webpack_require__(47);
+	Formsy.TextField = __webpack_require__(48);
+	Formsy.InputField = __webpack_require__(49);
+	Formsy.SelectField = __webpack_require__(50);
+	Formsy.DateField = __webpack_require__(51);
+	Formsy.RadioGroupField = __webpack_require__(52);
+	Formsy.CheckboxField = __webpack_require__(53);
+	Formsy.CheckboxGroupField = __webpack_require__(54);
+	Formsy.TextAreaField = __webpack_require__(55);
 
 	for (var name in validationRules) {
 	    Formsy.addValidationRule(name, validationRules[name]);
@@ -3722,7 +3957,7 @@ var zui =
 	module.exports = Formsy;
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -3735,12 +3970,12 @@ var zui =
 
 	var React = global.React || __webpack_require__(3);
 	var Formsy = {};
-	var validationRules = __webpack_require__(39);
-	var formDataToObject = __webpack_require__(40);
-	var utils = __webpack_require__(41);
-	var Mixin = __webpack_require__(42);
-	var HOC = __webpack_require__(43);
-	var Decorator = __webpack_require__(44);
+	var validationRules = __webpack_require__(40);
+	var formDataToObject = __webpack_require__(41);
+	var utils = __webpack_require__(42);
+	var Mixin = __webpack_require__(43);
+	var HOC = __webpack_require__(44);
+	var Decorator = __webpack_require__(45);
 	var options = {};
 	var emptyArray = [];
 
@@ -4188,7 +4423,7 @@ var zui =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4273,7 +4508,7 @@ var zui =
 	module.exports = validations;
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	function toObj(source) {
@@ -4324,7 +4559,7 @@ var zui =
 	}
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4386,12 +4621,12 @@ var zui =
 	};
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
-	var utils = __webpack_require__(41);
+	var utils = __webpack_require__(42);
 	var React = global.React || __webpack_require__(3);
 
 	var convertValidationsToObject = function convertValidationsToObject(validations) {
@@ -4566,7 +4801,7 @@ var zui =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -4574,7 +4809,7 @@ var zui =
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = global.React || __webpack_require__(3);
-	var Mixin = __webpack_require__(42);
+	var Mixin = __webpack_require__(43);
 	module.exports = function (Component) {
 	  return React.createClass({
 	    displayName: 'Formsy(' + getDisplayName(Component) + ')',
@@ -4607,7 +4842,7 @@ var zui =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -4615,7 +4850,7 @@ var zui =
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = global.React || __webpack_require__(3);
-	var Mixin = __webpack_require__(42);
+	var Mixin = __webpack_require__(43);
 	module.exports = function () {
 	  return function (Component) {
 	    return React.createClass({
@@ -4645,7 +4880,7 @@ var zui =
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -4665,7 +4900,7 @@ var zui =
 	module.exports = validations;
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4674,7 +4909,7 @@ var zui =
 	// ---------------------------
 
 	var React = __webpack_require__(3);
-	var Formsy = __webpack_require__(38);
+	var Formsy = __webpack_require__(39);
 
 	var HiddenField = React.createClass({
 	    displayName: 'HiddenField',
@@ -4697,7 +4932,7 @@ var zui =
 	module.exports = HiddenField;
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4706,7 +4941,7 @@ var zui =
 	// ---------------------------
 
 	var React = __webpack_require__(3);
-	var Formsy = __webpack_require__(38);
+	var Formsy = __webpack_require__(39);
 	var cx = __webpack_require__(4);
 
 	var TextField = React.createClass({
@@ -4745,7 +4980,7 @@ var zui =
 	module.exports = TextField;
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4759,7 +4994,7 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(38);
+	var Formsy = __webpack_require__(39);
 
 	var InputField = React.createClass({
 	    displayName: 'InputField',
@@ -4836,7 +5071,7 @@ var zui =
 	module.exports = InputField;
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4850,8 +5085,8 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Select = __webpack_require__(16);
-	var Formsy = __webpack_require__(38);
+	var Select = __webpack_require__(17);
+	var Formsy = __webpack_require__(39);
 
 	var SelectField = React.createClass({
 	    displayName: 'SelectField',
@@ -4920,7 +5155,7 @@ var zui =
 	module.exports = SelectField;
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4935,7 +5170,7 @@ var zui =
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
 	var DatePicker = __webpack_require__(14);
-	var Formsy = __webpack_require__(38);
+	var Formsy = __webpack_require__(39);
 
 	var DateField = React.createClass({
 	    displayName: 'DateField',
@@ -4996,7 +5231,7 @@ var zui =
 	module.exports = DateField;
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5010,7 +5245,7 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(38);
+	var Formsy = __webpack_require__(39);
 	var RadioGroup = __webpack_require__(21);
 
 	var RadioGroupField = React.createClass({
@@ -5058,7 +5293,7 @@ var zui =
 	module.exports = RadioGroupField;
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5072,7 +5307,7 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(38);
+	var Formsy = __webpack_require__(39);
 	var Checkbox = __webpack_require__(19);
 
 	var CheckboxField = React.createClass({
@@ -5116,7 +5351,7 @@ var zui =
 	module.exports = CheckboxField;
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5130,7 +5365,7 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(38);
+	var Formsy = __webpack_require__(39);
 	var CheckboxGroup = __webpack_require__(23);
 
 	var CheckboxGroupField = React.createClass({
@@ -5179,7 +5414,7 @@ var zui =
 	module.exports = CheckboxGroupField;
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5193,7 +5428,7 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-	var Formsy = __webpack_require__(38);
+	var Formsy = __webpack_require__(39);
 
 	var TextAreaField = React.createClass({
 	    displayName: 'TextAreaField',
@@ -5251,95 +5486,6 @@ var zui =
 	});
 
 	module.exports = TextAreaField;
-
-/***/ },
-/* 55 */
-/***/ function(module, exports) {
-
-	'use strict';
-	/* eslint-disable no-unused-vars */
-	var hasOwnProperty = Object.prototype.hasOwnProperty;
-	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-	function toObject(val) {
-		if (val === null || val === undefined) {
-			throw new TypeError('Object.assign cannot be called with null or undefined');
-		}
-
-		return Object(val);
-	}
-
-	function shouldUseNative() {
-		try {
-			if (!Object.assign) {
-				return false;
-			}
-
-			// Detect buggy property enumeration order in older V8 versions.
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-			var test1 = new String('abc');  // eslint-disable-line
-			test1[5] = 'de';
-			if (Object.getOwnPropertyNames(test1)[0] === '5') {
-				return false;
-			}
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-			var test2 = {};
-			for (var i = 0; i < 10; i++) {
-				test2['_' + String.fromCharCode(i)] = i;
-			}
-			var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-				return test2[n];
-			});
-			if (order2.join('') !== '0123456789') {
-				return false;
-			}
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-			var test3 = {};
-			'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-				test3[letter] = letter;
-			});
-			if (Object.keys(Object.assign({}, test3)).join('') !==
-					'abcdefghijklmnopqrst') {
-				return false;
-			}
-
-			return true;
-		} catch (e) {
-			// We don't expect any of the above to throw, but better to be safe.
-			return false;
-		}
-	}
-
-	module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-		var from;
-		var to = toObject(target);
-		var symbols;
-
-		for (var s = 1; s < arguments.length; s++) {
-			from = Object(arguments[s]);
-
-			for (var key in from) {
-				if (hasOwnProperty.call(from, key)) {
-					to[key] = from[key];
-				}
-			}
-
-			if (Object.getOwnPropertySymbols) {
-				symbols = Object.getOwnPropertySymbols(from);
-				for (var i = 0; i < symbols.length; i++) {
-					if (propIsEnumerable.call(from, symbols[i])) {
-						to[symbols[i]] = from[symbols[i]];
-					}
-				}
-			}
-		}
-
-		return to;
-	};
-
 
 /***/ }
 /******/ ]);
