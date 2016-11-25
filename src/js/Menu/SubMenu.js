@@ -3,6 +3,7 @@
 
 const React = require('react');
 const cx = require('classnames');
+const assign = require('object-assign');
 
 const SubMenu = React.createClass({
 
@@ -93,13 +94,16 @@ const SubMenu = React.createClass({
             className,
             menuClassName,
             style,
-            menuStyle,
             disabled,
             text,
             leftIcon,
             rightIcon,
             children
         } = this.props;
+
+        const menuStyle = assign({
+            display: this.state.isOpen ? 'block' : 'none'
+        }, this.props.menuStyle);
 
         return (
             <div 
@@ -118,13 +122,11 @@ const SubMenu = React.createClass({
                 }
                 <span className="right-icon">{rightIcon}</span>
                 <div 
-                    className={cx('z-sub-menu', menuClassName, {
-                        'hide': !this.state.isOpen
-                    })}
+                    className={cx('z-sub-menu', menuClassName)}
                     style={menuStyle}
                 >
-                    {React.Children.map(children, (item) => {
-                        return React.cloneElement(item, {
+                    {React.Children.map(children, (menuItem) => {
+                        return React.cloneElement(menuItem, {
                             onSelect: this.handleSelect
                         });
                     })}

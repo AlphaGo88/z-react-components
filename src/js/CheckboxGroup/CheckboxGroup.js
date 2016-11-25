@@ -82,16 +82,13 @@ const CheckboxGroup = React.createClass({
     },
 
     handleChange(value, checked) {
-        if (!this.props.disabled) {
-            const oldValue = this.props.value || this.state.value;
-            const newValue = checked ? oldValue.concat(value) :
-                oldValue.filter(it => it !== value);
+        const oldValue = this.props.value || this.state.value;
+        const newValue = checked ? oldValue.concat(value) : oldValue.filter(it => it !== value);
 
-            if (!this.props.value) {
-                this.setState({ value: newValue });
-            }
-            this.props.onChange(newValue);
+        if (!this.props.value) {
+            this.setState({ value: newValue });
         }
+        this.props.onChange(newValue);
     },
 
     render() {
@@ -100,6 +97,7 @@ const CheckboxGroup = React.createClass({
             itemClassName,
             style,
             itemStyle,
+            disabled,
             align,
             items,
         } = this.props;
@@ -121,8 +119,9 @@ const CheckboxGroup = React.createClass({
                     >
                         <Checkbox
                             label={item.text}
+                            disabled={disabled || item.disabled}
                             checked={checkedValues.indexOf(item.value) > -1}
-                            onCheck={(checked) => this.handleChange(item.value, checked)}
+                            onChange={(checked) => this.handleChange(item.value, checked)}
                         />
                     </li>
                 ))}

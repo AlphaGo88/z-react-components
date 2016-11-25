@@ -17,6 +17,7 @@ const TextField = React.createClass({
         const { 
             className, 
             labelClassName,
+            controlClassName,
             title
         } = this.props;
 
@@ -25,7 +26,7 @@ const TextField = React.createClass({
                 <label className={cx('form-label', labelClassName)}>
                     {title}
                 </label>
-                <span className="form-text">
+                <span className={cx('form-text', controlClassName)}>
                     {this.props.children}
                 </span>
             </div>

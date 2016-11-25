@@ -667,8 +667,8 @@ a:visited {
   color: #999 !important;
   cursor: not-allowed !important;
 }
-.btn-float .button-label,
-.btn-flat .button-label {
+.btn-float .btn-label,
+.btn-flat .btn-label {
   position: relative;
   z-index: 1;
 }
@@ -878,13 +878,6 @@ label.checkbox > input[type="checkbox"]:focus + span {
 }
 .z-tab-content-container {
   border-left: 1px solid #ccc;
-}
-.z-tab-content {
-  display: none;
-  padding: 15px;
-}
-.z-tab-content.active {
-  display: block;
 }
 input {
   background-color: transparent;

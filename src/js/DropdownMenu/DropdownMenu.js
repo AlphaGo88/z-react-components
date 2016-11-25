@@ -31,7 +31,6 @@ let DropdownMenu = React.createClass({
     render() {
         const { menu, children } = this.props;
         const { isOpen } = this.state;
-
         const processedChildren = React.cloneElement(children, {
             onClick: this.handleClick
         });

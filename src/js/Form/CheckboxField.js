@@ -11,14 +11,14 @@ const CheckboxField = React.createClass({
     mixins: [Formsy.Mixin],
 
     componentWillMount() {
-        if (typeof this.props.defaultValue === 'boolean') {
-            this.setValue(this.props.defaultValue);
+        if (this.props.defaultValue) {
+            this.setValue(!!this.props.defaultValue);
         }
     },
 
     changeValue(checked) {
         this.setValue(checked);
-        this.props.onCheck && this.props.onCheck(checked);
+        this.props.onChange && this.props.onChange(checked);
     },
 
     render() {
@@ -39,7 +39,7 @@ const CheckboxField = React.createClass({
                     className={cx('form-control', controlClassName)}
                     label={title}
                     checked={!!this.getValue()}
-                    onCheck={this.changeValue}
+                    onChange={this.changeValue}
                 />
             </div>
         );

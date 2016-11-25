@@ -79,8 +79,8 @@ const Dialog = React.createClass({
         autoScrollContent: React.PropTypes.bool,
 
         /**
-         * Callback when the ok button is clicked.
-         * Won't work when `actions` is customed.
+         * Fires when the ok button is clicked.
+         * Only `actions` is not customized.
          */
         onOK: React.PropTypes.func,
     },
@@ -90,13 +90,13 @@ const Dialog = React.createClass({
             isOpen: false,
             autoScrollContent: false,
             onRequestClose: () => {},
-            onOK: () => {},
+            onOK: () => {}
         };
     },
 
     componentDidMount() {
         this.positionDialog();
-        window.addEventListener('resize', this.positionDialog, false);
+        window.addEventListener('resize', this.positionDialog);
     },
 
     componentDidUpdate(prevProps, prevState) {
@@ -104,7 +104,7 @@ const Dialog = React.createClass({
     },
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.positionDialog, false);
+        window.removeEventListener('resize', this.positionDialog);
     },
 
     positionDialog() {
@@ -127,10 +127,9 @@ const Dialog = React.createClass({
         }
 
         const dialogHeight = this.dialogElem.offsetHeight;
+        let paddingTop = (clientHeight - dialogHeight) / 2;
 
-        let paddingTop = ((clientHeight - dialogHeight) / 2);
         if (paddingTop < minPaddingTop) paddingTop = minPaddingTop;
-
         this.container.style.paddingTop = `${paddingTop}px`;
     },
 
@@ -182,13 +181,13 @@ const Dialog = React.createClass({
 
         return (
             <div 
-                ref={(el) => this.container = el}
+                ref={(ref) => this.container = ref}
                 className={cx('z-dialog-mask', { 
                     'offscreen': !isOpen 
                 })}
             >
                 <div 
-                    ref={(el) => this.dialogElem = el}
+                    ref={(ref) => this.dialogElem = ref}
                     tabIndex="0"
                     style={style} 
                     className={cx('z-dialog', className)}
@@ -198,7 +197,7 @@ const Dialog = React.createClass({
                         <div>
                             {title && 
                                 <h3 
-                                    ref={(el) => this.titleElem = el}
+                                    ref={(ref) => this.titleElem = ref}
                                     style={titleStyle}
                                     className={cx('z-dialog-title', titleClassName)}
                                 >
@@ -206,7 +205,7 @@ const Dialog = React.createClass({
                                 </h3>
                             }
                             <div 
-                                ref={(el) => this.contentElem = el}
+                                ref={(ref) => this.contentElem = ref}
                                 style={contentStyle}
                                 className={cx(contentClassName, {
                                     'z-dialog-content': !autoScrollContent,
@@ -217,7 +216,7 @@ const Dialog = React.createClass({
                                 {children}
                             </div>
                             <div 
-                                ref={(el) => this.actionsElem = el}
+                                ref={(ref) => this.actionsElem = ref}
                                 style={actionsContainerStyle}
                                 className={cx('z-dialog-action-container', actionsContainerClassName)}
                             >

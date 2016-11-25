@@ -198,7 +198,7 @@ const DatePicker = React.createClass({
 
     componentDidMount() {
         // Listen to tab pressing so that we know when it's a keyboard focus. 
-        document.addEventListener('keydown', handleTabPress, false);
+        document.addEventListener('keydown', handleTabPress);
     },
 
     componentDidUpdate(prevProps, prevState) {
@@ -209,7 +209,7 @@ const DatePicker = React.createClass({
 
     componentWillUnmount() {
         this.cancelFocusTimeout();
-        document.removeEventListener('keydown', handleTabPress, false);
+        document.removeEventListener('keydown', handleTabPress);
     },
 
     cancelFocusTimeout() {
@@ -442,7 +442,6 @@ const DatePicker = React.createClass({
     },
 
     handleKeyDown(event) {
-
         switch (event.which) {
             case 37:
                 // Left Arrow

@@ -91,7 +91,6 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
-
 	var tabPressed = false;
 
 	function handleTabPress(event) {
@@ -159,11 +158,6 @@ var zui =
 	        onFocus: React.PropTypes.func,
 
 	        /**
-	         * Fires when the button is focused by keyboard.
-	         */
-	        onTabFocus: React.PropTypes.func,
-
-	        /**
 	         * Fires when the button is blurred.
 	         */
 	        onBlur: React.PropTypes.func,
@@ -184,7 +178,6 @@ var zui =
 	            disabled: false,
 	            focus: false,
 	            onFocus: function onFocus() {},
-	            onTabFocus: function onTabFocus() {},
 	            onBlur: function onBlur() {},
 	            onClick: function onClick() {}
 	        };
@@ -204,11 +197,11 @@ var zui =
 	            this.button.focus();
 	        }
 	        // Listen to tab pressing so that we know when it's a keyboard focus. 
-	        document.addEventListener('keydown', handleTabPress, false);
+	        document.addEventListener('keydown', handleTabPress);
 	    },
 	    componentWillUnmount: function componentWillUnmount() {
 	        this.cancelFocusTimeout();
-	        document.removeEventListener('keydown', handleTabPress, false);
+	        document.removeEventListener('keydown', handleTabPress);
 	    },
 	    cancelFocusTimeout: function cancelFocusTimeout() {
 	        if (this.focusTimeout) {
@@ -226,7 +219,6 @@ var zui =
 	            this.focusTimeout = setTimeout(function () {
 	                if (tabPressed) {
 	                    _this.setState({ focused: true });
-	                    _this.props.onTabFocus(event);
 	                }
 	            }, 150);
 	            this.props.onFocus(event);
@@ -269,8 +261,8 @@ var zui =
 	        }
 
 	        var renderProps = {
-	            ref: function ref(el) {
-	                return _this2.button = el;
+	            ref: function ref(_ref) {
+	                return _this2.button = _ref;
 	            },
 	            className: cx(className, (_cx = {}, _defineProperty(_cx, 'btn-' + type, true), _defineProperty(_cx, 'btn-' + size, true), _defineProperty(_cx, 'btn-' + colorStyle, true), _defineProperty(_cx, 'btn-focus', focused), _defineProperty(_cx, 'btn-block', fullWidth), _cx)),
 	            style: style,
@@ -283,7 +275,7 @@ var zui =
 
 	        var _children = [React.createElement('div', { key: 0, className: 'ripple' }), React.createElement(
 	            'div',
-	            { key: 1, className: 'button-label' },
+	            { key: 1, className: 'btn-label' },
 	            children
 	        )];
 
@@ -487,8 +479,8 @@ var zui =
 	        autoScrollContent: React.PropTypes.bool,
 
 	        /**
-	         * Callback when the ok button is clicked.
-	         * Won't work when `actions` is customed.
+	         * Fires when the ok button is clicked.
+	         * Only `actions` is not customized.
 	         */
 	        onOK: React.PropTypes.func
 	    },
@@ -503,13 +495,13 @@ var zui =
 	    },
 	    componentDidMount: function componentDidMount() {
 	        this.positionDialog();
-	        window.addEventListener('resize', this.positionDialog, false);
+	        window.addEventListener('resize', this.positionDialog);
 	    },
 	    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
 	        this.positionDialog();
 	    },
 	    componentWillUnmount: function componentWillUnmount() {
-	        window.removeEventListener('resize', this.positionDialog, false);
+	        window.removeEventListener('resize', this.positionDialog);
 	    },
 	    positionDialog: function positionDialog() {
 	        if (!this.props.isOpen) return;
@@ -531,10 +523,9 @@ var zui =
 	        }
 
 	        var dialogHeight = this.dialogElem.offsetHeight;
-
 	        var paddingTop = (clientHeight - dialogHeight) / 2;
-	        if (paddingTop < minPaddingTop) paddingTop = minPaddingTop;
 
+	        if (paddingTop < minPaddingTop) paddingTop = minPaddingTop;
 	        this.container.style.paddingTop = paddingTop + 'px';
 	    },
 	    handleKeyUp: function handleKeyUp(event) {
@@ -587,8 +578,8 @@ var zui =
 	        return React.createElement(
 	            'div',
 	            {
-	                ref: function ref(el) {
-	                    return _this.container = el;
+	                ref: function ref(_ref5) {
+	                    return _this.container = _ref5;
 	                },
 	                className: cx('z-dialog-mask', {
 	                    'offscreen': !isOpen
@@ -597,8 +588,8 @@ var zui =
 	            React.createElement(
 	                'div',
 	                {
-	                    ref: function ref(el) {
-	                        return _this.dialogElem = el;
+	                    ref: function ref(_ref4) {
+	                        return _this.dialogElem = _ref4;
 	                    },
 	                    tabIndex: '0',
 	                    style: style,
@@ -611,8 +602,8 @@ var zui =
 	                    title && React.createElement(
 	                        'h3',
 	                        {
-	                            ref: function ref(el) {
-	                                return _this.titleElem = el;
+	                            ref: function ref(_ref) {
+	                                return _this.titleElem = _ref;
 	                            },
 	                            style: titleStyle,
 	                            className: cx('z-dialog-title', titleClassName)
@@ -622,8 +613,8 @@ var zui =
 	                    React.createElement(
 	                        'div',
 	                        {
-	                            ref: function ref(el) {
-	                                return _this.contentElem = el;
+	                            ref: function ref(_ref2) {
+	                                return _this.contentElem = _ref2;
 	                            },
 	                            style: contentStyle,
 	                            className: cx(contentClassName, {
@@ -637,8 +628,8 @@ var zui =
 	                    React.createElement(
 	                        'div',
 	                        {
-	                            ref: function ref(el) {
-	                                return _this.actionsElem = el;
+	                            ref: function ref(_ref3) {
+	                                return _this.actionsElem = _ref3;
 	                            },
 	                            style: actionsContainerStyle,
 	                            className: cx('z-dialog-action-container', actionsContainerClassName)
@@ -670,15 +661,16 @@ var zui =
 	        if (!layer) {
 	            layer = document.createElement('div');
 	            layer.id = 'z-msg-layer';
+	            layer.addEventListener('transitionend', function (event) {
+	                var container = event.target.parentNode;
+
+	                ReactDOM.unmountComponentAtNode(container);
+	                layer.removeChild(container);
+	            });
 	            document.body.appendChild(layer);
 	        }
 
 	        var container = document.createElement('div');
-
-	        container.addEventListener('transitionend', function (event) {
-	            ReactDOM.unmountComponentAtNode(container);
-	            layer.removeChild(container);
-	        });
 	        layer.appendChild(container);
 
 	        ReactDOM.render(React.createElement(
@@ -732,9 +724,7 @@ var zui =
 	        };
 	    },
 	    getInitialState: function getInitialState() {
-	        return {
-	            exiting: false
-	        };
+	        return { exiting: false };
 	    },
 	    componentDidMount: function componentDidMount() {
 	        var _this = this;
@@ -801,15 +791,16 @@ var zui =
 	        if (!layer) {
 	            layer = document.createElement('div');
 	            layer.id = 'z-notification-layer';
+	            layer.addEventListener('transitionend', function (event) {
+	                var container = event.target.parentNode;
+
+	                ReactDOM.unmountComponentAtNode(container);
+	                layer.removeChild(container);
+	            });
 	            document.body.appendChild(layer);
 	        }
 
 	        var container = document.createElement('div');
-
-	        container.addEventListener('transitionend', function (event) {
-	            ReactDOM.unmountComponentAtNode(container);
-	            layer.removeChild(container);
-	        });
 	        layer.appendChild(container);
 
 	        ReactDOM.render(React.createElement(Notification, {
@@ -855,9 +846,7 @@ var zui =
 	        };
 	    },
 	    getInitialState: function getInitialState() {
-	        return {
-	            exiting: false
-	        };
+	        return { exiting: false };
 	    },
 	    componentDidMount: function componentDidMount() {
 	        if (this.props.autoClose) {
@@ -871,9 +860,7 @@ var zui =
 	        }
 	    },
 	    close: function close() {
-	        this.setState({
-	            exiting: true
-	        });
+	        this.setState({ exiting: true });
 	    },
 	    render: function render() {
 	        var _props = this.props,
@@ -1064,9 +1051,27 @@ var zui =
 
 	        var pageNos = [];
 
-	        // get page numbers
+	        var _loop = function _loop(i) {
+	            pageNos.push(React.createElement(
+	                'span',
+	                {
+	                    key: i,
+	                    style: pageStyle,
+	                    className: cx('z-page-no', pageClassName, {
+	                        'z-page-no-small': i < 100,
+	                        'z-page-no-big': i >= 100,
+	                        'active': i === activePage
+	                    }),
+	                    onClick: function onClick(e) {
+	                        if (i !== activePage) _this.handlePageChange(i);
+	                    }
+	                },
+	                i
+	            ));
+	        };
+
 	        for (var i = leftNo; i <= rightNo; i++) {
-	            pageNos.push(i);
+	            _loop(i);
 	        }
 
 	        return React.createElement(
@@ -1091,24 +1096,7 @@ var zui =
 	                    if (1 !== activePage) _this.handlePageChange(activePage - 1);
 	                }
 	            }),
-	            pageNos.map(function (pageNo) {
-	                return React.createElement(
-	                    'span',
-	                    {
-	                        key: pageNo,
-	                        style: pageStyle,
-	                        className: cx('z-page-no', pageClassName, {
-	                            'z-page-no-small': pageNo < 100,
-	                            'z-page-no-big': pageNo >= 100,
-	                            'active': pageNo === activePage
-	                        }),
-	                        onClick: function onClick(e) {
-	                            if (pageNo !== activePage) _this.handlePageChange(pageNo);
-	                        }
-	                    },
-	                    pageNo
-	                );
-	            }),
+	            pageNos,
 	            React.createElement('span', {
 	                className: cx('z-page-btn fa fa-angle-right', {
 	                    'disabled': activePage === pageCount
@@ -1351,7 +1339,7 @@ var zui =
 	    },
 	    componentDidMount: function componentDidMount() {
 	        // Listen to tab pressing so that we know when it's a keyboard focus. 
-	        document.addEventListener('keydown', handleTabPress, false);
+	        document.addEventListener('keydown', handleTabPress);
 	    },
 	    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
 	        if (this.state.view === 'year') {
@@ -1360,7 +1348,7 @@ var zui =
 	    },
 	    componentWillUnmount: function componentWillUnmount() {
 	        this.cancelFocusTimeout();
-	        document.removeEventListener('keydown', handleTabPress, false);
+	        document.removeEventListener('keydown', handleTabPress);
 	    },
 	    cancelFocusTimeout: function cancelFocusTimeout() {
 	        if (this.focusTimeout) {
@@ -1608,7 +1596,6 @@ var zui =
 	        }
 	    },
 	    handleKeyDown: function handleKeyDown(event) {
-
 	        switch (event.which) {
 	            case 37:
 	                // Left Arrow
@@ -2298,11 +2285,11 @@ var zui =
 	    },
 	    componentDidMount: function componentDidMount() {
 	        // Listen to tab pressing so that we know when it's a keyboard focus. 
-	        document.addEventListener('keydown', handleTabPress, false);
+	        document.addEventListener('keydown', handleTabPress);
 	    },
 	    componentWillUnmount: function componentWillUnmount() {
 	        this.cancelFocusTimeout();
-	        document.removeEventListener('keydown', handleTabPress, false);
+	        document.removeEventListener('keydown', handleTabPress);
 	    },
 	    cancelFocusTimeout: function cancelFocusTimeout() {
 	        if (this.focusTimeout) {
@@ -2731,18 +2718,18 @@ var zui =
 	         * Callback when the checkbox is checked or unchecked.
 	         * @param {bool} checked
 	         */
-	        onCheck: React.PropTypes.func
+	        onChange: React.PropTypes.func
 	    },
 
 	    getDefaultProps: function getDefaultProps() {
 	        return {
 	            disabled: false,
 	            defaultChecked: false,
-	            onCheck: function onCheck() {}
+	            onChange: function onChange() {}
 	        };
 	    },
 	    componentWillMount: function componentWillMount() {
-	        if (typeof this.props.checked !== 'boolean') {
+	        if (!this.props.checked) {
 	            this.setState({
 	                checked: this.props.defaultChecked
 	            });
@@ -2752,10 +2739,10 @@ var zui =
 	        if (!this.props.disabled) {
 	            var checked = event.currentTarget.checked;
 
-	            if (typeof this.props.checked !== 'boolean') {
+	            if (!this.props.checked) {
 	                this.setState({ checked: checked });
 	            }
-	            this.props.onCheck(checked);
+	            this.props.onChange(checked);
 	        }
 	    },
 	    render: function render() {
@@ -2765,8 +2752,6 @@ var zui =
 	            label = _props.label,
 	            disabled = _props.disabled;
 
-
-	        var isChecked = typeof this.props.checked === 'boolean' ? this.props.checked : this.state.checked;
 
 	        return React.createElement(
 	            'div',
@@ -2781,7 +2766,7 @@ var zui =
 	                React.createElement('input', {
 	                    type: 'checkbox',
 	                    disabled: disabled,
-	                    checked: isChecked,
+	                    checked: !!this.props.checked || this.state.checked,
 	                    onChange: this.handleChange
 	                }),
 	                React.createElement(
@@ -2908,6 +2893,7 @@ var zui =
 	            itemClassName = _props.itemClassName,
 	            style = _props.style,
 	            itemStyle = _props.itemStyle,
+	            disabled = _props.disabled,
 	            align = _props.align,
 	            items = _props.items;
 
@@ -2934,13 +2920,13 @@ var zui =
 	                        'label',
 	                        {
 	                            className: cx('radio', {
-	                                'disabled': item.disabled || _this.props.disabled
+	                                'disabled': disabled || item.disabled
 	                            })
 	                        },
 	                        React.createElement('input', {
 	                            type: 'radio',
 	                            value: item.value,
-	                            disabled: item.disabled || _this.props.disabled,
+	                            disabled: disabled || item.disabled,
 	                            checked: item.value === selectedValue,
 	                            onChange: function onChange(e) {
 	                                return _this.handleChange(e, item.value);
@@ -3058,17 +3044,15 @@ var zui =
 	        }
 	    },
 	    handleChange: function handleChange(value, checked) {
-	        if (!this.props.disabled) {
-	            var oldValue = this.props.value || this.state.value;
-	            var newValue = checked ? oldValue.concat(value) : oldValue.filter(function (it) {
-	                return it !== value;
-	            });
+	        var oldValue = this.props.value || this.state.value;
+	        var newValue = checked ? oldValue.concat(value) : oldValue.filter(function (it) {
+	            return it !== value;
+	        });
 
-	            if (!this.props.value) {
-	                this.setState({ value: newValue });
-	            }
-	            this.props.onChange(newValue);
+	        if (!this.props.value) {
+	            this.setState({ value: newValue });
 	        }
+	        this.props.onChange(newValue);
 	    },
 	    render: function render() {
 	        var _this = this;
@@ -3078,6 +3062,7 @@ var zui =
 	            itemClassName = _props.itemClassName,
 	            style = _props.style,
 	            itemStyle = _props.itemStyle,
+	            disabled = _props.disabled,
 	            align = _props.align,
 	            items = _props.items;
 
@@ -3102,8 +3087,9 @@ var zui =
 	                    },
 	                    React.createElement(Checkbox, {
 	                        label: item.text,
+	                        disabled: disabled || item.disabled,
 	                        checked: checkedValues.indexOf(item.value) > -1,
-	                        onCheck: function onCheck(checked) {
+	                        onChange: function onChange(checked) {
 	                            return _this.handleChange(item.value, checked);
 	                        }
 	                    })
@@ -3134,6 +3120,7 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
+	var assign = __webpack_require__(16);
 	var Tab = __webpack_require__(27);
 
 	var Tabs = React.createClass({
@@ -3224,7 +3211,17 @@ var zui =
 	        var contents = [];
 
 	        React.Children.forEach(children, function (child, i) {
-	            var active = _this.state ? _this.state.activeIndex === i : _this.props.value === child.props.value;
+	            var active = void 0;
+	            if (_this.state) {
+	                active = _this.state.activeIndex === i;
+	            } else {
+	                active = _this.props.value === child.props.value;
+	            }
+
+	            var contentStyle = {
+	                display: active ? 'block' : 'none'
+	            };
+	            assign(contentStyle, child.props.contentStyle);
 
 	            tabs.push(React.createElement(Tab, {
 	                key: i,
@@ -3243,10 +3240,8 @@ var zui =
 	                'div',
 	                {
 	                    key: i,
-	                    className: cx('z-tab-content', child.props.contentClassName, {
-	                        'active': active
-	                    }),
-	                    style: child.props.contentStyle
+	                    className: child.props.contentClassName,
+	                    style: contentStyle
 	                },
 	                child.props.children
 	            ));
@@ -3466,6 +3461,7 @@ var zui =
 
 	var React = __webpack_require__(3);
 	var cx = __webpack_require__(4);
+	var assign = __webpack_require__(16);
 
 	var SubMenu = React.createClass({
 	    displayName: 'SubMenu',
@@ -3555,13 +3551,16 @@ var zui =
 	            className = _props.className,
 	            menuClassName = _props.menuClassName,
 	            style = _props.style,
-	            menuStyle = _props.menuStyle,
 	            disabled = _props.disabled,
 	            text = _props.text,
 	            leftIcon = _props.leftIcon,
 	            rightIcon = _props.rightIcon,
 	            children = _props.children;
 
+
+	        var menuStyle = assign({
+	            display: this.state.isOpen ? 'block' : 'none'
+	        }, this.props.menuStyle);
 
 	        return React.createElement(
 	            'div',
@@ -3591,13 +3590,11 @@ var zui =
 	            React.createElement(
 	                'div',
 	                {
-	                    className: cx('z-sub-menu', menuClassName, {
-	                        'hide': !this.state.isOpen
-	                    }),
+	                    className: cx('z-sub-menu', menuClassName),
 	                    style: menuStyle
 	                },
-	                React.Children.map(children, function (item) {
-	                    return React.cloneElement(item, {
+	                React.Children.map(children, function (menuItem) {
+	                    return React.cloneElement(menuItem, {
 	                        onSelect: _this.handleSelect
 	                    });
 	                })
@@ -3778,7 +3775,6 @@ var zui =
 	            children = _props.children;
 	        var isOpen = this.state.isOpen;
 
-
 	        var processedChildren = React.cloneElement(children, {
 	            onClick: this.handleClick
 	        });
@@ -3846,10 +3842,10 @@ var zui =
 	        };
 	    },
 	    componentDidMount: function componentDidMount() {
-	        document.addEventListener('click', this.handleClickAway, false);
+	        document.addEventListener('click', this.handleClickAway);
 	    },
 	    componentWillUnmount: function componentWillUnmount() {
-	        document.removeEventListener('click', this.handleClickAway, false);
+	        document.removeEventListener('click', this.handleClickAway);
 	    },
 	    handleClickAway: function handleClickAway(event) {
 	        if (event.defaultPrevented) {
@@ -4957,6 +4953,7 @@ var zui =
 	        var _props = this.props,
 	            className = _props.className,
 	            labelClassName = _props.labelClassName,
+	            controlClassName = _props.controlClassName,
 	            title = _props.title;
 
 
@@ -4970,7 +4967,7 @@ var zui =
 	            ),
 	            React.createElement(
 	                'span',
-	                { className: 'form-text' },
+	                { className: cx('form-text', controlClassName) },
 	                this.props.children
 	            )
 	        );
@@ -5317,13 +5314,13 @@ var zui =
 	    mixins: [Formsy.Mixin],
 
 	    componentWillMount: function componentWillMount() {
-	        if (typeof this.props.defaultValue === 'boolean') {
-	            this.setValue(this.props.defaultValue);
+	        if (this.props.defaultValue) {
+	            this.setValue(!!this.props.defaultValue);
 	        }
 	    },
 	    changeValue: function changeValue(checked) {
 	        this.setValue(checked);
-	        this.props.onCheck && this.props.onCheck(checked);
+	        this.props.onChange && this.props.onChange(checked);
 	    },
 	    render: function render() {
 	        var _props = this.props,
@@ -5342,7 +5339,7 @@ var zui =
 	                className: cx('form-control', controlClassName),
 	                label: title,
 	                checked: !!this.getValue(),
-	                onCheck: this.changeValue
+	                onChange: this.changeValue
 	            }))
 	        );
 	    }

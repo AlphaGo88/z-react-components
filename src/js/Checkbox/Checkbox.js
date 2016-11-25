@@ -43,19 +43,19 @@ const Checkbox = React.createClass({
          * Callback when the checkbox is checked or unchecked.
          * @param {bool} checked
          */
-        onCheck: React.PropTypes.func,
+        onChange: React.PropTypes.func,
     },
 
     getDefaultProps() {
         return {
             disabled: false,
             defaultChecked: false,
-            onCheck: () => {}
+            onChange: () => {}
         };
     },
 
     componentWillMount() {
-        if (typeof(this.props.checked) !== 'boolean') {
+        if (!this.props.checked) {
             this.setState({
                 checked: this.props.defaultChecked
             });
@@ -66,10 +66,10 @@ const Checkbox = React.createClass({
         if (!this.props.disabled) {
             const checked = event.currentTarget.checked;
 
-            if (typeof(this.props.checked) !== 'boolean') {
+            if (!this.props.checked) {
                 this.setState({ checked });
             }
-            this.props.onCheck(checked);
+            this.props.onChange(checked);
         }
     },
 
@@ -81,9 +81,6 @@ const Checkbox = React.createClass({
             disabled
         } = this.props;
 
-        const isChecked = typeof(this.props.checked) === 'boolean' ? 
-            this.props.checked : this.state.checked;
-
         return (
             <div style={style} className={className}>
                 <label 
@@ -94,7 +91,7 @@ const Checkbox = React.createClass({
                     <input 
                         type="checkbox"
                         disabled={disabled}
-                        checked={isChecked}
+                        checked={!!this.props.checked || this.state.checked}
                         onChange={this.handleChange}
                     />
                     <span>{label}</span>

@@ -130,12 +130,12 @@ const Select = React.createClass({
 
     componentDidMount() {
         // Listen to tab pressing so that we know when it's a keyboard focus. 
-        document.addEventListener('keydown', handleTabPress, false);
+        document.addEventListener('keydown', handleTabPress);
     },
 
     componentWillUnmount() {
         this.cancelFocusTimeout();
-        document.removeEventListener('keydown', handleTabPress, false);
+        document.removeEventListener('keydown', handleTabPress);
     },
 
     cancelFocusTimeout() {

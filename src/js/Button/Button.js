@@ -3,7 +3,6 @@
 
 const React = require('react');
 const cx = require('classnames');
-
 let tabPressed = false;
 
 function handleTabPress(event) {
@@ -69,11 +68,6 @@ const Button = React.createClass({
         onFocus: React.PropTypes.func,
 
         /**
-         * Fires when the button is focused by keyboard.
-         */
-        onTabFocus: React.PropTypes.func,
-
-        /**
          * Fires when the button is blurred.
          */
         onBlur: React.PropTypes.func,
@@ -94,7 +88,6 @@ const Button = React.createClass({
             disabled: false,
             focus: false,
             onFocus: () => {},
-            onTabFocus: () => {},
             onBlur: () => {},
             onClick: () => {}
         };
@@ -117,12 +110,12 @@ const Button = React.createClass({
             this.button.focus();
         }
         // Listen to tab pressing so that we know when it's a keyboard focus. 
-        document.addEventListener('keydown', handleTabPress, false);
+        document.addEventListener('keydown', handleTabPress);
     },
 
     componentWillUnmount() {
         this.cancelFocusTimeout();
-        document.removeEventListener('keydown', handleTabPress, false);
+        document.removeEventListener('keydown', handleTabPress);
     },
 
     cancelFocusTimeout() {
@@ -140,7 +133,6 @@ const Button = React.createClass({
             this.focusTimeout = setTimeout(() => {
                 if (tabPressed) {
                     this.setState({ focused: true });
-                    this.props.onTabFocus(event);
                 }
             }, 150);
             this.props.onFocus(event);
@@ -183,7 +175,7 @@ const Button = React.createClass({
         }
 
         const renderProps = {
-            ref: (el) => this.button = el,
+            ref: (ref) => this.button = ref,
             className: cx(className, {
                 [`btn-${type}`]: true,
                 [`btn-${size}`]: true,
@@ -201,7 +193,7 @@ const Button = React.createClass({
 
         const _children = [
             <div key={0} className="ripple"/>,
-            <div key={1} className="button-label">
+            <div key={1} className="btn-label">
                 {children}
             </div>
         ];

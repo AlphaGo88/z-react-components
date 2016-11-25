@@ -3,6 +3,7 @@
 
 const React = require('react');
 const cx = require('classnames');
+const assign = require('object-assign');
 const Tab = require('./Tab');
 
 let Tabs = React.createClass({
@@ -52,7 +53,7 @@ let Tabs = React.createClass({
          * Callback when the active tab changes.
          * @param {number} tabIndex
          */
-        onChange: React.PropTypes.func,
+        onChange: React.PropTypes.func
     },
 
     getDefaultProps() {
@@ -92,8 +93,17 @@ let Tabs = React.createClass({
         let contents = [];
 
         React.Children.forEach(children, (child, i) => {
-            const active = this.state ? this.state.activeIndex === i :
-                this.props.value === child.props.value;
+            let active;
+            if (this.state) {
+                active = this.state.activeIndex === i;
+            } else {
+                active = this.props.value === child.props.value;
+            }
+
+            let contentStyle = {
+                display: active ? 'block' : 'none'
+            };
+            assign(contentStyle, child.props.contentStyle);
 
             tabs.push(
                 <Tab 
@@ -113,10 +123,8 @@ let Tabs = React.createClass({
             contents.push(
                 <div 
                     key={i}
-                    className={cx('z-tab-content', child.props.contentClassName, {
-                        'active': active
-                    })}
-                    style={child.props.contentStyle}
+                    className={child.props.contentClassName}
+                    style={contentStyle}
                 >
                     {child.props.children}
                 </div>

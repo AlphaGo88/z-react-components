@@ -107,10 +107,23 @@ const Pagination = React.createClass({
         const rightNo = Math.min(leftNo + pageDisplay - 1, pageCount);
         
         let pageNos = [];
-
-        // get page numbers
         for (let i = leftNo; i <= rightNo; i++) {
-            pageNos.push(i);
+            pageNos.push(
+                <span 
+                    key={i}
+                    style={pageStyle} 
+                    className={cx('z-page-no', pageClassName, {
+                        'z-page-no-small': i < 100,
+                        'z-page-no-big': i >= 100,
+                        'active': i === activePage
+                    })} 
+                    onClick={e => {
+                        if (i !== activePage) this.handlePageChange(i);
+                    }}
+                >
+                    {i}
+                </span>
+            );
         }
 
         return (
@@ -134,22 +147,7 @@ const Pagination = React.createClass({
                         if (1 !== activePage) this.handlePageChange(activePage - 1);
                     }}
                 />
-                {pageNos.map(pageNo => (
-                    <span 
-                        key={pageNo}
-                        style={pageStyle} 
-                        className={cx('z-page-no', pageClassName, {
-                            'z-page-no-small': pageNo < 100,
-                            'z-page-no-big': pageNo >= 100,
-                            'active': pageNo === activePage
-                        })} 
-                        onClick={e => {
-                            if (pageNo !== activePage) this.handlePageChange(pageNo);
-                        }}
-                    >
-                        {pageNo}
-                    </span>
-                ))}
+                {pageNos}
                 <span 
                     className={cx('z-page-btn fa fa-angle-right', {
                         'disabled': activePage === pageCount

@@ -23,9 +23,7 @@ const Notification = React.createClass({
     },
 
     getInitialState() {
-        return {
-            exiting: false 
-        };
+        return { exiting: false };
     },
 
     componentDidMount() {
@@ -42,9 +40,7 @@ const Notification = React.createClass({
     },
 
     close() {
-        this.setState({
-            exiting: true 
-        });
+        this.setState({ exiting: true });
     },
 
     render() {

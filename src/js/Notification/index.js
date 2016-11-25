@@ -10,15 +10,16 @@ module.exports = {
         if (!layer) {
             layer = document.createElement('div');
             layer.id = 'z-notification-layer';
+            layer.addEventListener('transitionend', (event) => {
+                const container = event.target.parentNode;
+
+                ReactDOM.unmountComponentAtNode(container);
+                layer.removeChild(container);
+            });
             document.body.appendChild(layer);
         }
 
         let container = document.createElement('div');
-
-        container.addEventListener('transitionend', (event) => {
-            ReactDOM.unmountComponentAtNode(container);
-            layer.removeChild(container);
-        });
         layer.appendChild(container);
 
         ReactDOM.render(

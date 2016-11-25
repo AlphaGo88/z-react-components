@@ -101,6 +101,7 @@ const RadioGroup = React.createClass({
             itemClassName,
             style,
             itemStyle,
+            disabled,
             align,
             items
         } = this.props;
@@ -122,13 +123,13 @@ const RadioGroup = React.createClass({
                     >
                         <label 
                             className={cx('radio', {
-                                'disabled': item.disabled || this.props.disabled
+                                'disabled': disabled || item.disabled
                             })}
                         >
                             <input
                                 type="radio"
                                 value={item.value}
-                                disabled={item.disabled || this.props.disabled}
+                                disabled={disabled || item.disabled}
                                 checked={item.value === selectedValue}
                                 onChange={e => this.handleChange(e, item.value)}
                             />

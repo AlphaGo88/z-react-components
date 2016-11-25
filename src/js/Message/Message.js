@@ -19,9 +19,7 @@ const Message = React.createClass({
     },
 
     getInitialState() {
-        return {
-            exiting: false 
-        };
+        return { exiting: false };
     },
 
     componentDidMount() {

@@ -24,11 +24,11 @@ const ClickAwayListener = React.createClass({
     },
 
     componentDidMount() {
-        document.addEventListener('click', this.handleClickAway, false);
+        document.addEventListener('click', this.handleClickAway);
     },
 
     componentWillUnmount() {
-        document.removeEventListener('click', this.handleClickAway, false);
+        document.removeEventListener('click', this.handleClickAway);
     },
 
     handleClickAway(event) {
