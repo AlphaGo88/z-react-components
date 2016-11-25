@@ -2729,9 +2729,9 @@ var zui =
 	        };
 	    },
 	    componentWillMount: function componentWillMount() {
-	        if (!this.props.checked) {
+	        if (this.props.checked == undefined) {
 	            this.setState({
-	                checked: this.props.defaultChecked
+	                checked: !!this.props.defaultChecked
 	            });
 	        }
 	    },
@@ -2739,7 +2739,7 @@ var zui =
 	        if (!this.props.disabled) {
 	            var checked = event.currentTarget.checked;
 
-	            if (!this.props.checked) {
+	            if (this.props.checked == undefined) {
 	                this.setState({ checked: checked });
 	            }
 	            this.props.onChange(checked);
@@ -2752,6 +2752,8 @@ var zui =
 	            label = _props.label,
 	            disabled = _props.disabled;
 
+
+	        var checked = this.props.checked == undefined ? this.state.checked : !!this.props.checked;
 
 	        return React.createElement(
 	            'div',
@@ -2766,7 +2768,7 @@ var zui =
 	                React.createElement('input', {
 	                    type: 'checkbox',
 	                    disabled: disabled,
-	                    checked: !!this.props.checked || this.state.checked,
+	                    checked: checked,
 	                    onChange: this.handleChange
 	                }),
 	                React.createElement(
