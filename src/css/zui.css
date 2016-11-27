@@ -683,16 +683,8 @@ a:visited {
 }
 .btn-float.btn-focus .ripple,
 .btn-flat.btn-focus .ripple {
-  height: 300%;
-  top: -100%;
   border-radius: 50%;
-  opacity: 1;
   animation: z-focus-ripple 1.4s ease-in-out infinite;
-}
-.btn-float.btn-block.btn-focus .ripple,
-.btn-flat.btn-block.btn-focus .ripple {
-  height: 560%;
-  top: -230%;
 }
 .btn-float {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
@@ -700,6 +692,12 @@ a:visited {
 .btn-float[disabled],
 .btn-float.btn-disabled {
   background-color: #e2e2e2 !important;
+}
+.btn-float .ripple {
+  background-color: #fff;
+}
+.btn-float.btn-focus .ripple {
+  opacity: 0.3;
 }
 .btn-float.btn-default {
   background-color: #fefefe;
@@ -709,13 +707,22 @@ a:visited {
 .btn-float.btn-default .ripple {
   background-color: #e2e2e2;
 }
+.btn-float.btn-default.btn-focus .ripple {
+  opacity: 1;
+}
 .btn-float.btn-primary {
   background-color: #2599f2;
   color: #fff;
 }
-.btn-float.btn-primary:hover,
-.btn-float.btn-primary .ripple {
+.btn-float.btn-primary:hover {
   background-color: #4cabf4;
+}
+.btn-float.btn-secondary {
+  background-color: #ad5888;
+  color: #fff;
+}
+.btn-float.btn-secondary:hover {
+  background-color: #ba739b;
 }
 .btn-flat {
   background-color: transparent;
@@ -726,6 +733,7 @@ a:visited {
 }
 .btn-flat.btn-focus .ripple {
   background-color: #c9c9c9;
+  opacity: 1;
 }
 .btn-flat[disabled]:hover,
 .btn-flat.btn-disabled:hover {
@@ -736,6 +744,9 @@ a:visited {
 }
 .btn-flat.btn-primary {
   color: #2599f2;
+}
+.btn-flat.btn-secondary {
+  color: #ad5888;
 }
 .btn-block {
   display: block;

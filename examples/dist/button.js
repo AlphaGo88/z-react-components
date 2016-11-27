@@ -70,19 +70,19 @@
 	                ),
 	                React.createElement(
 	                    Button,
-	                    { size: "small", primary: true },
+	                    { size: "small" },
 	                    "small"
 	                ),
 	                "\xA0\xA0",
 	                React.createElement(
 	                    Button,
-	                    { size: "medium", primary: true },
+	                    { size: "medium" },
 	                    "medium"
 	                ),
 	                "\xA0\xA0",
 	                React.createElement(
 	                    Button,
-	                    { size: "large", primary: true },
+	                    { size: "large" },
 	                    "large"
 	                )
 	            ),
@@ -96,13 +96,13 @@
 	                ),
 	                React.createElement(
 	                    Button,
-	                    null,
+	                    { colorType: "default" },
 	                    "default"
 	                ),
 	                "\xA0\xA0",
 	                React.createElement(
 	                    Button,
-	                    { primary: true, focus: true },
+	                    { focus: true },
 	                    "primary"
 	                ),
 	                "\xA0\xA0",
@@ -123,13 +123,13 @@
 	                ),
 	                React.createElement(
 	                    Button,
-	                    { type: "flat", focus: true, onClick: this.handleClick },
+	                    { type: "flat", colorType: "default", focus: true, onClick: this.handleClick },
 	                    "default"
 	                ),
 	                "\xA0\xA0",
 	                React.createElement(
 	                    Button,
-	                    { type: "flat", primary: true },
+	                    { type: "flat" },
 	                    "primary"
 	                ),
 	                "\xA0\xA0",
@@ -161,39 +161,13 @@
 	                React.createElement(
 	                    "h4",
 	                    null,
-	                    "Icon Button"
-	                ),
-	                React.createElement(
-	                    Button,
-	                    { type: "float", primary: true, size: "small" },
-	                    React.createElement("i", { className: "fa fa-envelope" })
-	                ),
-	                "\xA0\xA0",
-	                React.createElement(
-	                    Button,
-	                    { type: "float", size: "small" },
-	                    React.createElement("i", { className: "fa fa-bell" })
-	                ),
-	                "\xA0\xA0",
-	                React.createElement(
-	                    Button,
-	                    { type: "flat", size: "small" },
-	                    React.createElement("i", { className: "fa fa-comment" })
-	                ),
-	                "\xA0\xA0"
-	            ),
-	            React.createElement(
-	                "section",
-	                null,
-	                React.createElement(
-	                    "h4",
-	                    null,
 	                    "Custom style"
 	                ),
 	                React.createElement(
 	                    Button,
 	                    { type: "float", primary: true, style: { width: 200 } },
-	                    "custom"
+	                    "custom\xA0\xA0",
+	                    React.createElement("i", { className: "fa fa-envelope" })
 	                ),
 	                "\xA0\xA0",
 	                React.createElement(

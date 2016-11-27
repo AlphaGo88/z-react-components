@@ -163,7 +163,6 @@ const Dialog = React.createClass({
                 <Button 
                     key={0}
                     type="flat" 
-                    primary={true}
                     onClick={onRequestClose}
                 >
                     取消
@@ -171,7 +170,6 @@ const Dialog = React.createClass({
                 <Button 
                     key={1}
                     type="flat" 
-                    primary={true}
                     focus={true}
                     onClick={onOK}
                 >

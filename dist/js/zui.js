@@ -113,9 +113,9 @@ var zui =
 	        style: React.PropTypes.object,
 
 	        /**
-	         * The type of the button.
+	         * The button's type.
 	         */
-	        type: React.PropTypes.oneOf(['float', 'flat', 'outline']),
+	        type: React.PropTypes.oneOf(['float', 'flat']),
 
 	        /**
 	         * The button's size.
@@ -123,14 +123,9 @@ var zui =
 	        size: React.PropTypes.oneOf(['small', 'medium', 'large', 'larger']),
 
 	        /**
-	         * If true, colors the button with the theme's primary color.
+	         * The button's color type.
 	         */
-	        primary: React.PropTypes.bool,
-
-	        /**
-	         * If true, colors the button with the theme's secondary color.
-	         */
-	        secondary: React.PropTypes.bool,
+	        colorType: React.PropTypes.oneOf(['default', 'primary', 'secondary']),
 
 	        /**
 	         * If true, the button will take up the full width of its container.
@@ -143,7 +138,7 @@ var zui =
 	        link: React.PropTypes.string,
 
 	        /**
-	         * Whether the button has focus style.
+	         * Whether the button is focused.
 	         */
 	        focus: React.PropTypes.bool,
 
@@ -163,7 +158,7 @@ var zui =
 	        onBlur: React.PropTypes.func,
 
 	        /**
-	         * Fires when clicking the button.
+	         * Fires when the button is clicked.
 	         */
 	        onClick: React.PropTypes.func
 	    },
@@ -172,8 +167,7 @@ var zui =
 	        return {
 	            type: 'float',
 	            size: 'medium',
-	            primary: false,
-	            secondary: false,
+	            colorType: 'primary',
 	            fullWidth: false,
 	            disabled: false,
 	            focus: false,
@@ -198,10 +192,22 @@ var zui =
 	        }
 	        // Listen to tab pressing so that we know when it's a keyboard focus. 
 	        document.addEventListener('keydown', handleTabPress);
+	        this.getRippleSize();
 	    },
 	    componentWillUnmount: function componentWillUnmount() {
 	        this.cancelFocusTimeout();
 	        document.removeEventListener('keydown', handleTabPress);
+	    },
+	    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+	        this.getRippleSize();
+	    },
+	    getRippleSize: function getRippleSize() {
+	        var minHeight = this.button.offsetHeight * 3;
+	        var height = Math.max(minHeight, this.ripple.offsetWidth);
+	        var top = -(height - this.button.offsetHeight) / 2;
+
+	        this.ripple.style.height = height + 'px';
+	        this.ripple.style.top = top + 'px';
 	    },
 	    cancelFocusTimeout: function cancelFocusTimeout() {
 	        if (this.focusTimeout) {
@@ -244,8 +250,7 @@ var zui =
 	            style = _props.style,
 	            type = _props.type,
 	            size = _props.size,
-	            primary = _props.primary,
-	            secondary = _props.secondary,
+	            colorType = _props.colorType,
 	            fullWidth = _props.fullWidth,
 	            link = _props.link,
 	            disabled = _props.disabled,
@@ -253,18 +258,11 @@ var zui =
 	        var focused = this.state.focused;
 
 
-	        var colorStyle = void 0;
-	        if (disabled) {
-	            colorStyle = 'disabled';
-	        } else {
-	            colorStyle = primary ? 'primary' : secondary ? 'secondary' : 'default';
-	        }
-
 	        var renderProps = {
 	            ref: function ref(_ref) {
 	                return _this2.button = _ref;
 	            },
-	            className: cx(className, (_cx = {}, _defineProperty(_cx, 'btn-' + type, true), _defineProperty(_cx, 'btn-' + size, true), _defineProperty(_cx, 'btn-' + colorStyle, true), _defineProperty(_cx, 'btn-focus', focused), _defineProperty(_cx, 'btn-block', fullWidth), _cx)),
+	            className: cx(className, (_cx = {}, _defineProperty(_cx, 'btn-' + type, true), _defineProperty(_cx, 'btn-' + size, true), _defineProperty(_cx, 'btn-' + colorType, true), _defineProperty(_cx, 'btn-focus', focused), _defineProperty(_cx, 'btn-block', fullWidth), _cx)),
 	            style: style,
 	            disabled: disabled,
 	            tabIndex: "0",
@@ -273,7 +271,9 @@ var zui =
 	            onClick: this.handleClick
 	        };
 
-	        var _children = [React.createElement('div', { key: 0, className: 'ripple' }), React.createElement(
+	        var _children = [React.createElement('div', { key: 0, className: 'ripple', ref: function ref(_ref2) {
+	                return _this2.ripple = _ref2;
+	            } }), React.createElement(
 	            'div',
 	            { key: 1, className: 'btn-label' },
 	            children
@@ -559,7 +559,6 @@ var zui =
 	            {
 	                key: 0,
 	                type: 'flat',
-	                primary: true,
 	                onClick: onRequestClose
 	            },
 	            '\u53D6\u6D88'
@@ -568,7 +567,6 @@ var zui =
 	            {
 	                key: 1,
 	                type: 'flat',
-	                primary: true,
 	                focus: true,
 	                onClick: onOK
 	            },

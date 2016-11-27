@@ -23,24 +23,19 @@ const Button = React.createClass({
         style: React.PropTypes.object,
 
         /**
-         * The type of the button.
+         * The button's type.
          */
-        type: React.PropTypes.oneOf(['float', 'flat', 'outline']),
+        type: React.PropTypes.oneOf(['float', 'flat']),
 
         /**
          * The button's size.
          */
-        size: React.PropTypes.oneOf(['small', 'medium', 'large', 'larger']),
+        size: React.PropTypes.oneOf(['small', 'medium', 'large']),
 
         /**
-         * If true, colors the button with the theme's primary color.
+         * The button's color type.
          */
-        primary: React.PropTypes.bool,
-
-        /**
-         * If true, colors the button with the theme's secondary color.
-         */
-        secondary: React.PropTypes.bool,
+        colorType: React.PropTypes.oneOf(['default', 'primary', 'secondary']),
 
         /**
          * If true, the button will take up the full width of its container.
@@ -53,7 +48,7 @@ const Button = React.createClass({
         link: React.PropTypes.string,
 
         /**
-         * Whether the button has focus style.
+         * Whether the button is focused.
          */
         focus: React.PropTypes.bool,
 
@@ -73,7 +68,7 @@ const Button = React.createClass({
         onBlur: React.PropTypes.func,
 
         /**
-         * Fires when clicking the button.
+         * Fires when the button is clicked.
          */
         onClick: React.PropTypes.func
     },
@@ -82,8 +77,7 @@ const Button = React.createClass({
         return {
             type: 'float',
             size: 'medium',
-            primary: false,
-            secondary: false,
+            colorType: 'primary',
             fullWidth: false,
             disabled: false,
             focus: false,
@@ -111,11 +105,25 @@ const Button = React.createClass({
         }
         // Listen to tab pressing so that we know when it's a keyboard focus. 
         document.addEventListener('keydown', handleTabPress);
+        this.sizeRipple();
     },
 
     componentWillUnmount() {
         this.cancelFocusTimeout();
         document.removeEventListener('keydown', handleTabPress);
+    },
+
+    componentDidUpdate(prevProps, prevState) {
+        this.sizeRipple();
+    },
+
+    sizeRipple() {
+        const minHeight = this.button.offsetHeight * 3;
+        const height = Math.max(minHeight, this.ripple.offsetWidth);
+        const top = -(height - this.button.offsetHeight) / 2;
+        
+        this.ripple.style.height = `${height}px`;
+        this.ripple.style.top = `${top}px`;
     },
 
     cancelFocusTimeout() {
@@ -158,8 +166,7 @@ const Button = React.createClass({
             style,
             type,
             size,
-            primary,
-            secondary,
+            colorType,
             fullWidth,
             link,
             disabled,
@@ -167,36 +174,31 @@ const Button = React.createClass({
         } = this.props;
         const { focused } = this.state;
 
-        let colorStyle;
-        if (disabled) {
-            colorStyle = 'disabled';
-        } else {
-            colorStyle = primary ? 'primary' : (secondary ? 'secondary' : 'default');
-        }
-
         const renderProps = {
             ref: (ref) => this.button = ref,
             className: cx(className, {
                 [`btn-${type}`]: true,
                 [`btn-${size}`]: true,
-                [`btn-${colorStyle}`]: true,
+                [`btn-${colorType}`]: true,
                 'btn-focus': focused,
                 'btn-block': fullWidth
             }),
             style: style,
             disabled: disabled,
-            tabIndex: "0",
+            tabIndex: '0',
             onFocus: this.handleFocus,
             onBlur: this.handleBlur,
             onClick: this.handleClick
         };
 
-        const _children = [
-            <div key={0} className="ripple"/>,
-            <div key={1} className="btn-label">
-                {children}
+        const _children = (
+            <div>
+                <div className="ripple" ref={(ref) => this.ripple = ref}/>
+                <div className="btn-label">
+                    {children}
+                </div>
             </div>
-        ];
+        );
 
         return (link ?
             <a href={disabled ? undefined : link} {...renderProps}>
