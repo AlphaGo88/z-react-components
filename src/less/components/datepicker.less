@@ -28,7 +28,7 @@
     }
     .icon {
         position: absolute;
-        top: 10px;
+        top: 9px;
         right: 5px;
     }
     .placeholder {
@@ -103,9 +103,7 @@
 }
 
 .datepicker-body {
-    height: 204px;
-    border-top: 1px solid @border-color-base;
-    border-bottom: 1px solid @border-color-base;
+    height: 202px;
 }
 
 .datepicker-table {
@@ -158,6 +156,7 @@
 
 .datepicker-year-select {
     max-height: 202px;
+    border-top: 1px solid @border-color-base;
     overflow-y: auto;
 
     > li {
@@ -176,10 +175,14 @@
     }
 }
 
+.datepicker-time-select {
+    border-top: 1px solid @border-color-base;
+}
+
 .datepicker-time-col {
     float: left;
     width: 88px;
-    max-height: 202px;
+    max-height: 201px;
     border-left: 1px solid @border-color-base;
     overflow: hidden;
 
@@ -212,6 +215,7 @@
 
 .datepicker-foot {
     padding: 0 5px;
+    border-top: 1px solid @border-color-base;
     text-align: center;
 
     span {

@@ -120,7 +120,7 @@ var zui =
 	        /**
 	         * The button's size.
 	         */
-	        size: React.PropTypes.oneOf(['small', 'medium', 'large', 'larger']),
+	        size: React.PropTypes.oneOf(['small', 'medium', 'large']),
 
 	        /**
 	         * The button's color type.
@@ -192,16 +192,16 @@ var zui =
 	        }
 	        // Listen to tab pressing so that we know when it's a keyboard focus. 
 	        document.addEventListener('keydown', handleTabPress);
-	        this.getRippleSize();
+	        this.sizeRipple();
 	    },
 	    componentWillUnmount: function componentWillUnmount() {
 	        this.cancelFocusTimeout();
 	        document.removeEventListener('keydown', handleTabPress);
 	    },
 	    componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
-	        this.getRippleSize();
+	        this.sizeRipple();
 	    },
-	    getRippleSize: function getRippleSize() {
+	    sizeRipple: function sizeRipple() {
 	        var minHeight = this.button.offsetHeight * 3;
 	        var height = Math.max(minHeight, this.ripple.offsetWidth);
 	        var top = -(height - this.button.offsetHeight) / 2;
@@ -265,19 +265,24 @@ var zui =
 	            className: cx(className, (_cx = {}, _defineProperty(_cx, 'btn-' + type, true), _defineProperty(_cx, 'btn-' + size, true), _defineProperty(_cx, 'btn-' + colorType, true), _defineProperty(_cx, 'btn-focus', focused), _defineProperty(_cx, 'btn-block', fullWidth), _cx)),
 	            style: style,
 	            disabled: disabled,
-	            tabIndex: "0",
+	            tabIndex: '0',
 	            onFocus: this.handleFocus,
 	            onBlur: this.handleBlur,
 	            onClick: this.handleClick
 	        };
 
-	        var _children = [React.createElement('div', { key: 0, className: 'ripple', ref: function ref(_ref2) {
-	                return _this2.ripple = _ref2;
-	            } }), React.createElement(
+	        var _children = React.createElement(
 	            'div',
-	            { key: 1, className: 'btn-label' },
-	            children
-	        )];
+	            null,
+	            React.createElement('div', { className: 'ripple', ref: function ref(_ref2) {
+	                    return _this2.ripple = _ref2;
+	                } }),
+	            React.createElement(
+	                'div',
+	                { className: 'btn-label' },
+	                children
+	            )
+	        );
 
 	        return link ? React.createElement(
 	            'a',
@@ -1908,9 +1913,12 @@ var zui =
 	            ),
 	            this.props.selectTime && React.createElement(
 	                'div',
-	                { className: cx('clearfix', {
-	                        'hide': this.state.view !== 'time'
-	                    }) },
+	                {
+	                    className: 'clearfix datepicker-time-select',
+	                    style: {
+	                        display: this.state.view === 'time' ? 'block' : 'none'
+	                    }
+	                },
 	                React.createElement(
 	                    'ul',
 	                    { className: 'datepicker-time-col' },

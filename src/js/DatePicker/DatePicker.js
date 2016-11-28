@@ -700,9 +700,12 @@ const DatePicker = React.createClass({
                     </ul>
                 }
                 {this.props.selectTime && 
-                    <div className={cx('clearfix', {
-                        'hide': this.state.view !== 'time'
-                    })}>
+                    <div 
+                        className="clearfix datepicker-time-select"
+                        style={{
+                            display: this.state.view === 'time' ? 'block' : 'none'
+                        }}
+                    >
                         <ul className="datepicker-time-col">
                             {renderedHours}
                         </ul>

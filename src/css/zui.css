@@ -1602,7 +1602,7 @@ table th[class*="col-"] {
 }
 .datepicker-trigger .icon {
   position: absolute;
-  top: 10px;
+  top: 9px;
   right: 5px;
 }
 .datepicker-trigger .placeholder {
@@ -1663,9 +1663,7 @@ table th[class*="col-"] {
   right: 30px;
 }
 .datepicker-body {
-  height: 204px;
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
+  height: 202px;
 }
 .datepicker-table {
   width: 100%;
@@ -1713,6 +1711,7 @@ table th[class*="col-"] {
 }
 .datepicker-year-select {
   max-height: 202px;
+  border-top: 1px solid #ccc;
   overflow-y: auto;
 }
 .datepicker-year-select > li {
@@ -1728,10 +1727,13 @@ table th[class*="col-"] {
   background-color: #2599f2;
   color: #fff;
 }
+.datepicker-time-select {
+  border-top: 1px solid #ccc;
+}
 .datepicker-time-col {
   float: left;
   width: 88px;
-  max-height: 202px;
+  max-height: 201px;
   border-left: 1px solid #ccc;
   overflow: hidden;
 }
@@ -1764,6 +1766,7 @@ table th[class*="col-"] {
 }
 .datepicker-foot {
   padding: 0 5px;
+  border-top: 1px solid #ccc;
   text-align: center;
 }
 .datepicker-foot span {
