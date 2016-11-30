@@ -8,7 +8,6 @@
 
 .z-select-trigger-single,
 .z-select-trigger-multi {
-    padding: 0 20px 0 @input-padding-horizonal;
     border: 1px solid @border-color-base;
 
     &.open {
@@ -29,11 +28,13 @@
 .z-select-trigger-single {
     height: @input-height;
     line-height: @input-height - 2;
+    padding: 0 20px 0 @input-padding-horizonal;
     overflow: hidden;
 }
 
 .z-select-trigger-multi {
     min-height: @input-height;
+    padding: 0 1px 0 @input-padding-horizonal;
 
     > ul {
         margin: 0 0 4px -2px;
