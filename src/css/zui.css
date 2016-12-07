@@ -1455,7 +1455,6 @@ table th[class*="col-"] {
 }
 .z-select-trigger-single,
 .z-select-trigger-multi {
-  padding: 0 20px 0 10px;
   border: 1px solid #ccc;
 }
 .z-select-trigger-single.open,
@@ -1478,10 +1477,12 @@ table th[class*="col-"] {
 .z-select-trigger-single {
   height: 34px;
   line-height: 32px;
+  padding: 0 20px 0 10px;
   overflow: hidden;
 }
 .z-select-trigger-multi {
   min-height: 34px;
+  padding: 0 1px 0 10px;
 }
 .z-select-trigger-multi > ul {
   margin: 0 0 4px -2px;
@@ -1602,7 +1603,9 @@ table th[class*="col-"] {
 }
 .datepicker-trigger .icon {
   position: absolute;
-  top: 9px;
+  height: 34px;
+  line-height: 32px;
+  top: 0;
   right: 5px;
 }
 .datepicker-trigger .placeholder {
