@@ -40,7 +40,7 @@ function getDateTimeStr(year, month, date, hours, minutes, seconds) {
 function getDateFields(date) {
     if (date) {
         if (typeof date === 'string') {
-            // IE or firefox may not be able to initialize date with the '-' splitter.
+            // IE or firefox may not initialize the date with the '-' splitter correctly.
             date = new Date(date.replace(/-/g, '/'));
 
             if (isNaN(date.getFullYear())) {
@@ -130,7 +130,8 @@ const DatePicker = React.createClass({
         defaultValue: React.PropTypes.string,
 
         /**
-         * The value of the component, meaning the component is controlled.
+         * The value of the component, e.g. '2016-08-08'.
+         * The `Datepicker` is controlled if this prop is set.
          * Will override `defaultValue`.
          */
         value: React.PropTypes.string,
@@ -143,7 +144,7 @@ const DatePicker = React.createClass({
         disableDates: React.PropTypes.func,
 
         /**
-         * Callback when the component's value changes.
+         * Fires when the component's value changes.
          * @param {string} dateStr
          */
         onChange: React.PropTypes.func

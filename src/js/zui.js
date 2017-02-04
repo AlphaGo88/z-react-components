@@ -2,7 +2,7 @@
 module.exports = {
     version: '1.0.0',
     author: 'zhao xin <83268606@qq.com>',
-
+    
     Button: require('./Button'),
     Dialog: require('./Dialog'),
     Message: require('./Message'),

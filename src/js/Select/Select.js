@@ -269,8 +269,7 @@ const Select = React.createClass({
                 // Up Arrow
                 event.preventDefault();
                 this.setState({ 
-                    hoverIndex: (hoverIndex === 0) ? 
-                        (options.length - 1) : (hoverIndex - 1)
+                    hoverIndex: (hoverIndex === 0) ? (options.length - 1) : (hoverIndex - 1)
                 });
                 break;
 

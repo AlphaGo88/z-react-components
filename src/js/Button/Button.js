@@ -43,7 +43,7 @@ const Button = React.createClass({
         fullWidth: React.PropTypes.bool,
 
         /**
-         * Link to a url.
+         * Makes the button a url link.
          */
         link: React.PropTypes.string,
 

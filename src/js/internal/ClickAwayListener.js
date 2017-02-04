@@ -19,7 +19,7 @@ const ClickAwayListener = React.createClass({
 
     getDefaultProps() {
         return {
-            onClickAway() {}
+            onClickAway: () => {}
         };
     },
 
@@ -32,9 +32,7 @@ const ClickAwayListener = React.createClass({
     },
 
     handleClickAway(event) {
-        if (event.defaultPrevented) {
-            return;
-        }
+        if (event.defaultPrevented) return;
 
         const el = ReactDOM.findDOMNode(this);
 

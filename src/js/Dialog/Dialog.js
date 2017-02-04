@@ -69,7 +69,7 @@ const Dialog = React.createClass({
         isOpen: React.PropTypes.bool,
 
         /**
-         * Callback when request to close the dialog.
+         * Fires when request to close the dialog.
          */
         onRequestClose: React.PropTypes.func,
 
@@ -79,10 +79,9 @@ const Dialog = React.createClass({
         autoScrollContent: React.PropTypes.bool,
 
         /**
-         * Fires when the ok button is clicked.
-         * Only `actions` is not customized.
+         * Fires when the ok button is clicked (if `actions` is not customized.).
          */
-        onOK: React.PropTypes.func,
+        onOK: React.PropTypes.func
     },
 
     getDefaultProps() {
@@ -113,8 +112,8 @@ const Dialog = React.createClass({
         const clientHeight = this.container.offsetHeight;
         const minPaddingTop = 12;
         
-        // It `autoScrollContent` is true,
-        // Calculate the content's max height according to the client height.
+        // If `autoScrollContent` is true,
+        // calculate the content's max height according to the client height.
         if (this.props.autoScrollContent) {
             const titleHeight = this.titleElem ? this.titleElem.offsetHeight : 0;
             const actionsHeight = this.actionsElem ? this.actionsElem.offsetHeight : 0;
