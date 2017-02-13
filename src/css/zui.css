@@ -482,16 +482,16 @@ ol {
   list-style: none;
 }
 a {
-  color: #2599f2;
+  color: #6f5499;
   text-decoration: none;
   cursor: pointer;
 }
 a:hover {
-  color: #0c7ace;
+  color: #523e71;
   text-decoration: underline;
 }
 a:visited {
-  color: #0c7ace;
+  color: #523e71;
 }
 .fl {
   float: left;
@@ -621,19 +621,19 @@ a:visited {
   margin-left: 100% !important;
 }
 .btn-small {
-  height: 30px;
-  line-height: 30px;
+  height: 28px;
+  line-height: 28px;
   padding: 0 14px;
 }
 .btn-medium {
-  height: 36px;
-  line-height: 36px;
+  height: 34px;
+  line-height: 34px;
   padding: 0 20px;
 }
 .btn-large {
-  height: 44px;
-  line-height: 44px;
-  padding: 0 26px;
+  height: 42px;
+  line-height: 42px;
+  padding: 0 28px;
 }
 .btn-float,
 .btn-flat {
@@ -711,11 +711,11 @@ a:visited {
   opacity: 1;
 }
 .btn-float.btn-primary {
-  background-color: #2599f2;
+  background-color: #6f5499;
   color: #fff;
 }
 .btn-float.btn-primary:hover {
-  background-color: #4cabf4;
+  background-color: #8469ad;
 }
 .btn-float.btn-secondary {
   background-color: #ad5888;
@@ -743,7 +743,7 @@ a:visited {
   color: #333;
 }
 .btn-flat.btn-primary {
-  color: #2599f2;
+  color: #6f5499;
 }
 .btn-flat.btn-secondary {
   color: #ad5888;
@@ -802,12 +802,12 @@ label.radio > input[type="radio"] + span:after {
   border: 2px solid #999;
 }
 label.radio > input[type="radio"]:checked + span:before {
-  border-color: #2599f2;
+  border-color: #6f5499;
 }
 label.radio > input[type="radio"]:checked + span:after {
   border-radius: 50%;
-  border: 2px solid #2599f2;
-  background-color: #2599f2;
+  border: 2px solid #6f5499;
+  background-color: #6f5499;
   transform: scale(0.5);
 }
 label.checkbox > input[type="checkbox"] + span:before {
@@ -829,8 +829,8 @@ label.checkbox > input[type="checkbox"]:checked + span:before {
   height: 20px;
   border-top: 2px solid transparent;
   border-left: 2px solid transparent;
-  border-right: 2px solid #2599f2;
-  border-bottom: 2px solid #2599f2;
+  border-right: 2px solid #6f5499;
+  border-bottom: 2px solid #6f5499;
   transform: rotate(40deg);
   -webkit-backface-visibility: hidden;
   transform-origin: 100% 100%;
@@ -885,7 +885,7 @@ label.checkbox > input[type="checkbox"]:focus + span {
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: #2599f2;
+  background-color: #6f5499;
 }
 .z-tab-content-container {
   border-left: 1px solid #ccc;
@@ -1390,12 +1390,12 @@ table th[class*="col-"] {
   margin: 0 2px;
 }
 .z-page-no:hover {
-  color: #2599f2;
+  color: #6f5499;
 }
 .z-page-no.active {
   color: #fff;
   border-radius: 4px;
-  background-color: #2599f2;
+  background-color: #6f5499;
   cursor: default;
 }
 .z-page-no-small {
@@ -1551,11 +1551,11 @@ table th[class*="col-"] {
 }
 .z-select-action {
   margin-right: 10px;
-  color: #2599f2;
+  color: #6f5499;
   cursor: pointer;
 }
 .z-select-action:hover {
-  color: #0c7ace;
+  color: #523e71;
 }
 .z-select-options {
   padding: 10px 0;
@@ -1572,7 +1572,7 @@ table th[class*="col-"] {
   background-color: #e0e0e0;
 }
 .z-select-option.selected {
-  color: #2599f2;
+  color: #6f5499;
 }
 .z-select-option.disabled {
   color: #999;
@@ -1684,7 +1684,7 @@ table th[class*="col-"] {
   width: 100%;
   height: 26px;
   line-height: 26px;
-  background-color: #2599f2;
+  background-color: #6f5499;
   color: #fff;
 }
 .datepicker-table td {
@@ -1704,7 +1704,7 @@ table th[class*="col-"] {
   background-color: #ddd;
 }
 .datepicker-date.active {
-  background-color: #2599f2;
+  background-color: #6f5499;
   color: #fff;
 }
 .datepicker-date.disabled {
@@ -1727,7 +1727,7 @@ table th[class*="col-"] {
   background-color: #e8e8e8;
 }
 .datepicker-year-select > li.active {
-  background-color: #2599f2;
+  background-color: #6f5499;
   color: #fff;
 }
 .datepicker-time-select {
@@ -1764,7 +1764,7 @@ table th[class*="col-"] {
   background-color: #e8e8e8;
 }
 .datepicker-time-col > li.active {
-  background-color: #2599f2;
+  background-color: #6f5499;
   color: #fff;
 }
 .datepicker-foot {
@@ -1774,10 +1774,10 @@ table th[class*="col-"] {
 }
 .datepicker-foot span {
   cursor: pointer;
-  color: #2599f2;
+  color: #6f5499;
 }
 .datepicker-foot span:hover {
-  color: #0c7ace;
+  color: #523e71;
 }
 .datepicker-foot span.disabled {
   color: #999;

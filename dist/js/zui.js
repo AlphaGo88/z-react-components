@@ -133,7 +133,7 @@ var zui =
 	        fullWidth: React.PropTypes.bool,
 
 	        /**
-	         * Link to a url.
+	         * Makes the button a url link.
 	         */
 	        link: React.PropTypes.string,
 
@@ -474,7 +474,7 @@ var zui =
 	        isOpen: React.PropTypes.bool,
 
 	        /**
-	         * Callback when request to close the dialog.
+	         * Fires when request to close the dialog.
 	         */
 	        onRequestClose: React.PropTypes.func,
 
@@ -484,8 +484,7 @@ var zui =
 	        autoScrollContent: React.PropTypes.bool,
 
 	        /**
-	         * Fires when the ok button is clicked.
-	         * Only `actions` is not customized.
+	         * Fires when the ok button is clicked (if `actions` is not customized.).
 	         */
 	        onOK: React.PropTypes.func
 	    },
@@ -514,8 +513,8 @@ var zui =
 	        var clientHeight = this.container.offsetHeight;
 	        var minPaddingTop = 12;
 
-	        // It `autoScrollContent` is true,
-	        // Calculate the content's max height according to the client height.
+	        // If `autoScrollContent` is true,
+	        // calculate the content's max height according to the client height.
 	        if (this.props.autoScrollContent) {
 	            var titleHeight = this.titleElem ? this.titleElem.offsetHeight : 0;
 	            var actionsHeight = this.actionsElem ? this.actionsElem.offsetHeight : 0;
@@ -1180,7 +1179,7 @@ var zui =
 	function getDateFields(date) {
 	    if (date) {
 	        if (typeof date === 'string') {
-	            // IE or firefox may not be able to initialize date with the '-' splitter.
+	            // IE or firefox may not initialize the date with the '-' splitter correctly.
 	            date = new Date(date.replace(/-/g, '/'));
 
 	            if (isNaN(date.getFullYear())) {
@@ -1272,7 +1271,8 @@ var zui =
 	        defaultValue: React.PropTypes.string,
 
 	        /**
-	         * The value of the component, meaning the component is controlled.
+	         * The value of the component, e.g. '2016-08-08'.
+	         * The `Datepicker` is controlled if this prop is set.
 	         * Will override `defaultValue`.
 	         */
 	        value: React.PropTypes.string,
@@ -1285,7 +1285,7 @@ var zui =
 	        disableDates: React.PropTypes.func,
 
 	        /**
-	         * Callback when the component's value changes.
+	         * Fires when the component's value changes.
 	         * @param {string} dateStr
 	         */
 	        onChange: React.PropTypes.func
@@ -3856,9 +3856,7 @@ var zui =
 	        document.removeEventListener('click', this.handleClickAway);
 	    },
 	    handleClickAway: function handleClickAway(event) {
-	        if (event.defaultPrevented) {
-	            return;
-	        }
+	        if (event.defaultPrevented) return;
 
 	        var el = ReactDOM.findDOMNode(this);
 
